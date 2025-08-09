@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import onboardingScreen from '../screens/onboarding/onboardingScreen';
 import onboardingexplainScreen from '../screens/onboarding/onboardingexplainScreen';
 import onboardingstepScreen from '../screens/onboarding/onboardingstepScreen';
+import onboardingstartScreen from '../screens/onboarding/onboardingstartScreen';
 import mainScreen from '../screens/main/mainScreen';
 
 export type RootStackParamList = {
@@ -30,6 +31,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="onboardingstep"
           component={onboardingstepScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="onboardingstart"
+          component={onboardingstartScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen name="main" component={mainScreen} />

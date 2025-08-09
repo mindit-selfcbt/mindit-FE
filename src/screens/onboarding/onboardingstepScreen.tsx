@@ -53,7 +53,7 @@ const OnboardingPracticeOrderScreen = ({ navigation }) => {
         animated: true,
       });
     } else {
-      navigation.replace('Main');
+      navigation.replace('onboardingstart');
     }
   };
 
