@@ -39,7 +39,7 @@ const OnboardingExplainScreen = ({ navigation }) => {
   const { image, title, lines } = contents[pageIndex];
 
   const handleNext = () => {
-    navigation.replace('Main');
+    navigation.replace('onboardingstep');
   };
 
   const ArrowButton = ({ side }) => {
