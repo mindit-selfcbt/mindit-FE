@@ -38,7 +38,11 @@ const AppNavigator = () => {
           component={onboardingstartScreen}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="main" component={mainScreen} />
+        <Stack.Screen
+          name="main"
+          component={mainScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -6,7 +6,7 @@ const startImg = require('../../assets/img/onboarding/startImg.png');
 
 const OnboardingStartScreen = ({ navigation }) => {
   const handleNext = () => {
-    navigation.replace('OnboardingExplain');
+    navigation.replace('main');
   };
 
   return (
