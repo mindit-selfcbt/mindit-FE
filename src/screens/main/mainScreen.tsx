@@ -33,22 +33,28 @@ const BUTTON_HORIZONTAL_PADDING = 12;
 
 const MainScreen = ({ navigation }) => {
   const handleMenuPress = key => {
-    // 버튼 클릭 로직
+    // 메뉴 버튼 클릭 시 처리
   };
   const handleMicPress = () => {
-    // 마이크 클릭 로직
+    // 마이크 버튼 클릭 시 처리
+  };
+  const handleScreenPress = () => {
+    navigation.replace('responseprevention');
   };
 
   return (
     <View style={styles.container}>
-      {/* 상단 인사 */}
-      <View style={styles.headerWrap}>
+      <TouchableOpacity
+        style={styles.overlayTouchable}
+        activeOpacity={1}
+        onPress={handleScreenPress}
+      />
+      <View style={styles.headerWrap} pointerEvents="box-none">
         <Text style={styles.headerText}>눈송이님 안녕하세요</Text>
         <Text style={styles.headerText}>무엇을 하시겠어요?</Text>
       </View>
 
-      {/* 메뉴 버튼 2+3 배치, 왼쪽 정렬 */}
-      <View style={styles.menuZone}>
+      <View style={styles.menuZone} pointerEvents="box-none">
         <View style={styles.menuRow}>
           {menuData.slice(0, 2).map(item => (
             <TouchableOpacity
@@ -56,6 +62,7 @@ const MainScreen = ({ navigation }) => {
               style={styles.menuButton}
               activeOpacity={0.85}
               onPress={() => handleMenuPress(item.key)}
+              pointerEvents="auto"
             >
               <Image source={item.icon} style={styles.menuIcon} />
               <Text
@@ -75,6 +82,7 @@ const MainScreen = ({ navigation }) => {
               style={styles.menuButton}
               activeOpacity={0.85}
               onPress={() => handleMenuPress(item.key)}
+              pointerEvents="auto"
             >
               <Image source={item.icon} style={styles.menuIcon} />
               <Text
@@ -89,8 +97,7 @@ const MainScreen = ({ navigation }) => {
         </View>
       </View>
 
-      {/* 화면 정중앙 안내문구 */}
-      <View style={styles.centerGuideAbsoluteWrap}>
+      <View style={styles.centerGuideAbsoluteWrap} pointerEvents="box-none">
         <View style={styles.centerGuideInner}>
           <Text style={styles.centerGuide}>
             지금 불안이 느껴진다면{'\n'}빈 곳을 눌러 반응 방지를 시작하세요
@@ -98,8 +105,7 @@ const MainScreen = ({ navigation }) => {
         </View>
       </View>
 
-      {/* 하단 채팅 바 */}
-      <View style={styles.chatBar}>
+      <View style={styles.chatBar} pointerEvents="box-none">
         <TouchableOpacity onPress={handleMicPress} activeOpacity={0.75}>
           <Image source={icons.mic} style={styles.micIcon} />
         </TouchableOpacity>
@@ -122,12 +128,17 @@ const styles = StyleSheet.create({
     minHeight: '100%',
     position: 'relative',
   },
+  overlayTouchable: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1,
+  },
   headerWrap: {
     width: '100%',
     alignItems: 'flex-start',
     paddingHorizontal: 24,
     marginTop: 60,
     marginBottom: 40,
+    zIndex: 2,
   },
   headerText: {
     color: '#3D3D44',
@@ -141,6 +152,7 @@ const styles = StyleSheet.create({
     marginLeft: 24,
     marginBottom: 12,
     alignSelf: 'flex-start',
+    zIndex: 2,
   },
   menuRow: {
     flexDirection: 'row',
@@ -165,6 +177,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     alignSelf: 'flex-start',
     overflow: 'hidden',
+    zIndex: 3,
   },
   menuIcon: {
     width: 24,
@@ -179,18 +192,17 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '500',
     lineHeight: 20,
-    // min/max width 삭제, flex로 쭉 출력
   },
   centerGuideAbsoluteWrap: {
     position: 'absolute',
     left: 0,
     right: 0,
     top: '50%',
-    zIndex: 10,
+    zIndex: 2,
     alignItems: 'center',
     justifyContent: 'center',
     transform: [{ translateY: -38 }],
-    pointerEvents: 'none',
+    pointerEvents: 'box-none',
   },
   centerGuideInner: {
     width: '100%',
@@ -229,6 +241,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 4,
     gap: 8,
+    zIndex: 2,
   },
   micIcon: {
     width: 60,
