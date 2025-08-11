@@ -6,6 +6,7 @@ import onboardingexplainScreen from '../screens/onboarding/onboardingexplainScre
 import onboardingstepScreen from '../screens/onboarding/onboardingstepScreen';
 import onboardingstartScreen from '../screens/onboarding/onboardingstartScreen';
 import mainScreen from '../screens/main/mainScreen';
+import responsepreventionScreen from '../screens/responseprevention/responsepreventionScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -41,6 +42,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="main"
           component={mainScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="responseprevention"
+          component={responsepreventionScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
