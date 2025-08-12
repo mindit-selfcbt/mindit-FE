@@ -46,24 +46,14 @@ export default function MonthlyReportScreen({ navigation }) {
 
       {/* 안내 텍스트 */}
       <View style={styles.topTextWrap}>
-        <Text style={styles.topText}>
-          <Text style={styles.boldText}>눈송이님</Text>
-          {', 지난달보다 평균 불안이'}
-        </Text>
-
+        <Text style={styles.topText}>눈송이님, 지난달보다 평균 불안이</Text>
         <View style={styles.anxietyChange}>
           <Text style={styles.highlightScore}>58점</Text>
           <Text style={styles.arrow}>{' → '}</Text>
           <Text style={styles.highlightScore}>28점</Text>
-          <Text style={styles.topText}>
-            {'으로 '}
-            <Text style={styles.boldText}>감소</Text>
-            {'했어요.'}
-          </Text>
         </View>
-
         <Text style={styles.topText}>
-          변화가 눈에 띄어요.{'\n'}잘 해내고 있어요!
+          으로 감소했어요.{'\n'}변화가 눈에 띄어요.{'\n'}잘 해내고 있어요!
         </Text>
       </View>
 
@@ -190,11 +180,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 30,
   },
-  boldText: {
-    fontWeight: '700',
-    color: '#25252C',
-    fontFamily: 'Pretendard',
-  },
   anxietyChange: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -233,6 +218,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     letterSpacing: -0.42,
   },
+
   graphTitle: {
     color: '#25252C',
     fontFamily: 'Pretendard',
