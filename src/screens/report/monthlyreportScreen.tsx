@@ -31,9 +31,9 @@ const monthValues = [100, 95, 90, 85, 70, 60, 50, 60, 30, 40, 35, 20];
 
 const BAR_WIDTH = 48;
 const BAR_LINE_HEIGHT = 4;
-const GRAPH_BARLINE_WIDTH = 312;
-const BARROW_HEIGHT = 150;
-const YAXIS_HEIGHT = 150;
+const GRAPH_BARLINE_WIDTH = 300;
+const BARROW_HEIGHT = 100;
+const YAXIS_HEIGHT = 100;
 
 export default function MonthlyReportScreen({ navigation }) {
   const [toggle, setToggle] = useState('checking');
@@ -50,9 +50,9 @@ export default function MonthlyReportScreen({ navigation }) {
   const startIndex = currMonthIndex - 5 >= 0 ? currMonthIndex - 5 : 0;
   const showMonths = months.slice(startIndex, currMonthIndex + 1);
   const showValues = monthValues.slice(startIndex, currMonthIndex + 1);
-
-  // 표시되는 막대/월 레이블 수가 6개 미만일 때, 왼쪽 정렬!
   const isBarRowLeft = showMonths.length < 6;
+
+  const yLabelData = [{ value: 100 }, { value: 50 }, { value: 0 }];
 
   return (
     <View style={styles.container}>
@@ -102,18 +102,19 @@ export default function MonthlyReportScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <Text style={styles.graphTitle}>월별 평균 불안 정도</Text>
-
       <View style={styles.graphBox}>
         <View style={styles.graphArea}>
-          <View style={styles.yAxisLabels}>
-            <Text style={styles.yAxisText}>100</Text>
-            <Text style={styles.yAxisText}>50</Text>
-            <Text style={styles.yAxisText}>0</Text>
+          {/* y축 레이블+선 한 row에 묶어서 렌더 */}
+          <View style={styles.yAxisWrapper}>
+            {yLabelData.map((item, i) => (
+              <View key={item.value} style={styles.yAxisRow}>
+                <Text style={styles.yAxisText}>{item.value}</Text>
+                <View style={styles.dotLineRow} />
+              </View>
+            ))}
           </View>
-          <View style={[styles.graphContent, { paddingTop: 22 }]}>
-            <View style={[styles.dotLine, { top: 0 }]} />
-            <View style={[styles.dotLine, { top: YAXIS_HEIGHT / 2 }]} />
-            <View style={[styles.dotLine, { top: YAXIS_HEIGHT }]} />
+          {/* 그래프 bar 영역 */}
+          <View style={[styles.graphContent]}>
             <View
               style={[
                 styles.barRow,
@@ -272,8 +273,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   graphBox: {
-    width: 380,
-    height: 240,
+    width: 360,
+    height: 200,
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: '#D6E7F8',
@@ -283,8 +284,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'row',
     paddingLeft: 16,
-    paddingTop: 32,
-    paddingBottom: 18,
+    paddingTop: 28,
   },
   graphArea: {
     flexDirection: 'row',
@@ -292,36 +292,37 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     width: '100%',
   },
-  yAxisLabels: {
-    width: 26,
-    height: YAXIS_HEIGHT,
+  yAxisWrapper: {
+    flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginRight: 10,
+    height: YAXIS_HEIGHT,
+  },
+  yAxisRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: YAXIS_HEIGHT / 2,
   },
   yAxisText: {
+    width: 24,
+    textAlign: 'center',
     color: '#717780',
     fontFamily: 'Pretendard',
     fontSize: 12,
     fontWeight: '400',
-    textAlign: 'center',
+  },
+  dotLineRow: {
+    height: 1,
+    backgroundColor: '#E8F1FF',
+    flex: 1,
+    marginRight: 8,
   },
   graphContent: {
-    position: 'relative',
+    flex: 1,
     alignItems: 'flex-start',
     width: GRAPH_BARLINE_WIDTH,
     paddingBottom: 0,
     height: YAXIS_HEIGHT,
-    // 전체 content를 아래로 떨어뜨리려면 paddingTop 추가
-  },
-  dotLine: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: '#E8F1FF',
-    width: '100%',
-    zIndex: 1,
   },
   barRow: {
     flexDirection: 'row',
@@ -329,7 +330,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: BARROW_HEIGHT,
     width: GRAPH_BARLINE_WIDTH,
-    marginTop: 0,
+    marginTop: 20,
     marginBottom: 0,
     zIndex: 2,
   },
@@ -346,7 +347,7 @@ const styles = StyleSheet.create({
   barTopLine: {
     width: BAR_WIDTH,
     height: BAR_LINE_HEIGHT,
-    borderRadius: 2,
+    borderRadius: 0,
     marginBottom: 0,
   },
   barTopLinePrev: {
@@ -391,10 +392,11 @@ const styles = StyleSheet.create({
   },
   monthLabelRow: {
     flexDirection: 'row',
-    justifyContent: 'center', // 6개 미만일 때 'flex-start'로 동적 변경
+    justifyContent: 'center',
     alignItems: 'center',
     width: GRAPH_BARLINE_WIDTH,
     alignSelf: 'flex-start',
+    marginTop: 20,
   },
   monthLabel: {
     width: BAR_WIDTH,
