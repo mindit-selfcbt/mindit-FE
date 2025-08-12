@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import ToggleButton from '../../components/toggleButton';
+import LinearGradient from 'react-native-linear-gradient';
 
 const mainIcon = require('../../assets/icon/mainIcon.png');
 const weeklyIcon = require('../../assets/icon/weeklyIcon.png');
@@ -12,24 +13,49 @@ const TOGGLE_OPTIONS = [
   { key: 'contamination', label: '오염 강박' },
 ];
 
-const months = ['4월', '5월', '6월', '7월', '8월', '9월'];
-const monthValues = [85, 70, 60, 50, 60, 30];
+const months = [
+  '1월',
+  '2월',
+  '3월',
+  '4월',
+  '5월',
+  '6월',
+  '7월',
+  '8월',
+  '9월',
+  '10월',
+  '11월',
+  '12월',
+];
+const monthValues = [100, 95, 90, 85, 70, 60, 50, 60, 30, 40, 35, 20];
+
+const BAR_WIDTH = 48;
+const BAR_LINE_HEIGHT = 4;
+const GRAPH_BARLINE_WIDTH = 312;
+const BARROW_HEIGHT = 150;
+const YAXIS_HEIGHT = 150;
 
 export default function MonthlyReportScreen({ navigation }) {
   const [toggle, setToggle] = useState('checking');
   const [currentMonth, setCurrentMonth] = useState('9월');
 
   const currMonthIndex = months.indexOf(currentMonth);
-  const handleMonth = (direction: 'prev' | 'next') => {
+  const handleMonth = direction => {
     let idx = currMonthIndex + (direction === 'prev' ? -1 : 1);
     if (idx < 0) idx = 0;
     if (idx > months.length - 1) idx = months.length - 1;
     setCurrentMonth(months[idx]);
   };
 
+  const startIndex = currMonthIndex - 5 >= 0 ? currMonthIndex - 5 : 0;
+  const showMonths = months.slice(startIndex, currMonthIndex + 1);
+  const showValues = monthValues.slice(startIndex, currMonthIndex + 1);
+
+  // 표시되는 막대/월 레이블 수가 6개 미만일 때, 왼쪽 정렬!
+  const isBarRowLeft = showMonths.length < 6;
+
   return (
     <View style={styles.container}>
-      {/* 상단 중앙 토글 + 아이콘 */}
       <View style={styles.topRow}>
         <ToggleButton
           options={TOGGLE_OPTIONS}
@@ -43,8 +69,6 @@ export default function MonthlyReportScreen({ navigation }) {
           <Image source={mainIcon} style={styles.icon} />
         </TouchableOpacity>
       </View>
-
-      {/* 안내 텍스트 */}
       <View style={styles.topTextWrap}>
         <Text style={styles.topText}>눈송이님, 지난달보다 평균 불안이</Text>
         <View style={styles.anxietyChange}>
@@ -56,88 +80,119 @@ export default function MonthlyReportScreen({ navigation }) {
           으로 감소했어요.{'\n'}변화가 눈에 띄어요.{'\n'}잘 해내고 있어요!
         </Text>
       </View>
-
-      {/* 월 이동 및 주간 리포트 보기 */}
       <View style={styles.monthRow}>
-        {currMonthIndex > 0 ? (
+        <View style={styles.monthCenterRow}>
           <TouchableOpacity onPress={() => handleMonth('prev')}>
             <Image source={backIcon} style={styles.smallIcon} />
           </TouchableOpacity>
-        ) : (
-          <View style={styles.smallIcon} />
-        )}
-        <Text style={styles.monthText}>{currentMonth}</Text>
+          <Text style={styles.monthText}>{currentMonth}</Text>
+          <TouchableOpacity onPress={() => handleMonth('next')}>
+            <Image source={nextIcon} style={styles.smallIcon} />
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
           style={styles.weeklyReportRow}
           onPress={() => navigation.navigate('WeeklyReport')}
         >
-          <Image source={weeklyIcon} style={styles.smallIcon} />
           <Text style={styles.weeklyReportText}>주간 리포트 보기</Text>
+          <Image
+            source={weeklyIcon}
+            style={[styles.smallIcon, styles.weeklyIconRight]}
+          />
         </TouchableOpacity>
-        {currMonthIndex < months.length - 1 ? (
-          <TouchableOpacity onPress={() => handleMonth('next')}>
-            <Image source={nextIcon} style={styles.smallIcon} />
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.smallIcon} />
-        )}
       </View>
-
-      {/* 그래프 제목 */}
       <Text style={styles.graphTitle}>월별 평균 불안 정도</Text>
 
-      {/* 월별 평균 불안 정도 그래프 */}
       <View style={styles.graphBox}>
-        <View style={styles.yAxisLabels}>
-          {[100, 50, 0].map(v => (
-            <Text key={v} style={styles.yAxisText}>
-              {v}
-            </Text>
-          ))}
-        </View>
-        <View style={styles.graphContent}>
-          {/* 도트선 */}
-          <View style={[styles.dotLine, { top: 0 }]} />
-          <View style={[styles.dotLine, { top: '50%' }]} />
-          {/* 막대그래프와 수치 */}
-          <View style={styles.barRow}>
-            {months.map((month, i) => {
-              const value = monthValues[i];
-              const isLast = i === months.length - 1;
-              const barHeight = (value / 100) * 120;
-              return (
-                <View key={month} style={styles.barItem}>
-                  <View
-                    style={[
-                      styles.bar,
-                      {
-                        height: barHeight,
-                        backgroundColor: isLast
-                          ? '#7BAFFF'
-                          : 'rgba(123, 175, 255, 0.3)',
-                      },
-                    ]}
-                  >
+        <View style={styles.graphArea}>
+          <View style={styles.yAxisLabels}>
+            <Text style={styles.yAxisText}>100</Text>
+            <Text style={styles.yAxisText}>50</Text>
+            <Text style={styles.yAxisText}>0</Text>
+          </View>
+          <View style={[styles.graphContent, { paddingTop: 22 }]}>
+            <View style={[styles.dotLine, { top: 0 }]} />
+            <View style={[styles.dotLine, { top: YAXIS_HEIGHT / 2 }]} />
+            <View style={[styles.dotLine, { top: YAXIS_HEIGHT }]} />
+            <View
+              style={[
+                styles.barRow,
+                isBarRowLeft ? { justifyContent: 'flex-start' } : {},
+              ]}
+            >
+              {showMonths.map((month, i) => {
+                const value = showValues[i];
+                const isCurrent = i === showMonths.length - 1;
+                const barHeight = (value / 100) * BARROW_HEIGHT;
+                return (
+                  <View key={month} style={styles.barItem}>
                     <View
                       style={[
                         styles.barValueBox,
-                        isLast && styles.barValueBoxLast,
+                        isCurrent && styles.barValueBoxLast,
                       ]}
                     >
                       <Text
                         style={[
                           styles.barValueText,
-                          isLast && styles.barValueTextLast,
+                          isCurrent && styles.barValueTextLast,
                         ]}
                       >
                         {value}
                       </Text>
                     </View>
+                    <View style={{ height: 8 }} />
+                    <View
+                      style={[
+                        styles.barWrap,
+                        { height: barHeight + BAR_LINE_HEIGHT },
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.barTopLine,
+                          isCurrent
+                            ? styles.barTopLineCurrent
+                            : styles.barTopLinePrev,
+                        ]}
+                      />
+                      <View style={{ width: BAR_WIDTH, height: barHeight }}>
+                        <LinearGradient
+                          colors={[
+                            'rgba(123,175,255,0.30)',
+                            'rgba(123,175,255,0.00)',
+                          ]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 0, y: 1 }}
+                          style={styles.barGradient}
+                        />
+                      </View>
+                    </View>
                   </View>
-                  <Text style={styles.monthLabel}>{month}</Text>
-                </View>
-              );
-            })}
+                );
+              })}
+            </View>
+            <View
+              style={[
+                styles.monthLabelRow,
+                isBarRowLeft ? { justifyContent: 'flex-start' } : {},
+              ]}
+            >
+              {showMonths.map((month, i) => {
+                const isCurrent = i === showMonths.length - 1;
+                return (
+                  <Text
+                    key={month}
+                    style={[
+                      styles.monthLabel,
+                      isCurrent && styles.monthLabelCurrent,
+                    ]}
+                  >
+                    {month}
+                  </Text>
+                );
+              })}
+            </View>
           </View>
         </View>
       </View>
@@ -163,16 +218,200 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
   },
-  icon: { width: 24, height: 24, marginLeft: 4 },
+  icon: {
+    width: 20,
+    height: 20,
+    marginLeft: 4,
+  },
   monthRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 8,
     marginBottom: 18,
+    height: 48,
   },
-  smallIcon: { width: 24, height: 24 },
-  topTextWrap: { marginTop: 0, marginBottom: 24 },
+  monthCenterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  smallIcon: {
+    width: 20,
+    height: 20,
+    marginHorizontal: 4,
+  },
+  monthText: {
+    fontSize: 20,
+    color: '#25252C',
+    fontWeight: '700',
+    marginHorizontal: 4,
+    textAlign: 'center',
+    minWidth: 36,
+  },
+  weeklyReportRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  weeklyIconRight: {
+    marginLeft: 6,
+  },
+  weeklyReportText: {
+    color: '#717780',
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontWeight: '400',
+    letterSpacing: -0.42,
+  },
+  graphTitle: {
+    color: '#25252C',
+    fontFamily: 'Pretendard',
+    fontSize: 20,
+    fontWeight: '700',
+    lineHeight: 30,
+    marginBottom: 12,
+  },
+  graphBox: {
+    width: 380,
+    height: 240,
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: '#D6E7F8',
+    backgroundColor: '#FFF',
+    alignSelf: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    paddingLeft: 16,
+    paddingTop: 32,
+    paddingBottom: 18,
+  },
+  graphArea: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
+    width: '100%',
+  },
+  yAxisLabels: {
+    width: 26,
+    height: YAXIS_HEIGHT,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  yAxisText: {
+    color: '#717780',
+    fontFamily: 'Pretendard',
+    fontSize: 12,
+    fontWeight: '400',
+    textAlign: 'center',
+  },
+  graphContent: {
+    position: 'relative',
+    alignItems: 'flex-start',
+    width: GRAPH_BARLINE_WIDTH,
+    paddingBottom: 0,
+    height: YAXIS_HEIGHT,
+    // 전체 content를 아래로 떨어뜨리려면 paddingTop 추가
+  },
+  dotLine: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 1,
+    backgroundColor: '#E8F1FF',
+    width: '100%',
+    zIndex: 1,
+  },
+  barRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    height: BARROW_HEIGHT,
+    width: GRAPH_BARLINE_WIDTH,
+    marginTop: 0,
+    marginBottom: 0,
+    zIndex: 2,
+  },
+  barItem: {
+    alignItems: 'center',
+    width: BAR_WIDTH,
+  },
+  barWrap: {
+    width: BAR_WIDTH,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+  },
+  barTopLine: {
+    width: BAR_WIDTH,
+    height: BAR_LINE_HEIGHT,
+    borderRadius: 2,
+    marginBottom: 0,
+  },
+  barTopLinePrev: {
+    backgroundColor: '#85B6FF',
+  },
+  barTopLineCurrent: {
+    backgroundColor: '#3557D4',
+  },
+  barGradient: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    borderRadius: 0,
+  },
+  barValueBox: {
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    backgroundColor: '#E8F1FF',
+    marginBottom: 0,
+    marginTop: 0,
+    position: 'relative',
+    zIndex: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  barValueBoxLast: {
+    backgroundColor: '#3557D4',
+  },
+  barValueText: {
+    color: '#9CC3FF',
+    textAlign: 'center',
+    fontFamily: 'Gmarket Sans',
+    fontSize: 12,
+    fontWeight: '400',
+    lineHeight: 18,
+  },
+  barValueTextLast: {
+    color: '#FFF',
+  },
+  monthLabelRow: {
+    flexDirection: 'row',
+    justifyContent: 'center', // 6개 미만일 때 'flex-start'로 동적 변경
+    alignItems: 'center',
+    width: GRAPH_BARLINE_WIDTH,
+    alignSelf: 'flex-start',
+  },
+  monthLabel: {
+    width: BAR_WIDTH,
+    textAlign: 'center',
+    color: '#717780',
+    fontFamily: 'Pretendard',
+    fontSize: 12,
+    fontStyle: 'normal',
+    fontWeight: '500',
+  },
+  monthLabelCurrent: {
+    color: '#3557D4',
+  },
+  topTextWrap: {
+    marginTop: 0,
+    marginBottom: 24,
+  },
   topText: {
     color: '#25252C',
     fontFamily: 'Pretendard',
@@ -197,127 +436,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     marginHorizontal: 2,
-  },
-  monthText: {
-    color: '#25252C',
-    fontFamily: 'Pretendard',
-    fontSize: 20,
-    fontWeight: '700',
-    marginHorizontal: 8,
-  },
-  weeklyReportRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 8,
-  },
-  weeklyIcon: { width: 16, height: 16, marginRight: 3 },
-  weeklyReportText: {
-    color: '#717780',
-    fontFamily: 'Pretendard',
-    fontSize: 14,
-    fontWeight: '400',
-    letterSpacing: -0.42,
-  },
-
-  graphTitle: {
-    color: '#25252C',
-    fontFamily: 'Pretendard',
-    fontSize: 20,
-    fontWeight: '700',
-    lineHeight: 30,
-    marginBottom: 12,
-  },
-  graphBox: {
-    width: 380,
-    height: 186,
-    borderRadius: 10,
-    borderWidth: 0.5,
-    borderColor: '#D6E7F8',
-    backgroundColor: '#FFF',
-    alignSelf: 'center',
-    flexDirection: 'row',
-    paddingLeft: 34,
-    paddingTop: 12,
-    paddingBottom: 24,
-  },
-  yAxisLabels: {
-    width: 26,
-    justifyContent: 'space-between',
-    height: '93%',
-  },
-  yAxisText: {
-    color: '#717780',
-    fontFamily: 'Pretendard',
-    fontSize: 12,
-    fontWeight: '400',
-  },
-  graphContent: {
-    flex: 1,
-    marginLeft: 10,
-    position: 'relative',
-    justifyContent: 'flex-end',
-  },
-  dotLine: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: '#E8F1FF',
-    width: '92%',
-  },
-  barRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: 120,
-    marginTop: 20,
-    width: '95%',
-    justifyContent: 'space-between',
-  },
-  barItem: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    flex: 1,
-  },
-  bar: {
-    width: 32,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
-    marginBottom: 4,
-    position: 'relative',
-  },
-  barValueBox: {
-    paddingVertical: 2,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    backgroundColor: '#E8F1FF',
-    marginBottom: 6,
-    position: 'absolute',
-    top: -28,
-    zIndex: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  barValueBoxLast: {
-    backgroundColor: '#3557D4',
-  },
-  barValueText: {
-    color: '#9CC3FF',
-    textAlign: 'center',
-    fontFamily: 'Gmarket Sans',
-    fontSize: 12,
-    fontWeight: '400',
-    lineHeight: 18,
-  },
-  barValueTextLast: {
-    color: '#FFF',
-  },
-  monthLabel: {
-    marginTop: 6,
-    color: '#717780',
-    fontFamily: 'Pretendard',
-    fontSize: 14,
-    fontWeight: '400',
   },
 });
