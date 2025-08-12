@@ -7,6 +7,8 @@ import onboardingstepScreen from '../screens/onboarding/onboardingstepScreen';
 import onboardingstartScreen from '../screens/onboarding/onboardingstartScreen';
 import mainScreen from '../screens/main/mainScreen';
 import responsepreventionScreen from '../screens/responseprevention/responsepreventionScreen';
+import weeklyreportScreen from '../screens/report/weeklyreportScreen';
+import monthlyreportScreen from '../screens/report/monthlyreportScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -47,6 +49,16 @@ const AppNavigator = () => {
         <Stack.Screen
           name="responseprevention"
           component={responsepreventionScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="weeklyreport"
+          component={weeklyreportScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="monthlyreport"
+          component={monthlyreportScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

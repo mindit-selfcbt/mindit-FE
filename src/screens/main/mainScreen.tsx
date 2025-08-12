@@ -33,7 +33,9 @@ const BUTTON_HORIZONTAL_PADDING = 12;
 
 const MainScreen = ({ navigation }) => {
   const handleMenuPress = key => {
-    // 메뉴 버튼 클릭 시 처리
+    if (key === 'report') {
+      navigation.navigate('monthlyreport');
+    }
   };
   const handleMicPress = () => {
     // 마이크 버튼 클릭 시 처리
