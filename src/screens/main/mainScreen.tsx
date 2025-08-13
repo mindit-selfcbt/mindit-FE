@@ -33,6 +33,9 @@ const BUTTON_HORIZONTAL_PADDING = 12;
 
 const MainScreen = ({ navigation }) => {
   const handleMenuPress = key => {
+    if (key === 'record') {
+      navigation.navigate('recordcatalog');
+    }
     if (key === 'report') {
       navigation.navigate('monthlyreport');
     }
