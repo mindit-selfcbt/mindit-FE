@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#F3F7FB',
-    alignSelf: 'center', // 중요! 화면 중앙 pill
+    alignSelf: 'center',
   },
   thumb: {
     position: 'absolute',

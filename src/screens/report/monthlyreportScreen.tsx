@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import ToggleButton from '../../components/toggleButton';
 import MonthlyBarChart from '../../components/monthlybarChart';
+import CalendarGrid from '../../components/calendarGrid';
 
+// 아이콘 import는 동일...
 const mainIcon = require('../../assets/icon/mainIcon.png');
 const weeklyIcon = require('../../assets/icon/weeklyIcon.png');
 const backIcon = require('../../assets/icon/backIcon.png');
@@ -29,24 +38,62 @@ const months = [
 ];
 const monthValues = [100, 95, 90, 85, 70, 60, 50, 60, 30, 40, 35, 20];
 
+function getDaysInMonth(year, month) {
+  return new Date(year, month, 0).getDate();
+}
+
+// 월별 불안데이터 예시 생성기 (실제 데이타 연동 가능)
+function randomAnxietyForMonth(year, month) {
+  const numDays = getDaysInMonth(year, month);
+  return Array.from({ length: numDays }, (_, i) => ({
+    day: i + 1,
+    level: Math.ceil(Math.random() * 5),
+  }));
+}
+
 export default function MonthlyReportScreen({ navigation }) {
+  const now = new Date();
   const [toggle, setToggle] = useState('checking');
-  const [currentMonth, setCurrentMonth] = useState('9월');
+  const [currentYear, setCurrentYear] = useState(now.getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(now.getMonth() + 1); // 1~12
+  const [anxietyList, setAnxietyList] = useState(
+    randomAnxietyForMonth(now.getFullYear(), now.getMonth() + 1),
+  );
 
-  const currMonthIndex = months.indexOf(currentMonth);
-  const handleMonth = direction => {
-    let idx = currMonthIndex + (direction === 'prev' ? -1 : 1);
-    idx = Math.max(0, Math.min(months.length - 1, idx));
-    setCurrentMonth(months[idx]);
-  };
-
-  const startIndex = currMonthIndex - 5 >= 0 ? currMonthIndex - 5 : 0;
-  const showMonths = months.slice(startIndex, currMonthIndex + 1);
-  const showValues = monthValues.slice(startIndex, currMonthIndex + 1);
+  // 그래프 월 계산도 맞춰줌
+  const showMonthIdx = currentMonth - 1;
+  const showMonths = months.slice(
+    Math.max(0, showMonthIdx - 5),
+    showMonthIdx + 1,
+  );
+  const showValues = monthValues.slice(
+    Math.max(0, showMonthIdx - 5),
+    showMonthIdx + 1,
+  );
   const isBarRowLeft = showMonths.length < 6;
 
+  // 월 이동 핸들러
+  const handleMonth = dir => {
+    let y = currentYear;
+    let m = currentMonth + (dir === 'prev' ? -1 : 1);
+    if (m < 1) {
+      m = 12;
+      y -= 1;
+    } else if (m > 12) {
+      m = 1;
+      y += 1;
+    }
+    setCurrentYear(y);
+    setCurrentMonth(m);
+  };
+
+  // 월/연도 바뀔 때마다 불안 레벨 데이터 새로 준비(랜덤 예시)
+  useEffect(() => {
+    setAnxietyList(randomAnxietyForMonth(currentYear, currentMonth));
+  }, [currentYear, currentMonth]);
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
       <View style={styles.topRow}>
         <ToggleButton
           options={TOGGLE_OPTIONS}
@@ -76,7 +123,9 @@ export default function MonthlyReportScreen({ navigation }) {
           <TouchableOpacity onPress={() => handleMonth('prev')}>
             <Image source={backIcon} style={styles.smallIcon} />
           </TouchableOpacity>
-          <Text style={styles.monthText}>{currentMonth}</Text>
+          <Text
+            style={styles.monthText}
+          >{`${currentYear}년 ${currentMonth}월`}</Text>
           <TouchableOpacity onPress={() => handleMonth('next')}>
             <Image source={nextIcon} style={styles.smallIcon} />
           </TouchableOpacity>
@@ -93,21 +142,32 @@ export default function MonthlyReportScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <Text style={styles.graphTitle}>월별 평균 불안 정도</Text>
+      {/* 월별 그래프 */}
       <MonthlyBarChart
         months={showMonths}
         values={showValues}
         isBarRowLeft={isBarRowLeft}
       />
-    </View>
+      {/* 달력 (월 변경에 따라 날짜·이미지 연동!) */}
+      <CalendarGrid
+        year={currentYear}
+        month={currentMonth}
+        anxietyList={anxietyList}
+      />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scroll: {
     flex: 1,
     backgroundColor: '#F8FBFF',
+  },
+  container: {
     paddingHorizontal: 24,
     paddingTop: 48,
+    paddingBottom: 40,
+    backgroundColor: '#F8FBFF',
   },
   topRow: {
     flexDirection: 'row',

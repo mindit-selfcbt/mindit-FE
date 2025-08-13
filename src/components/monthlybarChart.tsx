@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#E8F1FF',
     flex: 1,
-    marginRight: 8,
   },
   graphContent: {
     flex: 1,
