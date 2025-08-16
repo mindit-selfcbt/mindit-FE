@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     width: 360,
     padding: 16,
     borderRadius: 8,
-    backgroundColor: '#FFF',
+    backgroundColor: '#F8FBFF',
     marginBottom: 20,
     alignSelf: 'center',
     shadowColor: '#000',
@@ -240,14 +240,14 @@ const styles = StyleSheet.create({
   infoLabel: {
     color: '#717780',
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '500',
     marginBottom: 8,
     fontFamily: 'Pretendard',
   },
   infoText: {
     color: '#25252C',
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '500',
     fontFamily: 'Pretendard',
   },
   statBoxRow: {
