@@ -4,6 +4,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 export default function CognitiveErrorScreen() {
   return (
     <View>
+      {/* 강박 상황 박스 (ErpRecordScreen에서 추출한 코드) */}
+      <View style={styles.situationBox}>
+        <Text style={styles.infoLabel}>강박 상황</Text>
+        <Text style={styles.infoText}>
+          지하철 손잡이를 잡고 손이 오염된 것 같다고 생각한다
+        </Text>
+      </View>
+
       <View style={styles.metaTabsRow}>
         <TouchableOpacity style={[styles.tabBtn, styles.tabBtnActive]}>
           <Text style={styles.tabBtnLabelActive}>강박상황</Text>
@@ -60,6 +68,33 @@ export default function CognitiveErrorScreen() {
 }
 
 const styles = StyleSheet.create({
+  situationBox: {
+    width: 360,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: '#FFF',
+    marginBottom: 20,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.07,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  infoLabel: {
+    color: '#717780',
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 8,
+    fontFamily: 'Pretendard',
+  },
+  infoText: {
+    color: '#25252C',
+    fontSize: 14,
+    fontWeight: '800',
+    fontFamily: 'Pretendard',
+  },
+
   metaTabsRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -80,6 +115,7 @@ const styles = StyleSheet.create({
     color: '#25252C',
     fontWeight: '500',
     fontSize: 14,
+    fontFamily: 'Pretendard',
   },
 
   sectionBox: { marginBottom: 18 },
@@ -88,18 +124,21 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
     marginBottom: 4,
+    fontFamily: 'Pretendard',
   },
   errPointTitle: {
     color: '#3557D4',
     fontWeight: 'bold',
     marginTop: 7,
     fontSize: 14,
+    fontFamily: 'Pretendard',
   },
   contentSmall: {
     color: '#717780',
     fontSize: 14,
     marginTop: 2,
     lineHeight: 20,
+    fontFamily: 'Pretendard',
   },
 
   chatBtn: {
@@ -110,5 +149,10 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     marginTop: 26,
   },
-  chatBtnLabel: { color: '#3557D4', fontWeight: 'bold', fontSize: 15 },
+  chatBtnLabel: {
+    color: '#3557D4',
+    fontWeight: 'bold',
+    fontSize: 15,
+    fontFamily: 'Pretendard',
+  },
 });
