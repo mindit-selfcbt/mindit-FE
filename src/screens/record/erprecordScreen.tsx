@@ -2,16 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-// 바와 레이블 고정값
 const BAR_WIDTH = 120;
-const BAR_LINE_HEIGHT = 5;
 const BAR_ROW_HEIGHT = 120;
+const BAR_LINE_HEIGHT = 5;
 
-// 단일 Bar Item (첨부 이미지 레이아웃 반영)
 function BarItem({ value, label, isCurrent }) {
   const safeValue = Math.max(0, Math.min(value, 100));
   const barHeight = (safeValue / 100) * BAR_ROW_HEIGHT;
-
   return (
     <View style={styles.barItem}>
       <View style={[styles.barValueBox, isCurrent && styles.barValueBoxLast]}>
@@ -30,7 +27,11 @@ function BarItem({ value, label, isCurrent }) {
           ]}
         />
         <View
-          style={{ width: BAR_WIDTH, height: barHeight, position: 'relative' }}
+          style={{
+            width: BAR_WIDTH,
+            height: barHeight,
+            position: 'relative',
+          }}
         >
           <LinearGradient
             colors={['rgba(123,175,255,0.30)', 'rgba(123,175,255,0.00)']}
@@ -67,10 +68,80 @@ function AnxietySection() {
   );
 }
 
+function ComparisonBarItem({ value, isCurrent }) {
+  const BAR_WIDTH_COMPARE = 40;
+  const BAR_ROW_HEIGHT_COMPARE = 80;
+  const BAR_LINE_HEIGHT_COMPARE = 5;
+  const safeValue = Math.max(0, Math.min(value, 100));
+  const barHeight = (safeValue / 100) * BAR_ROW_HEIGHT_COMPARE;
+
+  const valueLabelStyle = [
+    styles.compareValueLabelBase,
+    isCurrent ? styles.compareValueLabelCurrent : styles.compareValueLabelPrev,
+  ];
+
+  return (
+    <View style={styles.compareBarItem}>
+      <Text style={valueLabelStyle}>{safeValue}</Text>
+      <View
+        style={[
+          styles.compareBarWrap,
+          { height: barHeight + BAR_LINE_HEIGHT_COMPARE },
+        ]}
+      >
+        <View
+          style={[
+            styles.compareBarLine,
+            isCurrent
+              ? styles.compBarTopLineCurrent
+              : styles.compBarTopLinePrev,
+            { width: BAR_WIDTH_COMPARE },
+          ]}
+        />
+        <View
+          style={{
+            width: BAR_WIDTH_COMPARE,
+            height: barHeight,
+            position: 'relative',
+          }}
+        >
+          <LinearGradient
+            colors={
+              isCurrent
+                ? ['rgba(56,86,193,0.3)', 'rgba(56,86,193,0)']
+                : ['rgba(193,215,255,0.3)', 'rgba(193,215,255,0)']
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.barGradient}
+          />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+function ComparisonBarGraph() {
+  return (
+    <View style={styles.comparisonBarContainer}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'flex-end',
+          justifyContent: 'flex-start',
+        }}
+      >
+        <ComparisonBarItem value={75} isCurrent={false} />
+        <ComparisonBarItem value={30} isCurrent={true} />
+      </View>
+      <Text style={styles.comparisonCenterLabel}>10월 30일</Text>
+    </View>
+  );
+}
+
 export default function ErpRecordScreen() {
   return (
     <View>
-      {/* 상단 설명 */}
       <Text style={styles.descMain}>
         이번 반응 방지에서 평균 불안은{'\n'}
         <Text style={styles.descMainScore}>50점</Text>
@@ -79,7 +150,6 @@ export default function ErpRecordScreen() {
       </Text>
       <Text style={styles.meta}>10월 31일 금요일 · 오전 9시 30분</Text>
 
-      {/* 강박상황 박스 */}
       <View style={styles.situationBox}>
         <Text style={styles.infoLabel}>강박 상황</Text>
         <Text style={styles.infoText}>
@@ -87,7 +157,6 @@ export default function ErpRecordScreen() {
         </Text>
       </View>
 
-      {/* 반응방지/시간 박스 */}
       <View style={styles.statBoxRow}>
         <View style={styles.statBox}>
           <Text style={styles.statTitle}>이번 주 반응 방지</Text>
@@ -107,40 +176,24 @@ export default function ErpRecordScreen() {
         </View>
       </View>
 
-      {/* 불안 정도 섹션 */}
       <AnxietySection />
 
-      {/* 불안 정도 비교 섹션 */}
-      <View style={styles.sectionBox}>
-        <Text style={styles.secTitle}>불안 정도 비교</Text>
-        <Text style={styles.chartBarCompareDesc}>
-          이번 반응 방지 과정의 불안 정도를 비교해서 볼 수 있습니다.
+      <View style={styles.anxietyBox}>
+        <Text style={styles.anxietyTitle}>불안 정도 비교</Text>
+        <Text style={styles.anxietyDesc}>
+          이전 반응 방지 회차와 불안 정도를 비교해서 볼 수 있습니다.
         </Text>
-        <View style={styles.comparisonGraphRow}>
-          <View style={{ alignItems: 'center', marginRight: 30 }}>
-            <View style={[styles.chartBarSmall, { height: 75 }]} />
-            <Text style={styles.comparisonLabel}>10월 30일</Text>
-          </View>
-          <View style={{ alignItems: 'center' }}>
-            <View
-              style={[
-                styles.chartBarSmall,
-                { height: 30, backgroundColor: '#A8BFFB' },
-              ]}
-            />
-            <Text style={styles.comparisonLabel}>이번 불안 정도</Text>
-          </View>
-        </View>
+        <ComparisonBarGraph />
         <View style={styles.comparisonLegendRow}>
-          <View style={styles.legendCircle} />
-          <Text style={styles.legendLabel}>이전 불안 정도</Text>
+          <View style={[styles.legendCircle, { backgroundColor: '#C1D7FF' }]} />
+          <Text style={styles.comparisonLegendLabel}>이전 불안 정도</Text>
           <View
             style={[
               styles.legendCircle,
-              { backgroundColor: '#A8BFFB', marginLeft: 14 },
+              { backgroundColor: '#3856C1', marginLeft: 14 },
             ]}
           />
-          <Text style={styles.legendLabel}>이번 불안 정도</Text>
+          <Text style={styles.comparisonLegendLabel}>이번 불안 정도</Text>
         </View>
       </View>
     </View>
@@ -353,51 +406,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
   },
-  sectionBox: {
-    width: 360,
-    borderRadius: 10,
-    backgroundColor: '#FFF',
-    alignSelf: 'center',
-    marginBottom: 22,
-    paddingHorizontal: 22,
-    paddingVertical: 18,
-  },
-  secTitle: {
-    color: '#717780',
-    fontFamily: 'Pretendard',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  chartBarCompareDesc: {
-    color: '#9298A2',
-    fontFamily: 'Pretendard',
-    fontSize: 14,
-    fontWeight: '400',
-    marginBottom: 16,
-    letterSpacing: -0.42,
-  },
-  comparisonGraphRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-start',
-    marginBottom: 18,
-    marginTop: 6,
-  },
-  chartBarSmall: {
-    width: 40,
-    borderRadius: 10,
-    backgroundColor: '#85B6FF',
-    marginBottom: 8,
-  },
-  comparisonLabel: {
-    color: '#717780',
-    fontFamily: 'Pretendard',
-    fontSize: 13,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginTop: 2,
-  },
   comparisonLegendRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -409,6 +417,17 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#85B6FF',
   },
+  comparisonLegendLabel: {
+    color: '#717780',
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 18,
+    letterSpacing: -0.42,
+    marginLeft: 4,
+    marginRight: 18,
+  },
   legendLabel: {
     color: '#717780',
     fontFamily: 'Pretendard',
@@ -416,5 +435,55 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: 4,
     marginRight: 18,
+  },
+
+  comparisonBarContainer: {
+    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
+    height: 100,
+    marginBottom: 12,
+    marginTop: 6,
+  },
+  comparisonCenterLabel: {
+    color: '#9298A2',
+    fontFamily: 'Pretendard',
+    fontSize: 12,
+    fontWeight: '400',
+    marginTop: 12,
+    marginLeft: 12,
+    textAlign: 'center',
+  },
+  compareBarItem: {
+    alignItems: 'center',
+    width: 40,
+    marginHorizontal: 0,
+  },
+  compareBarWrap: {
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+  },
+  compareBarLine: {
+    height: 5,
+    borderRadius: 0,
+    marginBottom: 0,
+  },
+  compBarTopLinePrev: { backgroundColor: '#C1D7FF' },
+  compBarTopLineCurrent: { backgroundColor: '#3856C1' },
+  compareValueLabelBase: {
+    textAlign: 'center',
+    fontFamily: 'Gmarket Sans',
+    fontSize: 14,
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 21,
+    marginBottom: 4,
+  },
+  compareValueLabelPrev: {
+    color: '#5096FF',
+  },
+  compareValueLabelCurrent: {
+    color: '#3856C1',
   },
 });
