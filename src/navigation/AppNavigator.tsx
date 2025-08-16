@@ -8,6 +8,9 @@ import onboardingstartScreen from '../screens/onboarding/onboardingstartScreen';
 import mainScreen from '../screens/main/mainScreen';
 import responsepreventionScreen from '../screens/responseprevention/responsepreventionScreen';
 import recordcatalogScreen from '../screens/record/recordcatalogScreen';
+import recordScreen from '../screens/record/recordScreen';
+import cognitiveerrorScreen from '../screens/record/cognitiveerrorScreen';
+import erprecordScreen from '../screens/record/erprecordScreen';
 import weeklyreportScreen from '../screens/report/weeklyreportScreen';
 import monthlyreportScreen from '../screens/report/monthlyreportScreen';
 
@@ -55,6 +58,21 @@ const AppNavigator = () => {
         <Stack.Screen
           name="recordcatalog"
           component={recordcatalogScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="record"
+          component={recordScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="erprecord"
+          component={erprecordScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="cognitiveerror"
+          component={cognitiveerrorScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

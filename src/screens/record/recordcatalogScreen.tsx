@@ -137,7 +137,6 @@ export default function ListRecordScreen({ navigation }) {
   const [filter1, setFilter1] = useState('1주일');
   const [filter2, setFilter2] = useState('불안 위계');
 
-  // 현재 토글에 따른 데이터 가져오기
   const records = dummyRecordsByType[toggle] || [];
 
   return (
@@ -155,7 +154,6 @@ export default function ListRecordScreen({ navigation }) {
           <Image source={mainIcon} style={styles.icon} />
         </TouchableOpacity>
       </View>
-
       <View style={styles.selectRow}>
         <TouchableOpacity style={styles.selectorBox} onPress={() => {}}>
           <Text style={styles.selectorText}>{filter1}</Text>
@@ -174,21 +172,24 @@ export default function ListRecordScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-
       <View style={styles.section}>
         {records.map((item, idx) => (
           <TouchableOpacity
             key={idx}
             style={styles.recordCard}
             activeOpacity={0.85}
+            onPress={() =>
+              navigation.navigate('record', {
+                type: toggle,
+                record: item,
+              })
+            }
           >
             <View style={styles.titleRow}>
               <Text style={styles.dateText}>{item.date}</Text>
               <Text style={styles.timeText}>{item.time}</Text>
             </View>
-
             <Text style={styles.recordTitle}>{item.title}</Text>
-
             <View style={styles.infoBoxesRow}>
               <View style={styles.extraBox}>
                 <Text style={styles.extraLabel}>{item.extra1}</Text>
