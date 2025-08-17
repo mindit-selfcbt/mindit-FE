@@ -50,7 +50,6 @@ export default function ExposureScreen({ navigation }) {
     return active ? arExposureActivateIcon : arExposureDeactivateIcon;
   };
 
-  // 노출 훈련 타입별 아이콘 및 안내문구
   const exposureIcon =
     toggle === 'ai' ? aiExposureDeactivateIcon : arExposureDeactivateIcon;
 
@@ -61,7 +60,6 @@ export default function ExposureScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
-      {/* 상단 토글 + 메인 아이콘 */}
       <View style={styles.topRow}>
         <View style={styles.toggleWrap}>
           {TOGGLE_OPTIONS.map(option => {
@@ -102,14 +100,11 @@ export default function ExposureScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* 강박 상황 타이틀 */}
       <Text style={styles.title}>강박 상황</Text>
-      {/* 안내문구 */}
       <Text style={styles.desc}>
         불안 위계표에서 노출 훈련을 할 상황을 선택해주세요
       </Text>
 
-      {/* 불안 위계표 상황 리스트 */}
       <View style={styles.situationList}>
         {EXPOSURE_SITUATIONS.map((situation, i) => {
           const selected = selectedSituation === i;
@@ -136,15 +131,12 @@ export default function ExposureScreen({ navigation }) {
         })}
       </View>
 
-      {/* 훈련 제목 */}
       <Text style={styles.trainingLabel}>{TRAINING_LABELS[toggle]}</Text>
-      {/* 훈련 설명 */}
       <Text style={styles.trainingDesc}>
         훈련할 상황을 구체적으로 묘사하면 AI가 {toggle === 'ai' ? '사진' : 'AR'}
         를 생성해요
       </Text>
 
-      {/* 실제 훈련 상황 박스 */}
       <View style={exposureSituationBoxStyles.outer}>
         <Text style={exposureSituationBoxStyles.text}>
           {selectedSituation !== null
@@ -153,16 +145,25 @@ export default function ExposureScreen({ navigation }) {
         </Text>
       </View>
 
-      {/* gap 12 */}
       <View style={{ height: 12 }} />
 
-      {/* 이미지 및 안내문구 박스 */}
       <View style={exposureGuideBoxStyles.outer}>
         <Image
           source={exposureIcon}
           style={{ width: 48, height: 48, marginBottom: 18 }}
         />
         <Text style={exposureGuideBoxStyles.text}>{exposureText}</Text>
+      </View>
+
+      <View style={{ height: 24 }} />
+
+      <View style={styles.buttonRow}>
+        <TouchableOpacity style={styles.generateBtn}>
+          <Text style={styles.generateBtnText}>생성하기</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.startBtn}>
+          <Text style={styles.startBtnText}>시작하기</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 18,
     paddingTop: 48,
-    paddingBottom: 28,
+    paddingBottom: 36,
     backgroundColor: '#F8FBFF',
   },
   topRow: {
@@ -287,6 +288,57 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     letterSpacing: -0.42,
     lineHeight: 20,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 0,
+  },
+  generateBtn: {
+    display: 'flex',
+    width: 170,
+    height: 60,
+    paddingVertical: 20,
+    paddingHorizontal: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: '#92A9FF',
+    backgroundColor: '#E8F1FF',
+    marginRight: 8,
+  },
+  generateBtnText: {
+    color: '#3856C1',
+    fontFamily: 'Pretendard',
+    fontSize: 16,
+    fontStyle: 'normal',
+    fontWeight: '600',
+    lineHeight: 18,
+  },
+  startBtn: {
+    display: 'flex',
+    width: 180,
+    height: 60,
+    paddingVertical: 20,
+    paddingHorizontal: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    borderRadius: 8,
+    borderWidth: 0.8,
+    borderColor: '#9298A2',
+    backgroundColor: '#F3F7FB',
+  },
+  startBtnText: {
+    color: '#9298A2',
+    fontFamily: 'Pretendard',
+    fontSize: 16,
+    fontStyle: 'normal',
+    fontWeight: '600',
+    lineHeight: 18,
   },
 });
 
