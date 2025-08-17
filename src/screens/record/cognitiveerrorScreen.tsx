@@ -4,7 +4,6 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 export default function CognitiveErrorScreen() {
   return (
     <View style={styles.container}>
-      {/* 상황 설명 박스 */}
       <View style={styles.situationBox}>
         <Text style={styles.infoLabel}>강박 상황</Text>
         <Text style={styles.infoText}>
@@ -12,7 +11,6 @@ export default function CognitiveErrorScreen() {
         </Text>
       </View>
 
-      {/* 침투사고 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>침투사고</Text>
         <View style={styles.contentBox}>
@@ -22,7 +20,6 @@ export default function CognitiveErrorScreen() {
         </View>
       </View>
 
-      {/* 그릇된 믿음 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>그릇된 믿음</Text>
         <View style={styles.contentBox}>
@@ -32,21 +29,17 @@ export default function CognitiveErrorScreen() {
         </View>
       </View>
 
-      {/* 인지적 오류 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>인지적 오류</Text>
         <View style={styles.contentBox}>
-          {/* 과잉 일반화 */}
           <Text style={styles.cogErrorTitle}>과잉 일반화{'\n'}</Text>
           <Text style={styles.contentTextLeft}>
             ‘한 번 병에 걸릴 수도 있다’는 가능성을 ‘항상 그럴 것이다’로 과도하게
             일반화한다.{'\n\n'}
           </Text>
 
-          {/* divider 선*/}
           <View style={styles.divider} />
 
-          {/* 재앙화 */}
           <Text style={styles.cogErrorTitle}>재앙화{'\n'}</Text>
           <Text style={styles.contentTextLeft}>
             ‘손잡이를 잡는 행동’이 바로 병에 걸리는 심각한 결과로 이어질
@@ -55,10 +48,8 @@ export default function CognitiveErrorScreen() {
             한다.{'\n\n'}
           </Text>
 
-          {/* divider 선*/}
           <View style={styles.divider} />
 
-          {/* 확률의 왜곡 */}
           <Text style={styles.cogErrorTitle}>확률의 왜곡{'\n'}</Text>
           <Text style={styles.contentTextLeft}>
             병에 걸릴 가능성을 실제보다 높게 평가한다.
@@ -66,7 +57,6 @@ export default function CognitiveErrorScreen() {
         </View>
       </View>
 
-      {/* 현실적인 생각 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>현실적인 생각</Text>
         <View style={styles.contentBox}>
@@ -78,7 +68,6 @@ export default function CognitiveErrorScreen() {
         </View>
       </View>
 
-      {/* 채팅 다시 보기 버튼 */}
       <TouchableOpacity style={styles.chatBtn}>
         <Text style={styles.chatBtnLabel}>채팅 다시 보기</Text>
       </TouchableOpacity>
@@ -86,7 +75,6 @@ export default function CognitiveErrorScreen() {
   );
 }
 
-// 스타일 정의
 const styles = StyleSheet.create({
   container: {
     flex: 1,

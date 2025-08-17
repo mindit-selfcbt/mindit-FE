@@ -22,7 +22,6 @@ export default function RecordScreen({ route, navigation }) {
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
-      {/* 상단: 토글 & 메인 버튼 */}
       <View style={styles.topRow}>
         <ToggleButton
           options={TOGGLE_OPTIONS}
@@ -37,7 +36,6 @@ export default function RecordScreen({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* 토글된 화면 */}
       {toggle === 'report' ? <ErpRecordScreen /> : <CognitiveErrorScreen />}
     </ScrollView>
   );

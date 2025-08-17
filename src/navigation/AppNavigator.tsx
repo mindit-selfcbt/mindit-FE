@@ -6,6 +6,7 @@ import onboardingexplainScreen from '../screens/onboarding/onboardingexplainScre
 import onboardingstepScreen from '../screens/onboarding/onboardingstepScreen';
 import onboardingstartScreen from '../screens/onboarding/onboardingstartScreen';
 import mainScreen from '../screens/main/mainScreen';
+import exposureScreen from '../screens/aiarexposure/exposureScreen';
 import responsepreventionScreen from '../screens/responseprevention/responsepreventionScreen';
 import recordcatalogScreen from '../screens/record/recordcatalogScreen';
 import recordScreen from '../screens/record/recordScreen';
@@ -48,6 +49,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="main"
           component={mainScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="exposure"
+          component={exposureScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
