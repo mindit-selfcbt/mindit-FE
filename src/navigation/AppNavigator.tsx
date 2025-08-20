@@ -6,7 +6,12 @@ import onboardingexplainScreen from '../screens/onboarding/onboardingexplainScre
 import onboardingstepScreen from '../screens/onboarding/onboardingstepScreen';
 import onboardingstartScreen from '../screens/onboarding/onboardingstartScreen';
 import mainScreen from '../screens/main/mainScreen';
+import exposureScreen from '../screens/aiarexposure/exposureScreen';
 import responsepreventionScreen from '../screens/responseprevention/responsepreventionScreen';
+import recordcatalogScreen from '../screens/record/recordcatalogScreen';
+import recordScreen from '../screens/record/recordScreen';
+import cognitiveerrorScreen from '../screens/record/cognitiveerrorScreen';
+import erprecordScreen from '../screens/record/erprecordScreen';
 import weeklyreportScreen from '../screens/report/weeklyreportScreen';
 import monthlyreportScreen from '../screens/report/monthlyreportScreen';
 
@@ -47,8 +52,33 @@ const AppNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name="exposure"
+          component={exposureScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="responseprevention"
           component={responsepreventionScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="recordcatalog"
+          component={recordcatalogScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="record"
+          component={recordScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="erprecord"
+          component={erprecordScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="cognitiveerror"
+          component={cognitiveerrorScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
