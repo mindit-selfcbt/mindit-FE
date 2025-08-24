@@ -8,6 +8,7 @@ import onboardingstartScreen from '../screens/onboarding/onboardingstartScreen';
 import mainScreen from '../screens/main/mainScreen';
 import imagineScreen from '../screens/imagine/imagineScreen';
 import imaginereadyScreen from '../screens/imagine/imaginereadyScreen';
+import imaginalexposureScreen from '../screens/imagine/imaginalexposureScreen';
 import exposureScreen from '../screens/aiarexposure/exposureScreen';
 import responsepreventionScreen from '../screens/responseprevention/responsepreventionScreen';
 import recordcatalogScreen from '../screens/record/recordcatalogScreen';
@@ -61,6 +62,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="imagineready"
           component={imaginereadyScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="imaginalexposure"
+          component={imaginalexposureScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

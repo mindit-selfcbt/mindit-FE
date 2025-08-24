@@ -38,7 +38,10 @@ const ImagineReadyScreen = ({ navigation }) => {
           </View>
         </View>
         <View style={styles.bottomButtonWrap}>
-          <NextButton text="다음" onPress={() => {}} />
+          <NextButton
+            text="다음"
+            onPress={() => navigation.navigate('imaginalexposure')}
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -61,7 +64,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginTop: 100,
+    marginTop: 120,
   },
   headphoneImage: {
     width: 24,
