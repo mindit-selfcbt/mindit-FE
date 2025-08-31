@@ -33,14 +33,17 @@ const BUTTON_HORIZONTAL_PADDING = 12;
 
 const MainScreen = ({ navigation }) => {
   const handleMenuPress = key => {
+    if (key === 'imagine') {
+      navigation.navigate('imagine');
+    }
+    if (key === 'aiar') {
+      navigation.navigate('exposure');
+    }
     if (key === 'record') {
       navigation.navigate('recordcatalog');
     }
     if (key === 'report') {
       navigation.navigate('monthlyreport');
-    }
-    if (key === 'aiar') {
-      navigation.navigate('exposure');
     }
   };
   const handleMicPress = () => {
