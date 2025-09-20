@@ -49,11 +49,18 @@ const MainScreen = ({ navigation }) => {
       navigation.navigate('myanxiety');
     }
   };
+
   const handleMicPress = () => {
     // 마이크 버튼 클릭 시 처리
   };
+
   const handleScreenPress = () => {
     navigation.replace('responseprevention');
+  };
+
+  // chatBar 눌렀을 때 ocdchat 화면으로 이동
+  const handleChatBarPress = () => {
+    navigation.navigate('ocdchat');
   };
 
   return (
@@ -119,14 +126,17 @@ const MainScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <View style={styles.chatBar} pointerEvents="box-none">
-        <TouchableOpacity onPress={handleMicPress} activeOpacity={0.75}>
-          <Image source={icons.mic} style={styles.micIcon} />
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.chatBar}
+        activeOpacity={0.75}
+        onPress={handleChatBarPress}
+        pointerEvents="auto"
+      >
+        <Image source={icons.mic} style={styles.micIcon} />
         <Text style={styles.chatPlaceholder}>
           당신의 불안에 대해 무엇이든 말씀해주세요
         </Text>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };

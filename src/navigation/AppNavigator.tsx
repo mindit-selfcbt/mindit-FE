@@ -6,6 +6,7 @@ import onboardingexplainScreen from '../screens/onboarding/onboardingexplainScre
 import onboardingstepScreen from '../screens/onboarding/onboardingstepScreen';
 import onboardingstartScreen from '../screens/onboarding/onboardingstartScreen';
 import mainScreen from '../screens/main/mainScreen';
+import ocdchatScreen from '../screens/chat/ocdchatScreen';
 import imagineScreen from '../screens/imagine/imagineScreen';
 import imaginereadyScreen from '../screens/imagine/imaginereadyScreen';
 import imaginalexposureScreen from '../screens/imagine/imaginalexposureScreen';
@@ -54,6 +55,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="main"
           component={mainScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ocdchat"
+          component={ocdchatScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

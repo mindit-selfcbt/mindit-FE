@@ -204,7 +204,7 @@ export default function MyPlanScreen() {
       </ScrollView>
       <NextButton
         text="다음"
-        onPress={() => navigation.navigate('nextscreen')}
+        onPress={() => navigation.navigate('mytimeline')}
       />
     </SafeAreaView>
   );
