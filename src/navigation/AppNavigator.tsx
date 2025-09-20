@@ -18,6 +18,7 @@ import erprecordScreen from '../screens/record/erprecordScreen';
 import weeklyreportScreen from '../screens/report/weeklyreportScreen';
 import monthlyreportScreen from '../screens/report/monthlyreportScreen';
 import myanxietyScreen from '../screens/myplan/myanxietyScreen';
+import myplanScreen from '../screens/myplan/myplanScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -113,6 +114,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="myanxiety"
           component={myanxietyScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="myplan"
+          component={myplanScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
