@@ -17,6 +17,7 @@ import cognitiveerrorScreen from '../screens/record/cognitiveerrorScreen';
 import erprecordScreen from '../screens/record/erprecordScreen';
 import weeklyreportScreen from '../screens/report/weeklyreportScreen';
 import monthlyreportScreen from '../screens/report/monthlyreportScreen';
+import myanxietyScreen from '../screens/myplan/myanxietyScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -107,6 +108,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="monthlyreport"
           component={monthlyreportScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="myanxiety"
+          component={myanxietyScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

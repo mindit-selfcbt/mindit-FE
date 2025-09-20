@@ -45,6 +45,9 @@ const MainScreen = ({ navigation }) => {
     if (key === 'report') {
       navigation.navigate('monthlyreport');
     }
+    if (key === 'plan') {
+      navigation.navigate('myanxiety');
+    }
   };
   const handleMicPress = () => {
     // 마이크 버튼 클릭 시 처리
