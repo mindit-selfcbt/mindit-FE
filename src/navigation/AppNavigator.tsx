@@ -6,6 +6,7 @@ import onboardingexplainScreen from '../screens/onboarding/onboardingexplainScre
 import onboardingstepScreen from '../screens/onboarding/onboardingstepScreen';
 import onboardingstartScreen from '../screens/onboarding/onboardingstartScreen';
 import mainScreen from '../screens/main/mainScreen';
+import ocdchatScreen from '../screens/chat/ocdchatScreen';
 import imagineScreen from '../screens/imagine/imagineScreen';
 import imaginereadyScreen from '../screens/imagine/imaginereadyScreen';
 import imaginalexposureScreen from '../screens/imagine/imaginalexposureScreen';
@@ -17,6 +18,8 @@ import cognitiveerrorScreen from '../screens/record/cognitiveerrorScreen';
 import erprecordScreen from '../screens/record/erprecordScreen';
 import weeklyreportScreen from '../screens/report/weeklyreportScreen';
 import monthlyreportScreen from '../screens/report/monthlyreportScreen';
+import myanxietyScreen from '../screens/myplan/myanxietyScreen';
+import myplanScreen from '../screens/myplan/myplanScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -52,6 +55,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="main"
           component={mainScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ocdchat"
+          component={ocdchatScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -107,6 +115,16 @@ const AppNavigator = () => {
         <Stack.Screen
           name="monthlyreport"
           component={monthlyreportScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="myanxiety"
+          component={myanxietyScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="myplan"
+          component={myplanScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
