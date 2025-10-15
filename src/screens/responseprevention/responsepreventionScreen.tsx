@@ -8,37 +8,37 @@ const exitIcon = require('../../assets/icon/exitIcon.png');
 const ResponsePreventionScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(true);
   const [anxiety, setAnxiety] = useState(50);
-
   const [isStarted, setIsStarted] = useState(false);
-  const [isPulsing, setIsPulsing] = useState(false); // 비디오 재생 및 타이머 제어 상태
+  const [isPulsing, setIsPulsing] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const [message, setMessage] = useState(
-    '첫 불안 정도 입력을 완료했다면\n원을 눌러 바로 반응 방지를 시작하세요',
+    '첫 불안 정도 입력을 완료했다면\n화면을 꾹 눌러 바로 반응 방지를 시작하세요',
   );
 
   useEffect(() => {
     setModalVisible(true);
   }, []);
 
-  // 타이머 로직: isPulsing 상태에 따라 작동
+  // 🔹 타이머 로직
   useEffect(() => {
     let interval = null;
 
     if (isPulsing) {
+      console.log('⏳ Timer started');
       interval = setInterval(() => {
         setSeconds(prevSeconds => {
           const newSeconds = prevSeconds + 1;
-
           if (newSeconds === 15) {
+            console.log('💬 15 seconds passed — showing motivational message');
             setMessage(
               '지금 느끼는 불안은 잘못된 게 아니에요.\n치료가 작동하고 있다는 증거예요.',
             );
           }
-
           return newSeconds;
         });
       }, 1000);
     } else if (!isPulsing && seconds !== 0) {
+      console.log('⏹️ Timer stopped');
       clearInterval(interval);
     }
 
@@ -46,23 +46,32 @@ const ResponsePreventionScreen = ({ navigation }) => {
   }, [isPulsing, seconds]);
 
   const handleClose = () => {
+    console.log('🚪 Exit button pressed');
     setIsPulsing(false);
     navigation.replace('main');
   };
 
   const handleModalStart = () => {
+    console.log('▶️ Session started');
     setModalVisible(false);
     setIsStarted(true);
     setMessage(
-      '첫 불안 정도 입력을 완료했다면\n원을 눌러 바로 반응 방지를 시작하세요',
+      '첫 불안 정도 입력을 완료했다면\n화면을 꾹 눌러 바로 반응 방지를 시작하세요',
     );
   };
 
-  // 원을 가볍게 터치했을 때 isPulsing 상태를 토글하는 함수
-  const handleCirclePress = () => {
-    if (isStarted) {
-      setIsPulsing(prev => !prev);
-    }
+  const setPulsingState = state => {
+    console.log(`🌕 Pulsing state changed: ${state}`);
+    setIsPulsing(state);
+  };
+
+  const handlePressInCircle = () => {
+    console.log('🟢 User pressed in (handlePressInCircle)');
+  };
+
+  const handlePressOutCircle = () => {
+    console.log('🔴 User pressed out (handlePressOutCircle)');
+    setIsPulsing(false);
   };
 
   const formatTime = totalSeconds => {
@@ -76,14 +85,25 @@ const ResponsePreventionScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* 타이머 */}
+      {/* PulsingCircleInteraction */}
+      <View style={styles.pulsingInteractionWrapper}>
+        <PulsingCircleInteraction
+          isStarted={isStarted}
+          isPlaying={isPulsing}
+          handlePressIn={handlePressInCircle}
+          handlePressOut={handlePressOutCircle}
+          setPulsingState={setPulsingState}
+        />
+      </View>
+
+      {/* Timer */}
       <View style={styles.timerAbsolute}>
         <View style={styles.timerBox}>
           <Text style={styles.timerText}>{formatTime(seconds)}</Text>
         </View>
       </View>
 
-      {/* 종료 버튼 */}
+      {/* Exit Button */}
       <TouchableOpacity
         style={styles.exitBtn}
         onPress={handleClose}
@@ -92,21 +112,14 @@ const ResponsePreventionScreen = ({ navigation }) => {
         <Image source={exitIcon} style={styles.exitIcon} />
       </TouchableOpacity>
 
-      {/* PulsingCircleInteraction 컴포넌트 */}
-      <PulsingCircleInteraction
-        isStarted={isStarted}
-        isPlaying={isPulsing}
-        handlePress={handleCirclePress}
-      />
-
-      {/* 하단 메시지 영역 표시 */}
+      {/* Message */}
       {isStarted && !modalVisible && (
         <View style={styles.messageBox}>
           <Text style={styles.messageText}>{message}</Text>
         </View>
       )}
 
-      {/* 불안 입력 모달 */}
+      {/* Anxiety Start Modal */}
       <AnxietyStartModal
         visible={modalVisible}
         anxiety={anxiety}
@@ -124,9 +137,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000000',
-    alignItems: 'center',
-    justifyContent: 'center', // 중앙 정렬
     width: '100%',
+  },
+  pulsingInteractionWrapper: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 10,
   },
   timerAbsolute: {
     position: 'absolute',
@@ -134,7 +149,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: 'center',
-    zIndex: 2,
+    zIndex: 30,
   },
   timerBox: {
     paddingVertical: 8,
@@ -163,7 +178,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.60)',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 3,
+    zIndex: 30,
   },
   exitIcon: {
     width: 28,
@@ -172,13 +187,15 @@ const styles = StyleSheet.create({
   },
   messageBox: {
     position: 'absolute',
-    bottom: 50, // 하단 위치
+    top: 150,
+    left: 0,
+    right: 0,
     alignItems: 'center',
     paddingHorizontal: 30,
-    // ✅ zIndex 제거: 낮은 zIndex를 유지하여 터치 영역을 덮지 않도록 함
+    zIndex: 30,
   },
   messageText: {
-    color: '#FFFFFF',
+    color: '#717780',
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '400',
