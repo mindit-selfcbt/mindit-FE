@@ -9,48 +9,101 @@ import {
   SafeAreaView,
   Platform,
   Alert,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Sound from 'react-native-sound';
 import NextButton from '../../components/nextButton';
 
+// 이미지 파일은 require() 사용 가능
+const profileImg1 = require('../../assets/img/imagine/profileImg1.png');
+const profileImg2 = require('../../assets/img/imagine/profileImg2.png');
+const profileImg3 = require('../../assets/img/imagine/profileImg3.png');
+const profileImg4 = require('../../assets/img/imagine/profileImg4.png');
+
+// 오디오 파일명은 문자열로, 안드로이드 raw 폴더에 복사 완료 전제
 const voices = [
   {
     id: 'jae1',
     name: '지안',
     desc: '차분한 중저음의 중성 음성',
     subdesc: '전문적인 상담사 느낌의 신뢰를 주는 말투로 이끌어 줍니다.',
+    image: profileImg1,
+    audio: 'voice1_01',
   },
   {
     id: 'haru',
     name: '하루',
     desc: '명료하고 단호한 음성',
     subdesc:
-      '회피가 강한 사용자를 이끄는 코치형 음성으로, 단호하게 이끌어 줍니다.',
+      '회피가 강한 사용자를 이끄는 코치형 음성으로 단호하게 이끌어 줍니다.',
+    image: profileImg2,
+    audio: 'voice2_01',
   },
   {
     id: 'miso',
     name: '미소',
     desc: '밝고 경쾌한 여성 음성',
     subdesc: '친근하고 에너지 넘치는 말투로 상상을 안내합니다.',
+    image: profileImg3,
+    audio: 'voice3_01',
   },
   {
     id: 'minsu',
     name: '민수',
     desc: '부드러운 남성 음성',
     subdesc: '따뜻하고 안정감 있게 상상을 도와줍니다.',
+    image: profileImg4,
+    audio: 'voice4_01',
   },
 ];
+
+let currentSound = null;
+Sound.setCategory('Playback');
+
+const stopAndReleaseCurrentSound = () => {
+  if (currentSound) {
+    currentSound.stop(() => {
+      currentSound.release();
+      currentSound = null;
+    });
+  }
+};
 
 const ImagineScreen = () => {
   const [selectedVoice, setSelectedVoice] = useState(null);
   const navigation = useNavigation();
+
+  const handleVoicePress = voice => {
+    setSelectedVoice(voice.id);
+    stopAndReleaseCurrentSound();
+
+    currentSound = new Sound(voice.audio, Sound.MAIN_BUNDLE, error => {
+      if (error) {
+        console.error('오디오 로드 실패:', error);
+        currentSound = null; // 에러 시 null 처리
+        return;
+      }
+
+      currentSound.play(success => {
+        if (success) {
+          console.log(`${voice.name} 오디오 재생 완료`);
+        } else {
+          console.error('오디오 재생 실패');
+        }
+        currentSound.release();
+        currentSound = null;
+      });
+    });
+  };
 
   const handleNext = () => {
     if (!selectedVoice) {
       Alert.alert('안내', '안내 음성을 선택해 주세요.');
       return;
     }
-    navigation.navigate('imagineready');
+    stopAndReleaseCurrentSound();
+    navigation.navigate('imagineready', { voiceId: selectedVoice });
   };
 
   return (
@@ -61,16 +114,14 @@ const ImagineScreen = () => {
           showsVerticalScrollIndicator={false}
         >
           <View style={{ height: 16 }} />
-          {/* 상단 공지 */}
           <View style={styles.topNotice}>
             <Text style={styles.topNoticeText}>눈송이님,</Text>
             <Text style={styles.topNoticeText}>
               이번 주 상상 노출 훈련 횟수가 1회 남았어요.
             </Text>
           </View>
-          {/* 안내 박스 */}
+
           <View style={styles.box}>
-            {/* 1주차 + 날짜 */}
             <View style={styles.weekRow}>
               <View style={styles.weekBadge}>
                 <Text style={styles.weekBadgeText}>1주차</Text>
@@ -102,7 +153,6 @@ const ImagineScreen = () => {
             </View>
           </View>
 
-          {/* 안내 음성 선택 */}
           <Text style={styles.sectionLabel}>안내 음성 선택</Text>
           {voices.map(voice => (
             <TouchableOpacity
@@ -112,9 +162,9 @@ const ImagineScreen = () => {
                 styles.voiceBox,
                 selectedVoice === voice.id && styles.voiceBoxSelected,
               ]}
-              onPress={() => setSelectedVoice(voice.id)}
+              onPress={() => handleVoicePress(voice)}
             >
-              <View style={styles.voiceIcon} />
+              <Image source={voice.image} style={styles.voiceIcon} />
               <View style={styles.voiceTexts}>
                 <View style={styles.voiceTitleRow}>
                   <Text style={styles.voiceName}>{voice.name}</Text>
@@ -127,6 +177,7 @@ const ImagineScreen = () => {
 
           <View style={{ height: 120 }} />
         </ScrollView>
+
         <View style={styles.fixedButtonWrap}>
           <NextButton onPress={handleNext} />
         </View>
@@ -147,7 +198,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     alignItems: 'center',
-    paddingTop: 0,
     paddingBottom: 24,
     minHeight: '100%',
   },
@@ -164,22 +214,17 @@ const styles = StyleSheet.create({
   },
   box: {
     width: 360,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingVertical: 20,
     paddingHorizontal: 16,
     borderRadius: 16,
     borderWidth: 0.5,
     borderColor: '#E8F1FF',
     backgroundColor: '#FFF',
     marginBottom: 32,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
   },
   weekRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginBottom: 0,
   },
   weekBadge: {
     paddingHorizontal: 8,
@@ -195,14 +240,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     fontFamily: 'Pretendard',
-    lineHeight: 19.2,
   },
   dateText: {
     color: '#9298A2',
     fontSize: 12,
     fontWeight: '400',
     fontFamily: 'Pretendard',
-    lineHeight: 19.2,
     marginLeft: 10,
   },
   trainTitle: {
@@ -210,7 +253,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     fontFamily: 'Pretendard',
-    lineHeight: 32,
   },
   inlineRow: {
     flexDirection: 'row',
@@ -224,15 +266,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8F1FF',
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 38,
-    alignSelf: 'flex-start',
   },
   labelBadgeText: {
     color: '#3557D4',
     fontSize: 12,
     fontWeight: '500',
     fontFamily: 'Pretendard',
-    lineHeight: 19.2,
   },
   detailText: {
     color: '#25252C',
@@ -262,11 +301,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderWidth: 0,
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   voiceBoxSelected: {
     borderWidth: 2,
     borderColor: '#87B1FF',
-    backgroundColor: '#FFF',
+    elevation: 0,
   },
   voiceIcon: {
     width: 56,
@@ -277,8 +321,6 @@ const styles = StyleSheet.create({
   },
   voiceTexts: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
   },
   voiceTitleRow: {
     flexDirection: 'row',
@@ -297,14 +339,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard',
     fontSize: 16,
     fontWeight: '400',
-    lineHeight: 25.6,
   },
   voiceSubDesc: {
     color: '#25252C',
     fontFamily: 'Pretendard',
     fontSize: 16,
     fontWeight: '400',
-    lineHeight: 25.6,
   },
   fixedButtonWrap: {
     position: 'absolute',

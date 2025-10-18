@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   SafeAreaView,
   View,
@@ -8,27 +8,99 @@ import {
   Image,
 } from 'react-native';
 import NextButton from '../../components/nextButton';
+import Sound from 'react-native-sound';
 
-const ImagineReadyScreen = ({ navigation }) => {
+const profileImg1 = require('../../assets/img/imagine/profileImg1.png');
+const profileImg2 = require('../../assets/img/imagine/profileImg2.png');
+const profileImg3 = require('../../assets/img/imagine/profileImg3.png');
+const profileImg4 = require('../../assets/img/imagine/profileImg4.png');
+const subtitleImg = require('../../assets/img/imagine/subtitleImg.png');
+const headphoneImg = require('../../assets/img/imagine/headphoneImg.png');
+
+const voiceAudioMap = {
+  jae1: 'voice1_02',
+  haru: 'voice2_02',
+  miso: 'voice3_02',
+  minsu: 'voice4_02',
+};
+
+const voiceImageMap = {
+  jae1: profileImg1,
+  haru: profileImg2,
+  miso: profileImg3,
+  minsu: profileImg4,
+};
+
+const ImagineReadyScreen = ({ route, navigation }) => {
+  const { voiceId } = route.params || {};
+  const selectedImage = voiceImageMap[voiceId];
+  const soundRef = useRef(null);
+
+  useEffect(() => {
+    if (voiceId && voiceAudioMap[voiceId]) {
+      // Sound 객체 생성 및 재생
+      soundRef.current = new Sound(
+        voiceAudioMap[voiceId],
+        Sound.MAIN_BUNDLE,
+        error => {
+          if (error) {
+            console.error('오디오 로드 실패:', error);
+            soundRef.current = null;
+            return;
+          }
+          soundRef.current.play(success => {
+            if (success) {
+              console.log(`${voiceId} 오디오 재생 완료`);
+            } else {
+              console.error('오디오 재생 실패');
+            }
+            // 완료 후 릴리즈
+            soundRef.current.release();
+            soundRef.current = null;
+          });
+        },
+      );
+    }
+
+    // 언마운트 시 사운드 해제
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.stop(() => {
+          soundRef.current.release();
+          soundRef.current = null;
+        });
+      }
+    };
+  }, [voiceId]);
+
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <View style={styles.container}>
         <View style={styles.centerContent}>
           <Image
-            source={require('../../assets/img/imagine/headphoneImg.png')}
+            source={headphoneImg}
             style={styles.headphoneImage}
             resizeMode="contain"
           />
           <Text style={styles.guideText}>
             감정에 집중하기 위해, 이어폰을 착용해 주세요
           </Text>
-          <View style={styles.avatarCircle} />
+
+          {selectedImage ? (
+            <Image
+              source={selectedImage}
+              style={styles.avatarImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.avatarCircle} />
+          )}
         </View>
         <View style={styles.bottomInfoArea}>
           <Text style={styles.subGuideText}>음성 훈련이 어려운 경우에는,</Text>
           <View style={styles.ccRow}>
             <Image
-              source={require('../../assets/img/imagine/subtitleImg.png')}
+              source={subtitleImg}
               style={styles.ccImage}
               resizeMode="contain"
             />
@@ -85,6 +157,11 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     backgroundColor: '#D2DEF6',
+  },
+  avatarImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
   },
   bottomInfoArea: {
     width: width - 32,
