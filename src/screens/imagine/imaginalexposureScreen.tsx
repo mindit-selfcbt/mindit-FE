@@ -109,7 +109,7 @@ const ImaginalexposureScreen = ({ navigation }) => {
         <View style={styles.contentArea}>
           {!isSubtitleOn && (
             <Image
-              source={require('../../assets/img/imagine/ellipseImg.png')}
+              source={require('../../assets/img/imagine/profileImg1.png')}
               style={styles.colorCircleImage}
               resizeMode="contain"
             />

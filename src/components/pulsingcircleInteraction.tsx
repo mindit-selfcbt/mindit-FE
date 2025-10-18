@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import Video from 'react-native-video';
 
-const pulsingVideo = require('../assets/videos/pulsingcircle.mp4');
+const pulsingVideo = require('../assets/video/pulsingcircle.mp4');
 
 const PULSE_SCALE_MIN = 1.0;
 const PULSE_SCALE_MAX = 1.05;
