@@ -61,12 +61,30 @@ const voices = [
 let currentSound = null;
 Sound.setCategory('Playback');
 
+/**
+ * 현재 재생 중인 오디오를 중지하고 해제합니다.
+ * currentSound가 null로 설정되어 비동기 콜백 충돌을 방지합니다.
+ */
 const stopAndReleaseCurrentSound = () => {
   if (currentSound) {
-    currentSound.stop(() => {
-      currentSound.release();
-      currentSound = null;
-    });
+    const soundToRelease = currentSound; // 중지/해제할 객체의 참조를 저장
+    currentSound = null; // 전역 참조를 즉시 null로 설정 (가장 중요)
+
+    // stop은 비동기일 수 있으므로 콜백 내에서 release를 호출합니다.
+    try {
+      soundToRelease.stop(() => {
+        // stop이 완료된 후 해제
+        soundToRelease.release();
+      });
+    } catch (e) {
+      console.warn('이전 오디오 중지 중 오류 발생:', e);
+      // 오류가 발생해도 해제 시도 (단, 이미 해제되었을 가능성 있음)
+      try {
+        soundToRelease.release();
+      } catch (e2) {
+        // 무시
+      }
+    }
   }
 };
 
@@ -76,25 +94,64 @@ const ImagineScreen = () => {
 
   const handleVoicePress = voice => {
     setSelectedVoice(voice.id);
+
+    // 1. 이전 오디오 중지 및 해제 (currentSound는 null이 됩니다.)
     stopAndReleaseCurrentSound();
 
-    currentSound = new Sound(voice.audio, Sound.MAIN_BUNDLE, error => {
+    // 2. 새로운 오디오 로드 시작
+    // 이 시점에 currentSound는 null이므로, 새 객체를 바로 할당합니다.
+    // 로드 콜백은 비동기이므로, 이 객체의 참조를 지역 변수에 유지합니다.
+    const newSound = new Sound(voice.audio, Sound.MAIN_BUNDLE, error => {
+      // **(A) 로드 완료 콜백 시작**
+
       if (error) {
         console.error('오디오 로드 실패:', error);
-        currentSound = null; // 에러 시 null 처리
+        newSound.release();
+        // 만약 로드 실패 시, currentSound가 이 newSound를 참조하고 있었다면 null 처리
+        if (currentSound === newSound) {
+          currentSound = null;
+        }
         return;
       }
 
+      // 로드 성공 시:
+      // 이 시점에 currentSound가 null이 아니거나 newSound가 아니라면
+      // 사용자가 이 오디오 로드 시간 동안 다른 음성을 선택했다는 뜻입니다.
+      if (currentSound !== null && currentSound !== newSound) {
+        // 이미 다른 오디오가 시작되었으므로 이 객체는 재생하지 않고 해제
+        newSound.release();
+        return;
+      }
+
+      // currentSound가 null이거나 newSound인 경우 (대부분 null일 것)
+      currentSound = newSound;
+
+      // 3. 새 사운드 재생 시도
       currentSound.play(success => {
+        // **(B) 재생 완료 콜백 시작**
         if (success) {
           console.log(`${voice.name} 오디오 재생 완료`);
         } else {
           console.error('오디오 재생 실패');
         }
-        currentSound.release();
-        currentSound = null;
+
+        // 재생 완료 후 해제:
+        // 오디오 객체(currentSound)가 여전히 이 객체(newSound)와 동일한 경우에만
+        // 안전하게 해제하고 currentSound를 null로 설정합니다.
+        if (currentSound === newSound) {
+          currentSound.release();
+          currentSound = null;
+        } else {
+          // 이미 다른 오디오가 시작되어 currentSound가 변경되었거나 null이 된 경우,
+          // 이 객체(newSound)만 해제
+          newSound.release();
+        }
       });
     });
+
+    // 로드 시작 후, currentSound에 잠재적인 객체를 할당
+    // 이 객체는 로드 완료 전/후에 stopAndReleaseCurrentSound에 의해 안전하게 처리됩니다.
+    currentSound = newSound;
   };
 
   const handleNext = () => {
@@ -106,6 +163,7 @@ const ImagineScreen = () => {
     navigation.navigate('imagineready', { voiceId: selectedVoice });
   };
 
+  // ... (나머지 렌더링 코드는 이전과 동일)
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <View style={styles.container}>
