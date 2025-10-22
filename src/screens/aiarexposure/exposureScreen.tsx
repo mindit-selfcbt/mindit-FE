@@ -7,16 +7,27 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  ActivityIndicator, // 로딩 인디케이터 사용을 위해 추가
 } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const HORIZONTAL_PADDING = 18;
 
+// 이미지 및 아이콘 경로
 const aiExposureActivateIcon = require('../../assets/img/exposure/aiexposrueactivateImg.png');
 const aiExposureDeactivateIcon = require('../../assets/img/exposure/aiexposruedeactivateImg.png');
 const arExposureActivateIcon = require('../../assets/img/exposure/arexposrueactivateImg.png');
 const arExposureDeactivateIcon = require('../../assets/img/exposure/arexposruedeactivateImg.png');
 const mainIcon = require('../../assets/icon/mainIcon.png');
+const noChoiceIcon = require('../../assets/img/exposure/nochoice.png');
+const choiceIcon = require('../../assets/img/exposure/choice.png');
+
+// 더미 AI 이미지
+const aiImages = [
+  require('../../assets/img/exposure/aisubway1Img.png'),
+  require('../../assets/img/exposure/aisubway2Img.png'),
+  require('../../assets/img/exposure/aisubway3Img.png'),
+];
 
 const TOGGLE_OPTIONS = [
   { key: 'ai', label: 'AI 사진 노출' },
@@ -42,11 +53,18 @@ const SITUATION_DESCRIPTIONS = [
   '오염에 손이 닿았다.',
 ];
 
-const BUTTON_WIDTH_LIMIT = (windowWidth - HORIZONTAL_PADDING * 1.5) / 2;
+// 버튼 너비 고정 (유동성을 위해 width를 제거하고 flex: 1을 사용하는 것이 좋지만, 기존 스타일 유지를 위해 명시적 너비 사용)
+const BUTTON_FIXED_WIDTH = (windowWidth - HORIZONTAL_PADDING * 2 - 8) / 2;
 
 export default function ExposureScreen({ navigation }) {
   const [toggle, setToggle] = useState<'ai' | 'ar'>('ai');
-  const [selectedSituation, setSelectedSituation] = useState<number | null>(
+  const [selectedSituation, setSelectedSituation] = useState<number | null>(0);
+  // 이미지 생성 여부 상태
+  const [isGenerated, setIsGenerated] = useState(false);
+  // 로딩 상태 (2초 딜레이 구현용)
+  const [isLoading, setIsLoading] = useState(false);
+  // 선택된 이미지 인덱스 상태 (null이면 미선택)
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
     null,
   );
 
@@ -64,8 +82,99 @@ export default function ExposureScreen({ navigation }) {
       ? '생성하기를 누르면 AI 사진이 표시됩니다'
       : '생성하기를 누르면 AR 사진이 표시됩니다';
 
+  // --- 생성하기 버튼 핸들러 (로딩 딜레이 추가) ---
+  const handleGenerate = () => {
+    if (toggle === 'ai' && selectedSituation !== null) {
+      setIsGenerated(false); // 생성 상태 초기화
+      setSelectedImageIndex(null); // 이미지 선택 초기화
+      setIsLoading(true); // 로딩 시작
+
+      // 2초 로딩 딜레이
+      setTimeout(() => {
+        setIsLoading(false); // 로딩 끝
+        setIsGenerated(true); // 이미지 생성 완료
+      }, 2000);
+    }
+  };
+
+  // --- 이미지 선택 핸들러 ---
+  const handleImageSelect = (index: number) => {
+    setSelectedImageIndex(prevIndex => (prevIndex === index ? null : index)); // 이미 선택된 것을 다시 누르면 해제
+  };
+
+  // --- 시작하기 버튼 스타일 결정 ---
+  const isStartButtonActive = selectedImageIndex !== null;
+
+  const startBtnStyle = isStartButtonActive
+    ? { ...styles.startBtn, backgroundColor: '#3856C1', borderColor: '#3856C1' }
+    : styles.startBtn;
+
+  const startBtnTextStyle = isStartButtonActive
+    ? { ...styles.startBtnText, color: '#FFFFFF' }
+    : styles.startBtnText;
+
+  // --- UI 컴포넌트 분리: 이미지 렌더링 영역 ---
+  const ImageDisplayArea = () => {
+    if (isLoading) {
+      // 로딩 중일 때
+      return (
+        <View style={exposureGuideBoxStyles.outer}>
+          <ActivityIndicator
+            size="large"
+            color="#3557D4"
+            style={{ marginBottom: 18 }}
+          />
+          <Text style={exposureGuideBoxStyles.text}>
+            AI 이미지를 생성 중입니다...
+          </Text>
+        </View>
+      );
+    } else if (isGenerated) {
+      // 생성 완료 후 이미지 표시
+      return (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={imageDisplayStyles.scrollView}
+          contentContainerStyle={imageDisplayStyles.scrollContent} // 패딩을 ContentContainerStyle로 이동
+        >
+          {aiImages.map((imageSource, index) => {
+            const isSelected = selectedImageIndex === index;
+            return (
+              <View key={index} style={imageDisplayStyles.imageContainer}>
+                <Image source={imageSource} style={imageDisplayStyles.image} />
+                <TouchableOpacity
+                  style={imageDisplayStyles.selectionIcon}
+                  onPress={() => handleImageSelect(index)}
+                  activeOpacity={0.8}
+                >
+                  <Image
+                    source={isSelected ? choiceIcon : noChoiceIcon}
+                    style={imageDisplayStyles.icon}
+                  />
+                </TouchableOpacity>
+              </View>
+            );
+          })}
+        </ScrollView>
+      );
+    } else {
+      // 생성 전 가이드 표시
+      return (
+        <View style={exposureGuideBoxStyles.outer}>
+          <Image
+            source={exposureIcon}
+            style={{ width: 48, height: 48, marginBottom: 18 }}
+          />
+          <Text style={exposureGuideBoxStyles.text}>{exposureText}</Text>
+        </View>
+      );
+    }
+  };
+
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
+      {/* 상단 탭 및 아이콘 */}
       <View style={styles.topRow}>
         <View style={styles.toggleWrap}>
           {TOGGLE_OPTIONS.map(option => {
@@ -74,7 +183,12 @@ export default function ExposureScreen({ navigation }) {
               <TouchableOpacity
                 key={option.key}
                 style={[styles.toggleBtn, active && styles.toggleBtnActive]}
-                onPress={() => setToggle(option.key as 'ai' | 'ar')}
+                onPress={() => {
+                  setToggle(option.key as 'ai' | 'ar');
+                  setIsGenerated(false);
+                  setSelectedImageIndex(null);
+                  setIsLoading(false); // 로딩 중지
+                }}
                 activeOpacity={1}
               >
                 <Image
@@ -111,6 +225,7 @@ export default function ExposureScreen({ navigation }) {
         불안 위계표에서 노출 훈련을 할 상황을 선택해주세요
       </Text>
 
+      {/* 상황 목록 */}
       <View style={styles.situationList}>
         {EXPOSURE_SITUATIONS.map((situation, i) => {
           const selected = selectedSituation === i;
@@ -121,7 +236,12 @@ export default function ExposureScreen({ navigation }) {
                 styles.situationItem,
                 selected ? styles.situationItemSelected : null,
               ]}
-              onPress={() => setSelectedSituation(i)}
+              onPress={() => {
+                setSelectedSituation(i);
+                setIsGenerated(false);
+                setSelectedImageIndex(null);
+                setIsLoading(false); // 상황 변경 시 로딩 중지
+              }}
               activeOpacity={0.9}
             >
               <Text
@@ -150,29 +270,43 @@ export default function ExposureScreen({ navigation }) {
             ? SITUATION_DESCRIPTIONS[selectedSituation]
             : '상황을 선택해 주세요.'}
         </Text>
+        <Text style={exposureSituationBoxStyles.charCount}>
+          {selectedSituation !== null
+            ? `${SITUATION_DESCRIPTIONS[selectedSituation].length}/100`
+            : '0/100'}
+        </Text>
       </View>
 
       <View style={{ height: 12 }} />
 
-      {/* 가이드 박스 */}
-      <View style={exposureGuideBoxStyles.outer}>
-        <Image
-          source={exposureIcon}
-          style={{ width: 48, height: 48, marginBottom: 18 }}
-        />
-        <Text style={exposureGuideBoxStyles.text}>{exposureText}</Text>
-      </View>
+      {/* 이미지 표시/가이드/로딩 영역 */}
+      <ImageDisplayArea />
 
       <View style={{ height: 24 }} />
 
-      {/* 버튼 영역: 버튼 너비를 줄이고 중앙 정렬 */}
+      {/* 버튼 영역 */}
       <View style={styles.buttonRowWrapper}>
         <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.generateBtn}>
-            <Text style={styles.generateBtnText}>생성하기</Text>
+          <TouchableOpacity
+            style={styles.generateBtn}
+            onPress={handleGenerate}
+            disabled={
+              toggle !== 'ai' || selectedSituation === null || isLoading
+            } // AI 모드, 상황 선택, 로딩 중 아닐 때만 활성화
+          >
+            <Text style={styles.generateBtnText}>
+              {isLoading
+                ? '생성 중...'
+                : isGenerated
+                ? '다시 생성하기'
+                : '생성하기'}
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.startBtn}>
-            <Text style={styles.startBtnText}>시작하기</Text>
+          <TouchableOpacity
+            style={startBtnStyle}
+            disabled={!isStartButtonActive}
+          >
+            <Text style={startBtnTextStyle}>시작하기</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -307,27 +441,23 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     width: '100%',
   },
-  // 버튼을 래핑하여 전체 너비를 사용하고, 버튼을 중앙에 정렬합니다.
   buttonRowWrapper: {
     width: '100%',
     alignItems: 'center',
   },
-  // 버튼 자체의 컨테이너, 버튼 너비를 직접 설정하거나 제한합니다.
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 0,
-    // 버튼 영역의 최대 너비를 설정하여 여백 확보
-    maxWidth: windowWidth - HORIZONTAL_PADDING * 2, // 컨테이너 패딩만큼 줄입니다.
-    width: '100%', // 래퍼 내에서 100% 사용
+    maxWidth: windowWidth - HORIZONTAL_PADDING * 2,
+    width: '100%',
   },
   generateBtn: {
-    // flex: 1 대신 max width로 버튼 길이를 제한하고, padding을 더 줄입니다.
-    width: BUTTON_WIDTH_LIMIT * 0.9, // 계산된 너비보다 약간 더 줄입니다.
+    width: BUTTON_FIXED_WIDTH,
     height: 60,
     paddingVertical: 20,
-    paddingHorizontal: 10, // 버튼 내부 패딩을 줄여 너비 조정
+    paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -346,11 +476,10 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   startBtn: {
-    // flex: 1 대신 max width로 버튼 길이를 제한하고, padding을 더 줄입니다.
-    width: BUTTON_WIDTH_LIMIT, // 계산된 너비보다 약간 더 줄입니다.
+    width: BUTTON_FIXED_WIDTH,
     height: 60,
     paddingVertical: 20,
-    paddingHorizontal: 10, // 버튼 내부 패딩을 줄여 너비 조정
+    paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -385,6 +514,7 @@ const exposureSituationBoxStyles = StyleSheet.create({
     backgroundColor: '#F3F7FB',
     alignSelf: 'stretch',
     marginBottom: 0,
+    position: 'relative',
   },
   text: {
     color: '#25252C',
@@ -394,6 +524,14 @@ const exposureSituationBoxStyles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 25.6,
     alignSelf: 'flex-start',
+    flex: 1,
+  },
+  charCount: {
+    position: 'absolute',
+    bottom: 8,
+    right: 16,
+    color: '#717780',
+    fontSize: 12,
   },
 });
 
@@ -418,5 +556,44 @@ const exposureGuideBoxStyles = StyleSheet.create({
     lineHeight: 16,
     letterSpacing: -0.42,
     width: '100%',
+  },
+});
+
+const IMAGE_WIDTH = windowWidth * 0.7;
+const imageDisplayStyles = StyleSheet.create({
+  scrollView: {
+    width: '100%',
+    height: 360,
+  },
+  scrollContent: {
+    paddingHorizontal: HORIZONTAL_PADDING,
+  },
+  imageContainer: {
+    width: IMAGE_WIDTH,
+    height: 360,
+    marginRight: 10,
+    borderRadius: 8,
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#F3F7FB',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  selectionIcon: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    padding: 4,
+    zIndex: 10,
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
   },
 });
