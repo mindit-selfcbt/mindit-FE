@@ -141,7 +141,7 @@ const MainScreen = ({ navigation }) => {
       >
         <Image source={icons.mic} style={styles.micIcon} />
         <Text style={styles.chatPlaceholder}>
-          당신의 불안에 대해 무엇이든 말씀해주세요
+          당신의 불안에 대해 말씀해주세요
         </Text>
       </TouchableOpacity>
     </View>
