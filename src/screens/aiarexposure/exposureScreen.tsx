@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  ActivityIndicator, // 로딩 인디케이터 사용을 위해 추가
+  ActivityIndicator,
 } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
@@ -27,6 +27,13 @@ const aiImages = [
   require('../../assets/img/exposure/aisubway1Img.png'),
   require('../../assets/img/exposure/aisubway2Img.png'),
   require('../../assets/img/exposure/aisubway3Img.png'),
+];
+
+// 더미 AR 이미지
+const arImages = [
+  require('../../assets/img/exposure/arhandle1Img.png'),
+  require('../../assets/img/exposure/arhandle2Img.png'),
+  require('../../assets/img/exposure/arhandle3Img.png'),
 ];
 
 const TOGGLE_OPTIONS = [
@@ -53,17 +60,13 @@ const SITUATION_DESCRIPTIONS = [
   '오염에 손이 닿았다.',
 ];
 
-// 버튼 너비 고정 (유동성을 위해 width를 제거하고 flex: 1을 사용하는 것이 좋지만, 기존 스타일 유지를 위해 명시적 너비 사용)
 const BUTTON_FIXED_WIDTH = (windowWidth - HORIZONTAL_PADDING * 2 - 8) / 2;
 
 export default function ExposureScreen({ navigation }) {
   const [toggle, setToggle] = useState<'ai' | 'ar'>('ai');
   const [selectedSituation, setSelectedSituation] = useState<number | null>(0);
-  // 이미지 생성 여부 상태
   const [isGenerated, setIsGenerated] = useState(false);
-  // 로딩 상태 (2초 딜레이 구현용)
   const [isLoading, setIsLoading] = useState(false);
-  // 선택된 이미지 인덱스 상태 (null이면 미선택)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
     null,
   );
@@ -82,28 +85,29 @@ export default function ExposureScreen({ navigation }) {
       ? '생성하기를 누르면 AI 사진이 표시됩니다'
       : '생성하기를 누르면 AR 사진이 표시됩니다';
 
-  // --- 생성하기 버튼 핸들러 (로딩 딜레이 추가) ---
+  // --- 생성하기 버튼 핸들러 ---
   const handleGenerate = () => {
-    if (toggle === 'ai' && selectedSituation !== null) {
-      setIsGenerated(false); // 생성 상태 초기화
-      setSelectedImageIndex(null); // 이미지 선택 초기화
-      setIsLoading(true); // 로딩 시작
+    if (selectedSituation !== null) {
+      setIsGenerated(false);
+      setSelectedImageIndex(null);
+      setIsLoading(true);
 
       // 2초 로딩 딜레이
       setTimeout(() => {
-        setIsLoading(false); // 로딩 끝
-        setIsGenerated(true); // 이미지 생성 완료
+        setIsLoading(false);
+        setIsGenerated(true);
       }, 2000);
     }
   };
 
   // --- 이미지 선택 핸들러 ---
   const handleImageSelect = (index: number) => {
-    setSelectedImageIndex(prevIndex => (prevIndex === index ? null : index)); // 이미 선택된 것을 다시 누르면 해제
+    setSelectedImageIndex(prevIndex => (prevIndex === index ? null : index));
   };
 
-  // --- 시작하기 버튼 스타일 결정 ---
-  const isStartButtonActive = selectedImageIndex !== null;
+  // --- 시작하기 버튼 스타일 결정 (수정된 부분) ---
+  // 조건: 이미지가 생성되었고 (isGenerated) 사용자가 이미지를 선택했을 때 (selectedImageIndex !== null)
+  const isStartButtonActive = isGenerated && selectedImageIndex !== null;
 
   const startBtnStyle = isStartButtonActive
     ? { ...styles.startBtn, backgroundColor: '#3856C1', borderColor: '#3856C1' }
@@ -113,8 +117,23 @@ export default function ExposureScreen({ navigation }) {
     ? { ...styles.startBtnText, color: '#FFFFFF' }
     : styles.startBtnText;
 
+  // --- 생성하기 버튼 스타일 결정 (기존 유지) ---
+  // 생성 완료 후에도 색상은 바뀌지 않음.
+  // 단, 로딩 중이 아닐 때만 '다시 생성하기' 버튼의 기본 스타일 유지
+  const isGenerateButtonActive = isGenerated && !isLoading;
+
+  const generateBtnStyle = styles.generateBtn;
+
+  const generateBtnTextStyle = styles.generateBtnText;
+
   // --- UI 컴포넌트 분리: 이미지 렌더링 영역 ---
   const ImageDisplayArea = () => {
+    const imagesToDisplay = toggle === 'ai' ? aiImages : arImages;
+    const loadingMessage =
+      toggle === 'ai'
+        ? 'AI 이미지를 생성 중입니다...'
+        : 'AR 이미지를 생성 중입니다...';
+
     if (isLoading) {
       // 로딩 중일 때
       return (
@@ -124,9 +143,7 @@ export default function ExposureScreen({ navigation }) {
             color="#3557D4"
             style={{ marginBottom: 18 }}
           />
-          <Text style={exposureGuideBoxStyles.text}>
-            AI 이미지를 생성 중입니다...
-          </Text>
+          <Text style={exposureGuideBoxStyles.text}>{loadingMessage}</Text>
         </View>
       );
     } else if (isGenerated) {
@@ -136,9 +153,9 @@ export default function ExposureScreen({ navigation }) {
           horizontal
           showsHorizontalScrollIndicator={false}
           style={imageDisplayStyles.scrollView}
-          contentContainerStyle={imageDisplayStyles.scrollContent} // 패딩을 ContentContainerStyle로 이동
+          contentContainerStyle={imageDisplayStyles.scrollContent}
         >
-          {aiImages.map((imageSource, index) => {
+          {imagesToDisplay.map((imageSource, index) => {
             const isSelected = selectedImageIndex === index;
             return (
               <View key={index} style={imageDisplayStyles.imageContainer}>
@@ -240,7 +257,7 @@ export default function ExposureScreen({ navigation }) {
                 setSelectedSituation(i);
                 setIsGenerated(false);
                 setSelectedImageIndex(null);
-                setIsLoading(false); // 상황 변경 시 로딩 중지
+                setIsLoading(false);
               }}
               activeOpacity={0.9}
             >
@@ -288,13 +305,11 @@ export default function ExposureScreen({ navigation }) {
       <View style={styles.buttonRowWrapper}>
         <View style={styles.buttonRow}>
           <TouchableOpacity
-            style={styles.generateBtn}
+            style={generateBtnStyle}
             onPress={handleGenerate}
-            disabled={
-              toggle !== 'ai' || selectedSituation === null || isLoading
-            } // AI 모드, 상황 선택, 로딩 중 아닐 때만 활성화
+            disabled={selectedSituation === null || isLoading}
           >
-            <Text style={styles.generateBtnText}>
+            <Text style={generateBtnTextStyle}>
               {isLoading
                 ? '생성 중...'
                 : isGenerated
@@ -303,7 +318,7 @@ export default function ExposureScreen({ navigation }) {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={startBtnStyle}
+            style={startBtnStyle} // 시작하기 버튼 스타일 적용
             disabled={!isStartButtonActive}
           >
             <Text style={startBtnTextStyle}>시작하기</Text>
