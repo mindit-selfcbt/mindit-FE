@@ -22,8 +22,10 @@ const contents = [
     lines: [
       '만약 평소에 문이 잘 잠겼는지 강박적으로',
       '확인하는 증상이 있었다면, 문단속을 할 때',
-      { highlight: '딱 한 번만 확인하고' },
-      '더 이상 확인하지 않는',
+      {
+        highlight: '딱 한 번만 확인하고',
+        normal: ' 더 이상 확인하지 않는',
+      },
       '것을 반복해서 연습하는 행동이 바로',
       '노출 및 반응 방지입니다.',
     ],
@@ -39,7 +41,11 @@ const OnboardingExplainScreen = ({ navigation }) => {
   const { image, title, lines } = contents[pageIndex];
 
   const handleNext = () => {
-    navigation.replace('onboardingstep');
+    if (pageIndex < contents.length - 1) {
+      setPageIndex(prev => prev + 1);
+    } else {
+      navigation.replace('onboardingstep');
+    }
   };
 
   const ArrowButton = ({ side }) => {
@@ -69,22 +75,36 @@ const OnboardingExplainScreen = ({ navigation }) => {
       <View style={styles.rowWithArrow}>
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>{title}</Text>
-          {lines.map((line, i) =>
-            typeof line === 'string' ? (
-              <Text key={i} style={styles.desc}>
-                {line}
-              </Text>
-            ) : (
-              <Text key={i} style={[styles.desc, styles.highlightDesc]}>
-                {line.highlight}
-              </Text>
-            ),
-          )}
+          {lines.map((line, i) => {
+            if (typeof line === 'string') {
+              return (
+                <Text key={i} style={styles.desc}>
+                  {line}
+                </Text>
+              );
+            } else if (line.highlight && line.normal) {
+              return (
+                <Text key={i} style={styles.desc}>
+                  <Text style={styles.highlightDesc}>{line.highlight}</Text>
+                  <Text style={styles.desc}>{line.normal}</Text>
+                </Text>
+              );
+            } else {
+              return (
+                <Text key={i} style={[styles.desc, styles.highlightDesc]}>
+                  {line.highlight}
+                </Text>
+              );
+            }
+          })}
         </View>
         <ArrowButton side="right" />
         <ArrowButton side="left" />
       </View>
-      <NextButton title="다음" onPress={handleNext} />
+      <NextButton
+        title={pageIndex === contents.length - 1 ? '다음' : '계속'}
+        onPress={handleNext}
+      />
     </View>
   );
 };
@@ -96,21 +116,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FBFF',
     paddingHorizontal: 24,
-    paddingTop: 64,
+    paddingTop: 160,
     paddingBottom: 24,
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 120,
+    height: 120,
     resizeMode: 'contain',
     marginBottom: 20,
     alignSelf: 'flex-start',
   },
   rowWithArrow: {
     flexDirection: 'row',
-    width: '100%',
+    width: '110%',
     alignItems: 'center',
   },
   title: {
@@ -125,7 +145,7 @@ const styles = StyleSheet.create({
   desc: {
     color: '#25252C',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '400',
     lineHeight: 28.8,
     textAlign: 'left',
@@ -136,8 +156,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   arrowBtn: {
-    marginLeft: 16,
-    marginRight: 0,
+    marginLeft: 8,
+    marginRight: 20,
     padding: 8,
   },
   arrowImg: {
