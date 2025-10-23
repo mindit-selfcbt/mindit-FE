@@ -9,6 +9,7 @@ const BAR_LINE_HEIGHT = 5;
 function BarItem({ value, label, isCurrent }) {
   const safeValue = Math.max(0, Math.min(value, 100));
   const barHeight = (safeValue / 100) * BAR_ROW_HEIGHT;
+
   return (
     <View style={styles.barItem}>
       <View style={[styles.barValueBox, isCurrent && styles.barValueBoxLast]}>
@@ -18,7 +19,9 @@ function BarItem({ value, label, isCurrent }) {
           {safeValue}
         </Text>
       </View>
+
       <View style={{ height: 8 }} />
+
       <View style={[styles.barWrap, { height: barHeight + BAR_LINE_HEIGHT }]}>
         <View
           style={[
@@ -27,11 +30,7 @@ function BarItem({ value, label, isCurrent }) {
           ]}
         />
         <View
-          style={{
-            width: BAR_WIDTH,
-            height: barHeight,
-            position: 'relative',
-          }}
+          style={{ width: BAR_WIDTH, height: barHeight, position: 'relative' }}
         >
           <LinearGradient
             colors={['rgba(123,175,255,0.30)', 'rgba(123,175,255,0.00)']}
@@ -41,6 +40,7 @@ function BarItem({ value, label, isCurrent }) {
           />
         </View>
       </View>
+
       <Text style={styles.barLabel}>{label}</Text>
     </View>
   );
@@ -53,12 +53,14 @@ function AnxietySection() {
       <Text style={styles.anxietyDesc}>
         반응 방지를 하며 기록한 불안의 변화
       </Text>
+
       <View style={styles.chartArea}>
         <View style={styles.yAxis}>
           <Text style={styles.axisLabel}>100</Text>
           <View style={{ flex: 1 }} />
           <Text style={styles.axisLabel}>0</Text>
         </View>
+
         <View style={styles.barsArea}>
           <BarItem value={75} label="반응 방지 시작" isCurrent={false} />
           <BarItem value={30} label="반응 방지 완료" isCurrent={true} />
@@ -141,13 +143,14 @@ function ComparisonBarGraph() {
 
 export default function ErpRecordScreen() {
   return (
-    <View>
+    <View style={styles.screenContainer}>
       <Text style={styles.descMain}>
         이번 반응 방지에서 평균 불안은{'\n'}
-        <Text style={styles.descMainScore}>50점</Text>
-        이었어요! 앞으로 반응 방지를{'\n'}
-        이어나가며 불안을 줄일 수 있을 거예요
+        <Text style={styles.descMainScore}>50점</Text>이었어요! 앞으로 반응
+        방지를{'\n'}
+        이어나가며 불안을 줄여 나가요
       </Text>
+
       <Text style={styles.meta}>10월 31일 금요일 · 오전 9시 30분</Text>
 
       <View style={styles.situationBox}>
@@ -165,6 +168,7 @@ export default function ErpRecordScreen() {
             <Text style={styles.statUnit}>번째</Text>
           </View>
         </View>
+
         <View style={styles.statBox}>
           <Text style={styles.statTitle}>반응 방지 시간</Text>
           <View style={styles.statNumRow}>
@@ -201,39 +205,46 @@ export default function ErpRecordScreen() {
 }
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    padding: 8,
+  },
   descMain: {
     color: '#25252C',
     fontSize: 20,
     fontWeight: '500',
     lineHeight: 34,
-    marginBottom: 36,
+    marginBottom: 20,
     marginTop: 12,
     fontFamily: 'Pretendard',
+    textAlign: 'left',
   },
   descMainScore: {
     color: '#3557D4',
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '800',
     lineHeight: 34,
     fontFamily: 'Pretendard',
+    textAlign: 'left',
   },
   meta: {
     color: '#9298A2',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
     marginBottom: 20,
     fontFamily: 'Pretendard',
+    textAlign: 'left',
   },
   situationBox: {
-    width: 360,
+    width: 320,
     padding: 16,
     borderRadius: 8,
-    backgroundColor: '#F8FBFF',
+    backgroundColor: '#FFF',
     marginBottom: 20,
     alignSelf: 'center',
-    shadowColor: '#000',
+    shadowColor: '#9298A2',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.07,
+    shadowOpacity: 0.05,
     shadowRadius: 12,
     elevation: 4,
   },
@@ -257,7 +268,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   statBox: {
-    width: 170,
+    width: 150,
     height: 120,
     borderRadius: 10,
     backgroundColor: '#FFF',
@@ -269,9 +280,9 @@ const styles = StyleSheet.create({
   statTitle: {
     color: '#717780',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
-    marginBottom: 10,
+    marginBottom: 4,
     textAlign: 'left',
   },
   statNumRow: {
@@ -284,23 +295,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Pretendard',
     fontSize: 36,
-    fontStyle: 'normal',
     fontWeight: '400',
     lineHeight: 57.6,
-    letterSpacing: -0.72,
     marginRight: 2,
   },
   statUnit: {
     color: '#717780',
     fontFamily: 'Pretendard',
     fontSize: 20,
-    fontStyle: 'normal',
     fontWeight: '500',
     marginRight: 10,
-    textAlign: 'left',
   },
   anxietyBox: {
-    width: 360,
+    width: 320,
     height: 300,
     borderRadius: 10,
     backgroundColor: '#FFF',
@@ -421,22 +428,12 @@ const styles = StyleSheet.create({
     color: '#717780',
     fontFamily: 'Pretendard',
     fontSize: 14,
-    fontStyle: 'normal',
     fontWeight: '400',
     lineHeight: 18,
     letterSpacing: -0.42,
     marginLeft: 4,
     marginRight: 18,
   },
-  legendLabel: {
-    color: '#717780',
-    fontFamily: 'Pretendard',
-    fontSize: 13,
-    fontWeight: '500',
-    marginLeft: 4,
-    marginRight: 18,
-  },
-
   comparisonBarContainer: {
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
@@ -451,7 +448,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginTop: 12,
     marginLeft: 12,
-    textAlign: 'center',
+    textAlign: 'center', // ← 가운데 정렬
   },
   compareBarItem: {
     alignItems: 'center',
@@ -475,7 +472,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'Gmarket Sans',
     fontSize: 14,
-    fontStyle: 'normal',
     fontWeight: '400',
     lineHeight: 21,
     marginBottom: 4,

@@ -154,6 +154,7 @@ export default function ListRecordScreen({ navigation }) {
           <Image source={mainIcon} style={styles.icon} />
         </TouchableOpacity>
       </View>
+
       <View style={styles.selectRow}>
         <TouchableOpacity style={styles.selectorBox} onPress={() => {}}>
           <Text style={styles.selectorText}>{filter1}</Text>
@@ -172,6 +173,7 @@ export default function ListRecordScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
+
       <View style={styles.section}>
         {records.map((item, idx) => (
           <TouchableOpacity
@@ -179,10 +181,7 @@ export default function ListRecordScreen({ navigation }) {
             style={styles.recordCard}
             activeOpacity={0.85}
             onPress={() =>
-              navigation.navigate('record', {
-                type: toggle,
-                record: item,
-              })
+              navigation.navigate('record', { type: toggle, record: item })
             }
           >
             <View style={styles.titleRow}>
@@ -196,7 +195,7 @@ export default function ListRecordScreen({ navigation }) {
                 <Text style={styles.extraValue}>{item.extra2}</Text>
               </View>
               <View style={styles.extraBox}>
-                <Text style={styles.extraLabel}>{item.extra3}</Text>
+                <Text style={styles.extraLabel}>{item.extra3} </Text>
                 <Text style={styles.extraValue}>{item.extra4}</Text>
               </View>
             </View>
@@ -272,7 +271,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 20,
-    width: 360,
+    width: 320,
     flexDirection: 'column',
     alignItems: 'flex-start',
     gap: 20,
@@ -304,36 +303,37 @@ const styles = StyleSheet.create({
   recordTitle: {
     color: '#717780',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
   },
   infoBoxesRow: {
     flexDirection: 'row',
     gap: 12,
     width: '100%',
+    justifyContent: 'space-between',
   },
   extraBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: 12,
+    gap: 4,
+    paddingHorizontal: 10,
     paddingVertical: 16,
     borderRadius: 10,
     backgroundColor: '#F7F9FD',
-    flex: 1,
+    width: '48%',
   },
   extraLabel: {
     color: '#717780',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
-    marginRight: 4,
+    marginRight: 0,
   },
   extraValue: {
     color: '#3557D4',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
-    marginRight: 4,
+    marginRight: 0,
   },
 });

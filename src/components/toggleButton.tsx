@@ -119,14 +119,14 @@ const styles = StyleSheet.create({
   activeText: {
     color: '#3D3D44',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
     lineHeight: 22,
   },
   inactiveText: {
     color: '#9298A2',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
     lineHeight: 22,
   },
