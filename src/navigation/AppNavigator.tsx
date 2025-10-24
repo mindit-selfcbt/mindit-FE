@@ -13,6 +13,8 @@ import imaginalexposureScreen from '../screens/imagine/imaginalexposureScreen';
 import exposureScreen from '../screens/aiarexposure/exposureScreen';
 import responsepreventionScreen from '../screens/responseprevention/responsepreventionScreen';
 import exitresponsepreventionScreen from '../screens/responseprevention/exitresponsepreventionScreen';
+import loadingScreen from '../screens/responseprevention/loadingScreen';
+import responsepreventionreportScreen from '../screens/responseprevention/responsepreventionreportScreen';
 import recordcatalogScreen from '../screens/record/recordcatalogScreen';
 import recordScreen from '../screens/record/recordScreen';
 import cognitiveerrorScreen from '../screens/record/cognitiveerrorScreen';
@@ -91,6 +93,16 @@ const AppNavigator = () => {
         <Stack.Screen
           name="exitresponseprevention"
           component={exitresponsepreventionScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="loading"
+          component={loadingScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="responsepreventionreport"
+          component={responsepreventionreportScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

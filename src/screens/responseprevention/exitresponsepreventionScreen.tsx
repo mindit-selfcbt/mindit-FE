@@ -11,6 +11,9 @@ import {
   Image,
 } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
 const editIcon = require('../../assets/img/responseprevention/editImg.png');
 
 const COLORS = {
@@ -26,7 +29,19 @@ const COLORS = {
   PLACEHOLDER: '#BDC5D3',
 };
 
+type RootStackParamList = {
+  ExitResponsePreventionScreen: undefined;
+  LoadingScreen: undefined;
+};
+
+type ExitScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'ExitResponsePreventionScreen'
+>;
+
 export default function ExitResponsePreventionScreen() {
+  const navigation = useNavigation<ExitScreenNavigationProp>();
+
   const [selectedSituation, setSelectedSituation] = useState('');
   const [customSituation, setCustomSituation] = useState('');
   const [obsessiveThought, setObsessiveThought] = useState('');
@@ -50,6 +65,12 @@ export default function ExitResponsePreventionScreen() {
     (selectedSituation === '직접 작성하기' &&
       customSituation.trim() !== '' &&
       obsessiveThought.trim() !== '');
+
+  const handleCompletePress = () => {
+    if (isCompleteButtonActive) {
+      navigation.navigate('loading');
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -157,7 +178,7 @@ export default function ExitResponsePreventionScreen() {
               ? styles.completeButtonActive
               : styles.completeButtonInactive,
           ]}
-          onPress={() => console.log('반응 방지 완료')}
+          onPress={handleCompletePress}
           disabled={!isCompleteButtonActive}
           activeOpacity={0.8}
         >
