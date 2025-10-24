@@ -1,198 +1,335 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
+} from 'react-native';
 
-export default function CognitiveErrorScreen() {
+const editIcon = require('../../assets/img/responseprevention/editImg.png');
+
+const COLORS = {
+  BG_LIGHT: '#F8FBFF',
+  BG_BUTTON: '#3557D4',
+  TEXT_DARK: '#25252C',
+  TEXT_GRAY: '#717780',
+  TEXT_WHITE: '#FFFFFF',
+  BG_BUTTON_LIGHT: '#F3F7FB',
+  BORDER_GRAY: '#E0E0E0',
+  BORDER_BLUE_LIGHT: '#E8F1FF',
+  TEXT_BLUE: '#3856C1',
+  PLACEHOLDER: '#BDC5D3',
+};
+
+export default function ExitResponsePreventionScreen() {
+  const [selectedSituation, setSelectedSituation] = useState('');
+  const [customSituation, setCustomSituation] = useState('');
+  const [obsessiveThought, setObsessiveThought] = useState('');
+
+  const situationOptions = [
+    '이동 중에 내 위치를 확인하고 싶다',
+    '도착지까지의 시간을 확인하고 싶다',
+    '일정 사이 사이의 시간을 확인하고 싶다',
+    '이동 중 발생할 상황을 계속 확인하고 싶다',
+  ];
+
+  const handleSelectSituation = situation => {
+    setSelectedSituation(situation);
+    if (situation !== '직접 작성하기') {
+      setCustomSituation('');
+    }
+  };
+
+  const isCompleteButtonActive =
+    (!!selectedSituation && selectedSituation !== '직접 작성하기') ||
+    (selectedSituation === '직접 작성하기' &&
+      customSituation.trim() !== '' &&
+      obsessiveThought.trim() !== '');
+
   return (
-    <View style={styles.outerContainer}>
-      <View style={styles.container}>
-        {/* 강박 상황 */}
-        <View style={styles.situationBox}>
-          <Text style={styles.infoLabel}>강박 상황</Text>
-          <Text style={styles.infoText}>
-            지하철 손잡이를 잡고 손이 오염된 것 같다고 생각한다
+    <KeyboardAvoidingView
+      style={styles.outerContainer}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={0}
+    >
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>반응 방지 완료하기</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>강박 상황</Text>
+          <Text style={styles.sectionSubtitle}>
+            불안 위계표에서 방금 겪었던 상황을 선택해주세요
           </Text>
+          {situationOptions.map(situation => (
+            <TouchableOpacity
+              key={situation}
+              style={[
+                styles.situationButton,
+                selectedSituation === situation && styles.situationButtonActive,
+              ]}
+              onPress={() => handleSelectSituation(situation)}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[
+                  styles.situationButtonText,
+                  selectedSituation === situation &&
+                    styles.situationButtonTextActive,
+                ]}
+              >
+                {situation}
+              </Text>
+            </TouchableOpacity>
+          ))}
+
+          <TouchableOpacity
+            style={[
+              styles.situationButton,
+              styles.writeButton,
+              selectedSituation === '직접 작성하기' &&
+                styles.situationButtonActive,
+            ]}
+            onPress={() => handleSelectSituation('직접 작성하기')}
+            activeOpacity={0.8}
+          >
+            <View style={styles.writeButtonContent}>
+              <Image
+                source={editIcon}
+                style={styles.writeIcon}
+                resizeMode="contain"
+              />
+              <Text
+                style={[
+                  styles.writeButtonText,
+                  selectedSituation === '직접 작성하기' &&
+                    styles.situationButtonTextActive,
+                ]}
+              >
+                직접 작성하기
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          {selectedSituation === '직접 작성하기' && (
+            <TextInput
+              style={styles.customInput}
+              placeholder="강박 상황을 직접 입력하세요."
+              placeholderTextColor={COLORS.PLACEHOLDER}
+              value={customSituation}
+              onChangeText={setCustomSituation}
+              multiline
+            />
+          )}
         </View>
 
-        {/* 침투사고 */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>침투사고</Text>
-          <View style={styles.contentBox}>
-            <Text style={styles.contentText}>
-              당장 손을 씻지 않으면 병에 걸릴 것 같다는 생각이 든다
-            </Text>
+          <Text style={styles.sectionTitle}>강박 사고</Text>
+          <Text style={styles.sectionSubtitle}>
+            반응 방지를 하면서 어떤 생각과 감정이 들었나요?
+          </Text>
+          <View style={styles.textBox}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="뭔가 내가 지금 지날 영역을 지나쳤을 것 같다는 느낌이 들고, 당장 나의 현재 위치를 확인하지 않으면 늦을 것 같다는 생각이 든다."
+              placeholderTextColor={COLORS.TEXT_GRAY}
+              value={obsessiveThought}
+              onChangeText={setObsessiveThought}
+              multiline
+            />
           </View>
         </View>
 
-        {/* 그릇된 믿음 */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>그릇된 믿음</Text>
-          <View style={styles.contentBox}>
-            <Text style={styles.contentText}>
-              손을 씻지 않으면 걱정하는 일이 벌어질 것이라는 믿음
-            </Text>
-          </View>
-        </View>
-
-        {/* 인지적 오류 */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>인지적 오류</Text>
-          <View style={styles.contentBox}>
-            <Text style={styles.cogErrorTitle}>과잉 일반화{'\n'}</Text>
-            <Text style={styles.contentTextLeft}>
-              ‘한 번 병에 걸릴 수도 있다’는 가능성을 ‘항상 그럴 것이다’로
-              과도하게 일반화한다.{'\n\n'}
-            </Text>
-
-            <View style={styles.divider} />
-
-            <Text style={styles.cogErrorTitle}>재앙화{'\n'}</Text>
-            <Text style={styles.contentTextLeft}>
-              ‘손잡이를 잡는 행동’이 바로 병에 걸리는 심각한 결과로 이어질
-              것이라는 생각은 실제 증거나 정보 없이 미래를 단정하는 경향이다.
-              지금은 단지 그런 느낌이 들었을 뿐이지만, 마치 사실인 것처럼
-              느껴지게 한다.{'\n\n'}
-            </Text>
-
-            <View style={styles.divider} />
-
-            <Text style={styles.cogErrorTitle}>확률의 왜곡{'\n'}</Text>
-            <Text style={styles.contentTextLeft}>
-              병에 걸릴 가능성을 실제보다 높게 평가한다.
-            </Text>
-          </View>
-        </View>
-
-        {/* 현실적인 생각 */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>현실적인 생각</Text>
-          <View style={styles.contentBox}>
-            <Text style={styles.contentText}>
-              손잡이를 만지면 불편한 느낌이 들 수는 있지만, 실제로 병에 걸릴
-              일은 거의 없다. 또한 그 불편함은 시간이 지나면서 사라지고, 나는
-              그걸 감당할 수 있다.
-            </Text>
-          </View>
-        </View>
-
-        {/* 버튼 */}
-        <TouchableOpacity style={styles.chatBtn}>
-          <Text style={styles.chatBtnLabel}>채팅 다시 보기</Text>
+        <TouchableOpacity
+          style={[
+            styles.completeButton,
+            isCompleteButtonActive
+              ? styles.completeButtonActive
+              : styles.completeButtonInactive,
+          ]}
+          onPress={() => console.log('반응 방지 완료')}
+          disabled={!isCompleteButtonActive}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.completeButtonText}>반응 방지 완료하기</Text>
         </TouchableOpacity>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    backgroundColor: '#F8FBFF',
-    alignItems: 'center',
+    backgroundColor: COLORS.BG_LIGHT,
   },
-  container: {
+  scrollView: {
     flex: 1,
-    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  contentContainer: {
     paddingTop: 20,
-    width: '100%',
     paddingHorizontal: 20,
+    alignItems: 'center',
+    paddingBottom: 40,
   },
-  situationBox: {
-    width: 320,
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: '#F8FBFF',
-    marginBottom: 28,
-    alignSelf: 'center',
-    shadowColor: '#9298A2',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.07,
-    shadowRadius: 12,
-    elevation: 4,
+  header: {
+    width: '100%',
+    marginBottom: 20,
+    marginTop: 40,
   },
-  infoLabel: {
-    color: '#717780',
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
-    fontFamily: 'Pretendard',
-    textAlign: 'left',
-  },
-  infoText: {
-    color: '#25252C',
-    fontSize: 14,
-    fontWeight: '500',
-    fontFamily: 'Pretendard',
-    textAlign: 'left',
+  headerTitle: {
+    color: COLORS.TEXT_DARK,
+    fontSize: 20,
+    fontWeight: '900',
+    lineHeight: 28,
   },
   section: {
-    width: 320,
-    marginBottom: 20,
-    alignItems: 'flex-start',
+    width: '100%',
+    marginBottom: 30,
   },
   sectionTitle: {
-    color: '#25252C',
+    color: COLORS.TEXT_DARK,
+    fontSize: 20,
+    fontWeight: '900',
+    lineHeight: 30,
+    marginBottom: 8,
+  },
+  headerSubTitle: {
+    color: COLORS.TEXT_GRAY,
     fontFamily: 'Pretendard',
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 22,
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 22.4,
+    marginTop: 5,
+  },
+  sectionSubtitle: {
+    color: COLORS.TEXT_GRAY,
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 22.4,
     marginBottom: 12,
-    textAlign: 'left',
   },
-  contentBox: {
+  situationButton: {
+    display: 'flex',
     width: 320,
-    padding: 16,
+    paddingVertical: 24,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
     borderRadius: 8,
-    backgroundColor: '#F3F7FB',
-  },
-  contentText: {
-    color: '#25252C',
-    fontFamily: 'Pretendard',
-    fontSize: 16,
-    fontWeight: '400',
-    lineHeight: 25.6,
-    textAlign: 'left',
-  },
-  contentTextLeft: {
-    color: '#25252C',
-    fontFamily: 'Pretendard',
-    fontSize: 16,
-    fontWeight: '400',
-    lineHeight: 25.6,
-    textAlign: 'left',
-  },
-  cogErrorTitle: {
-    color: '#3557D4',
-    fontFamily: 'Pretendard',
-    fontSize: 16,
-    fontWeight: '700',
-    alignSelf: 'flex-start',
-    textAlign: 'left',
-  },
-  divider: {
-    width: '100%',
-    height: 0.5,
-    backgroundColor: '#BDC5D3',
+    backgroundColor: COLORS.BG_BUTTON_LIGHT,
+    marginBottom: 8,
     alignSelf: 'center',
-    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
-  chatBtn: {
+  situationButtonActive: {
+    borderColor: COLORS.BG_BUTTON,
+    backgroundColor: COLORS.BORDER_BLUE_LIGHT,
+  },
+  situationButtonText: {
+    color: COLORS.TEXT_DARK,
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 14 * 1.5,
+    textAlign: 'center',
+  },
+  situationButtonTextActive: {
+    color: COLORS.BG_BUTTON,
+    fontWeight: '700',
+  },
+  writeButton: {
+    backgroundColor: COLORS.BG_BUTTON_LIGHT,
+    borderColor: 'transparent',
+    borderWidth: 1,
+    alignSelf: 'center',
+  },
+  writeButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  writeIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+  },
+  writeButtonText: {
+    color: COLORS.TEXT_GRAY,
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 14 * 1.5,
+  },
+  customInput: {
+    width: '100%',
+    minHeight: 80,
+    padding: 16,
+    marginTop: 8,
+    borderRadius: 8,
+    backgroundColor: COLORS.TEXT_WHITE,
+    borderColor: COLORS.BORDER_GRAY,
+    borderWidth: 1,
+    fontSize: 16,
+    color: COLORS.TEXT_DARK,
+    textAlignVertical: 'top',
+    fontWeight: '400',
+  },
+  textBox: {
+    width: '100%',
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: COLORS.TEXT_WHITE,
+    borderWidth: 1,
+    borderColor: COLORS.BORDER_GRAY,
+    minHeight: 120,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  textInput: {
+    width: '100%',
+    fontSize: 16,
+    color: COLORS.TEXT_DARK,
+    lineHeight: 25.6,
+    textAlignVertical: 'top',
+    padding: 0,
+    fontWeight: '400',
+  },
+  completeButton: {
     width: 320,
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: '#92A9FF',
-    backgroundColor: '#E8F1FF',
-    marginTop: 14,
-    marginBottom: 30,
+    alignSelf: 'center',
   },
-  chatBtnLabel: {
-    color: '#3856C1',
+  completeButtonActive: {
+    backgroundColor: COLORS.BG_BUTTON,
+  },
+  completeButtonInactive: {
+    backgroundColor: COLORS.PLACEHOLDER,
+  },
+  completeButtonText: {
+    color: COLORS.TEXT_WHITE,
     fontFamily: 'Pretendard',
-    fontSize: 16,
-    fontWeight: '800',
-    lineHeight: 24,
-    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '900',
   },
 });

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import AnxietyStartModal from '../../components/anxietystartModal';
-import AnxietyExitModal from '../../components/anxietyexitModal'; // AnxietyExitModal import 확인
+import AnxietyExitModal from '../../components/anxietyexitModal';
 import PulsingCircleInteraction from '../../components/pulsingcircleInteraction';
 
 const exitIcon = require('../../assets/icon/exitIcon.png');
@@ -21,7 +21,6 @@ const ResponsePreventionScreen = ({ navigation }) => {
     setModalVisible(true);
   }, []);
 
-  // ✅ 2분(120초) 기준으로 수정된 메시지 타이밍
   useEffect(() => {
     let interval = null;
 
@@ -80,8 +79,7 @@ const ResponsePreventionScreen = ({ navigation }) => {
   const handleCompleteExit = () => {
     setExitModalVisible(false);
     setIsPulsing(false);
-    // ExitResponsePrevention 스크린으로 이동
-    navigation.replace('ExitResponsePrevention', {
+    navigation.replace('exitresponseprevention', {
       initialAnxiety: anxiety,
       secondsSpent: seconds,
     });
@@ -101,17 +99,12 @@ const ResponsePreventionScreen = ({ navigation }) => {
 
   const handlePressInCircle = () => {};
 
-  /**
-   * 사용자가 손을 떼면 호출되는 함수입니다.
-   * 진행 중이었다면 타이머를 멈추고 종료 모달을 띄웁니다.
-   */
   const handlePressOutCircle = () => {
-    // 💡 변경된 로직: isStarted 상태이고, 실제로 pulsing 중이었다면 타이머를 멈추고 모달을 띄웁니다.
     if (isStarted && isPulsing) {
-      setIsPulsing(false); // 타이머 정지 (useEffect에서 clearInterval 호출됨)
-      setExitModalVisible(true); // 종료 모달 표시
+      setIsPulsing(false);
+      setExitModalVisible(true);
     } else {
-      setIsPulsing(false); // 그 외의 경우 (시작 전 등), pulsing 상태만 false로 확실히 설정
+      setIsPulsing(false);
     }
   };
 
@@ -156,7 +149,6 @@ const ResponsePreventionScreen = ({ navigation }) => {
         </View>
       )}
 
-      {/* 시작 모달 */}
       <AnxietyStartModal
         visible={modalVisible}
         anxiety={anxiety}
@@ -165,12 +157,11 @@ const ResponsePreventionScreen = ({ navigation }) => {
         onClose={() => setModalVisible(false)}
       />
 
-      {/* 💡 종료 모달 */}
       <AnxietyExitModal
         visible={exitModalVisible}
         anxiety={anxiety}
         setAnxiety={setAnxiety}
-        onComplete={handleCompleteExit} // ✅ 완료 시 이동
+        onComplete={handleCompleteExit}
         onCancel={() => {
           setExitModalVisible(false);
         }}
