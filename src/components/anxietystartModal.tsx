@@ -9,6 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
+import { useNavigation } from '@react-navigation/native';
 
 const COLORS = {
   BG_0: '#F8FBFF',
@@ -27,11 +28,16 @@ const AnxietyStartModal = ({
   visible,
   onClose,
   onStart,
-  onCancel,
   anxiety,
   setAnxiety,
 }) => {
+  const navigation = useNavigation();
   const isSliderMoved = anxiety > 0;
+
+  const handleCancel = () => {
+    navigation.navigate('main');
+    onClose && onClose();
+  };
 
   return (
     <Modal
@@ -65,7 +71,7 @@ const AnxietyStartModal = ({
 
           <View style={styles.buttonContainerAbsolute}>
             <TouchableOpacity
-              onPress={onCancel}
+              onPress={handleCancel}
               style={styles.cancelButton}
               activeOpacity={0.8}
             >
