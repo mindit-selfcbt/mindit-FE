@@ -27,6 +27,7 @@ const AnxietyStartModal = ({
   visible,
   onClose,
   onStart,
+  onCancel,
   anxiety,
   setAnxiety,
 }) => {
@@ -62,9 +63,9 @@ const AnxietyStartModal = ({
             }
           />
 
-          <View style={styles.buttonContainer}>
+          <View style={styles.buttonContainerAbsolute}>
             <TouchableOpacity
-              onPress={onClose} // ✅ 취소 버튼 누르면 닫힘
+              onPress={onCancel}
               style={styles.cancelButton}
               activeOpacity={0.8}
             >
@@ -110,18 +111,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    width: 360,
-    height: 360,
+    width: 320,
+    height: 320,
     backgroundColor: COLORS.WHITE,
     borderRadius: 8,
-    padding: 24,
+    padding: 20,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    overflow: 'hidden',
   },
   image: {
     width: 80,
     height: 80,
-    marginBottom: 12,
+    marginBottom: 20,
+    marginTop: 10,
   },
   title: {
     color: COLORS.BG_100,
@@ -130,39 +133,41 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
     lineHeight: 30,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   slider: {
     width: '100%',
-    height: 40,
-    marginBottom: 20,
+    height: 60,
+    marginBottom: 40,
   },
-  buttonContainer: {
+  buttonContainerAbsolute: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginTop: 24,
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+    right: 20,
   },
   cancelButton: {
-    width: 150,
-    paddingVertical: 18,
+    width: '48%',
+    paddingVertical: 16,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
     borderWidth: 0.5,
     borderColor: COLORS.BORDER_BLUE,
     backgroundColor: COLORS.MAIN_4,
-    marginRight: 10,
   },
   cancelButtonText: {
     color: COLORS.MAIN_1,
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
   },
   startButton: {
-    width: 150,
-    paddingVertical: 18,
+    width: '48%',
+    paddingVertical: 16,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
@@ -178,7 +183,7 @@ const styles = StyleSheet.create({
   },
   startButtonText: {
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
   },
   startButtonTextInactive: {

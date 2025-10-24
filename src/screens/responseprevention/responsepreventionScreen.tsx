@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   timerAbsolute: {
     position: 'absolute',
-    top: 54,
+    top: 60,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -171,18 +171,17 @@ const styles = StyleSheet.create({
   },
   exitBtn: {
     position: 'absolute',
-    top: 54,
+    top: 55,
     right: 24,
     padding: 8,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.60)',
+
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 30,
   },
   exitIcon: {
-    width: 28,
-    height: 28,
+    width: 40,
+    height: 40,
     resizeMode: 'contain',
   },
   messageBox: {
