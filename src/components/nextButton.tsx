@@ -30,8 +30,7 @@ const styles = StyleSheet.create({
   button: {
     position: 'absolute',
     bottom: 20,
-    width: windowWidth - 32,
-    maxWidth: 380,
+    width: 320,
     paddingVertical: 20,
     borderRadius: 8,
     backgroundColor: '#3557D4',

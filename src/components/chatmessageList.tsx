@@ -4,7 +4,6 @@ import { FlatList, View, Text, StyleSheet } from 'react-native';
 const ChatMessageList = ({ messages, style }) => {
   const flatListRef = useRef(null);
 
-  // ✅ 새 메시지가 추가될 때 자동으로 맨 아래로 스크롤
   useEffect(() => {
     if (flatListRef.current && messages.length > 0) {
       flatListRef.current.scrollToEnd({ animated: true });
@@ -45,7 +44,6 @@ const ChatMessageList = ({ messages, style }) => {
         }
         showsVerticalScrollIndicator={false}
         onContentSizeChange={handleContentSizeChange}
-        // ⚡ 새로운 메시지가 추가되면 하단 자동 스크롤
         onLayout={handleContentSizeChange}
       />
     </View>
@@ -54,7 +52,7 @@ const ChatMessageList = ({ messages, style }) => {
 
 const styles = StyleSheet.create({
   flatList: {
-    flex: 1, // FlatList가 부모를 채우도록
+    flex: 1,
   },
   flatListPadding: {
     paddingHorizontal: 18,

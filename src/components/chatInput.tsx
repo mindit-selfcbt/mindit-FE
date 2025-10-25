@@ -5,14 +5,13 @@ import {
   Image,
   StyleSheet,
   Animated,
-  Easing,
   PermissionsAndroid,
   Platform,
   Alert,
   TextInput,
   Dimensions,
   KeyboardAvoidingView,
-  Keyboard, // ✅ 추가
+  Keyboard,
 } from 'react-native';
 import Voice from '@react-native-voice/voice';
 import VoiceIcon from '../assets/img/chat/voicerecognition.png';
@@ -26,10 +25,9 @@ const ChatInput = ({ onSendText }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const [inputText, setInputText] = useState('');
-  const [keyboardVisible, setKeyboardVisible] = useState(false); // ✅ 추가
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  // ✅ 키보드 상태 감지
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardDidShow', () =>
       setKeyboardVisible(true),
@@ -100,14 +98,10 @@ const ChatInput = ({ onSendText }) => {
     setIsKeyboardOpen(prev => !prev);
   };
 
-  // ⚡ Keyboard 모드
   if (isKeyboardOpen) {
     return (
       <KeyboardAvoidingView
-        style={[
-          styles.keyboardAvoidContainer,
-          !keyboardVisible && { flex: 0 }, // ✅ 키보드가 내려가면 여백 제거
-        ]}
+        style={[styles.keyboardAvoidContainer, !keyboardVisible && { flex: 0 }]}
         behavior="position"
         keyboardVerticalOffset={40}
       >
@@ -155,7 +149,6 @@ const ChatInput = ({ onSendText }) => {
     );
   }
 
-  // ⚡ 음성 모드
   return (
     <View style={styles.inputWrapVoice}>
       <TouchableOpacity
@@ -178,12 +171,11 @@ const ChatInput = ({ onSendText }) => {
   );
 };
 
-// ⚡ 스타일 정의
 const styles = StyleSheet.create({
   inputWrapVoice: {
     width: '100%',
     position: 'absolute',
-    bottom: 0, // 기존 20 → 살짝 내려감
+    bottom: 50,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -200,13 +192,11 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   keyboardIcon: { width: 60, height: 60, resizeMode: 'contain' },
-
   keyboardAvoidContainer: {
     flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: 'transparent',
   },
-
   chatBarWrapper: {
     position: 'absolute',
     bottom: -32,
@@ -214,7 +204,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-
   chatBar: {
     flexDirection: 'row',
     alignItems: 'center',
