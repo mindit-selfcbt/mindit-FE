@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import AnxietyStartModal from '../../components/anxietystartModal';
+import AnxietyExitModal from '../../components/anxietyexitModal';
 import PulsingCircleInteraction from '../../components/pulsingcircleInteraction';
 
 const exitIcon = require('../../assets/icon/exitIcon.png');
 
 const ResponsePreventionScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(true);
+  const [exitModalVisible, setExitModalVisible] = useState(false);
   const [anxiety, setAnxiety] = useState(50);
   const [isStarted, setIsStarted] = useState(false);
   const [isPulsing, setIsPulsing] = useState(false);
@@ -19,26 +21,50 @@ const ResponsePreventionScreen = ({ navigation }) => {
     setModalVisible(true);
   }, []);
 
-  // 🔹 타이머 로직
   useEffect(() => {
     let interval = null;
 
     if (isPulsing) {
-      console.log('⏳ Timer started');
       interval = setInterval(() => {
         setSeconds(prevSeconds => {
           const newSeconds = prevSeconds + 1;
-          if (newSeconds === 15) {
-            console.log('💬 15 seconds passed — showing motivational message');
+
+          if (newSeconds === 5) {
+            setMessage('좋아요. 지금처럼 천천히 호흡에 집중해보세요.');
+          } else if (newSeconds === 10) {
             setMessage(
-              '지금 느끼는 불안은 잘못된 게 아니에요.\n치료가 작동하고 있다는 증거예요.',
+              '괜찮아요, 불안은 곧 잦아듭니다.\n당신은 이미 잘하고 있어요.',
             );
+          } else if (newSeconds === 20) {
+            setMessage(
+              '불안을 피하지 않고 마주하는 건\n용기가 필요한 일이에요.',
+            );
+          } else if (newSeconds === 35) {
+            setMessage(
+              '조금 힘들 수 있지만,\n이 순간은 당신의 회복 과정이에요.',
+            );
+          } else if (newSeconds === 50) {
+            setMessage(
+              '절대 잘못된 감정이 아니에요.\n당신의 몸이 적응하고 있어요.',
+            );
+          } else if (newSeconds === 70) {
+            setMessage(
+              '호흡을 한 번 더 깊게, 천천히.\n당신이 통제하고 있습니다.',
+            );
+          } else if (newSeconds === 90) {
+            setMessage('이제 조금 익숙해졌죠?\n불안은 이미 줄어들고 있어요.');
+          } else if (newSeconds === 110) {
+            setMessage(
+              '마지막까지 잘 버텨줬어요.\n이 경험이 당신을 더 강하게 만들 거예요.',
+            );
+          } else if (newSeconds === 120) {
+            setMessage('2분을 완주했어요.\n당신은 해냈습니다. 정말 잘했어요.');
           }
+
           return newSeconds;
         });
       }, 1000);
     } else if (!isPulsing && seconds !== 0) {
-      console.log('⏹️ Timer stopped');
       clearInterval(interval);
     }
 
@@ -46,13 +72,20 @@ const ResponsePreventionScreen = ({ navigation }) => {
   }, [isPulsing, seconds]);
 
   const handleClose = () => {
-    console.log('🚪 Exit button pressed');
     setIsPulsing(false);
     navigation.replace('main');
   };
 
+  const handleCompleteExit = () => {
+    setExitModalVisible(false);
+    setIsPulsing(false);
+    navigation.replace('exitresponseprevention', {
+      initialAnxiety: anxiety,
+      secondsSpent: seconds,
+    });
+  };
+
   const handleModalStart = () => {
-    console.log('▶️ Session started');
     setModalVisible(false);
     setIsStarted(true);
     setMessage(
@@ -61,17 +94,18 @@ const ResponsePreventionScreen = ({ navigation }) => {
   };
 
   const setPulsingState = state => {
-    console.log(`🌕 Pulsing state changed: ${state}`);
     setIsPulsing(state);
   };
 
-  const handlePressInCircle = () => {
-    console.log('🟢 User pressed in (handlePressInCircle)');
-  };
+  const handlePressInCircle = () => {};
 
   const handlePressOutCircle = () => {
-    console.log('🔴 User pressed out (handlePressOutCircle)');
-    setIsPulsing(false);
+    if (isStarted && isPulsing) {
+      setIsPulsing(false);
+      setExitModalVisible(true);
+    } else {
+      setIsPulsing(false);
+    }
   };
 
   const formatTime = totalSeconds => {
@@ -85,7 +119,6 @@ const ResponsePreventionScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* PulsingCircleInteraction */}
       <View style={styles.pulsingInteractionWrapper}>
         <PulsingCircleInteraction
           isStarted={isStarted}
@@ -96,14 +129,12 @@ const ResponsePreventionScreen = ({ navigation }) => {
         />
       </View>
 
-      {/* Timer */}
       <View style={styles.timerAbsolute}>
         <View style={styles.timerBox}>
           <Text style={styles.timerText}>{formatTime(seconds)}</Text>
         </View>
       </View>
 
-      {/* Exit Button */}
       <TouchableOpacity
         style={styles.exitBtn}
         onPress={handleClose}
@@ -112,20 +143,28 @@ const ResponsePreventionScreen = ({ navigation }) => {
         <Image source={exitIcon} style={styles.exitIcon} />
       </TouchableOpacity>
 
-      {/* Message */}
-      {isStarted && !modalVisible && (
+      {isStarted && !modalVisible && !exitModalVisible && (
         <View style={styles.messageBox}>
           <Text style={styles.messageText}>{message}</Text>
         </View>
       )}
 
-      {/* Anxiety Start Modal */}
       <AnxietyStartModal
         visible={modalVisible}
         anxiety={anxiety}
         setAnxiety={setAnxiety}
         onStart={handleModalStart}
         onClose={() => setModalVisible(false)}
+      />
+
+      <AnxietyExitModal
+        visible={exitModalVisible}
+        anxiety={anxiety}
+        setAnxiety={setAnxiety}
+        onComplete={handleCompleteExit}
+        onCancel={() => {
+          setExitModalVisible(false);
+        }}
       />
     </View>
   );
@@ -145,7 +184,7 @@ const styles = StyleSheet.create({
   },
   timerAbsolute: {
     position: 'absolute',
-    top: 54,
+    top: 60,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -171,18 +210,16 @@ const styles = StyleSheet.create({
   },
   exitBtn: {
     position: 'absolute',
-    top: 54,
+    top: 55,
     right: 24,
     padding: 8,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.60)',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 30,
   },
   exitIcon: {
-    width: 28,
-    height: 28,
+    width: 40,
+    height: 40,
     resizeMode: 'contain',
   },
   messageBox: {

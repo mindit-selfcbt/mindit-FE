@@ -29,7 +29,7 @@ const menuData = [
 
 const BUTTON_HEIGHT = 40;
 const CHATBAR_HEIGHT = 60;
-const BUTTON_HORIZONTAL_PADDING = 12;
+const BUTTON_HORIZONTAL_PADDING = 8;
 
 const MainScreen = ({ navigation }) => {
   const handleMenuPress = key => {
@@ -65,6 +65,13 @@ const MainScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/* 이 TouchableOpacity는 오버레이 역할을 하며,
+        메뉴 버튼 위를 가려 onPress={handleScreenPress}가 동작하게 만들 수 있습니다.
+        메뉴 버튼이 눌리게 하려면 pointerEvents="none"으로 변경해야 하지만,
+        현재 코드는 메뉴 버튼에 pointerEvents="auto"를 설정하여
+        메뉴 버튼은 클릭 가능하고 나머지 빈 공간을 눌렀을 때 handleScreenPress가 작동하도록
+        의도한 것으로 보이므로, Z-Index와 pointerEvents 설정을 유지합니다.
+      */}
       <TouchableOpacity
         style={styles.overlayTouchable}
         activeOpacity={1}
@@ -134,7 +141,7 @@ const MainScreen = ({ navigation }) => {
       >
         <Image source={icons.mic} style={styles.micIcon} />
         <Text style={styles.chatPlaceholder}>
-          당신의 불안에 대해 무엇이든 말씀해주세요
+          당신의 불안에 대해 말씀해주세요
         </Text>
       </TouchableOpacity>
     </View>
@@ -160,7 +167,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'flex-start',
     paddingHorizontal: 24,
-    marginTop: 60,
+    marginTop: 100,
     marginBottom: 40,
     zIndex: 2,
   },
@@ -182,7 +189,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
-    gap: 4,
+    gap: 8,
     justifyContent: 'flex-start',
   },
   menuButton: {
@@ -193,7 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    marginRight: 8,
+    marginRight: 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.07,
@@ -204,8 +211,8 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   menuIcon: {
-    width: 24,
-    height: 24,
+    width: 20,
+    height: 20,
     marginRight: 4,
     resizeMode: 'contain',
   },
@@ -242,7 +249,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
     lineHeight: 30,
-    marginTop: 40,
+    marginTop: 80,
   },
   chatBar: {
     position: 'absolute',

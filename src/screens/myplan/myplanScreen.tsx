@@ -112,6 +112,7 @@ export default function MyPlanScreen() {
         <Text style={styles.topTitle}>
           눈송이님이 진행할 훈련을 설명해드릴게요
         </Text>
+
         {trainings.map(item => (
           <View key={item.id} style={styles.trainingRow}>
             <View style={styles.badge}>
@@ -201,11 +202,13 @@ export default function MyPlanScreen() {
             ))}
           </View>
         </View>
+
+        <NextButton
+          text="다음"
+          onPress={() => navigation.navigate('mytimeline')}
+          style={{ marginBottom: 40 }}
+        />
       </ScrollView>
-      <NextButton
-        text="다음"
-        onPress={() => navigation.navigate('mytimeline')}
-      />
     </SafeAreaView>
   );
 }
@@ -216,13 +219,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topTitle: {
+    fontWeight: '700',
     fontFamily: 'Pretendard',
-    fontWeight: '800',
     fontSize: 20,
     lineHeight: 32,
     color: '#25252C',
     marginLeft: 24,
-    marginTop: 32,
+    marginTop: 60,
     marginBottom: 40,
   },
   trainingRow: {
@@ -301,7 +304,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F8FBFF',
     paddingTop: 20,
-    paddingBottom: 36,
+    paddingBottom: 12,
   },
   planCard: {
     width: CARD_WIDTH,

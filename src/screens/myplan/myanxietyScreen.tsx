@@ -54,7 +54,9 @@ export default function MyAnxietyScreen() {
   return (
     <SafeAreaView style={styles.root}>
       <ScrollView contentContainerStyle={styles.container} style={{ flex: 1 }}>
-        <Text style={styles.title}>눈송이님 강박 증상 요약 및 불안 위계표</Text>
+        <Text style={styles.title}>
+          눈송이님의 강박 증상 요약과 {'\n'}불안 위계표입니다
+        </Text>
 
         {symptomItems.map((item, i) => (
           <View key={i} style={styles.summaryBox}>
@@ -70,7 +72,7 @@ export default function MyAnxietyScreen() {
             key={idx}
             style={[
               styles.hierarchyBox,
-              idx === anxieties.length - 1 ? { marginBottom: 120 } : {},
+              idx === anxieties.length - 1 ? { marginBottom: 20 } : {},
             ]}
           >
             <View style={styles.rankBox}>
@@ -80,12 +82,12 @@ export default function MyAnxietyScreen() {
             <Text style={styles.hierarchyScore}>{item.score}점</Text>
           </View>
         ))}
-      </ScrollView>
 
-      <NextButton
-        title="맞춤형 반응 방지 플랜 보기"
-        onPress={() => navigation.navigate('myplan')}
-      />
+        <NextButton
+          title="맞춤형 반응 방지 플랜 보기"
+          onPress={() => navigation.navigate('myplan')}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -106,6 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 30,
+    marginTop: 32,
     marginBottom: 32,
   },
   summaryBox: {
@@ -193,16 +196,15 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   button: {
-    position: 'absolute',
-    bottom: 20,
-    width: windowWidth - 32,
-    maxWidth: 380,
+    width: 320,
     paddingVertical: 20,
     borderRadius: 8,
     backgroundColor: '#3557D4',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
+    marginTop: 16,
+    marginBottom: 40,
   },
   buttonText: {
     color: '#FFF',

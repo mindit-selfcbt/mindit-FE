@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   View,
@@ -9,7 +9,6 @@ import {
   Platform,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { useNavigation } from '@react-navigation/native';
 
 const COLORS = {
   BG_0: '#F8FBFF',
@@ -19,24 +18,26 @@ const COLORS = {
   MAIN_4: '#E8F1FF',
   SLIDER_TRACK: '#344EAD',
   BORDER_BLUE: '#4388FF',
+  ACTIVE_BTN_BG: '#3856C1',
+  ACTIVE_BTN_TEXT: '#FFFFFF',
   WHITE: '#FFF',
 };
 
 const Step4Image = require('../assets/img/responseprevention/infoImg.png');
 
-const AnxietyStartModal = ({
+const AnxietyExitModal = ({
   visible,
-  onClose,
-  onStart,
+  onComplete,
+  onCancel,
   anxiety,
   setAnxiety,
 }) => {
-  const navigation = useNavigation();
-  const isSliderMoved = anxiety > 0;
+  // ✅ 새 state: 사용자가 실제로 슬라이더를 움직였는지 추적
+  const [hasMoved, setHasMoved] = useState(false);
 
-  const handleCancel = () => {
-    navigation.navigate('main');
-    onClose && onClose();
+  const handleValueChange = value => {
+    setAnxiety(value);
+    if (!hasMoved) setHasMoved(true); // 처음 슬라이더를 움직였을 때 true로 변경
   };
 
   return (
@@ -60,7 +61,7 @@ const AnxietyStartModal = ({
             minimumValue={0}
             maximumValue={100}
             value={anxiety}
-            onValueChange={setAnxiety}
+            onValueChange={handleValueChange} // ✅ 수정
             style={styles.slider}
             minimumTrackTintColor={COLORS.SLIDER_TRACK}
             maximumTrackTintColor={COLORS.BG_40}
@@ -70,34 +71,36 @@ const AnxietyStartModal = ({
           />
 
           <View style={styles.buttonContainerAbsolute}>
+            {/* 이어서 하기 버튼 */}
             <TouchableOpacity
-              onPress={handleCancel}
+              onPress={onCancel}
               style={styles.cancelButton}
               activeOpacity={0.8}
             >
-              <Text style={styles.cancelButtonText}>취소</Text>
+              <Text style={styles.cancelButtonText}>이어서하기</Text>
             </TouchableOpacity>
 
+            {/* 완료하기 버튼 */}
             <TouchableOpacity
-              onPress={onStart}
+              onPress={onComplete}
               style={[
                 styles.startButton,
-                isSliderMoved
+                hasMoved
                   ? styles.startButtonActive
                   : styles.startButtonInactive,
               ]}
-              disabled={!isSliderMoved}
+              disabled={!hasMoved}
               activeOpacity={0.8}
             >
               <Text
                 style={[
                   styles.startButtonText,
-                  isSliderMoved
+                  hasMoved
                     ? styles.startButtonTextActive
                     : styles.startButtonTextInactive,
                 ]}
               >
-                시작하기
+                완료하기
               </Text>
             </TouchableOpacity>
           </View>
@@ -107,7 +110,7 @@ const AnxietyStartModal = ({
   );
 };
 
-export default AnxietyStartModal;
+export default AnxietyExitModal;
 
 const styles = StyleSheet.create({
   backdrop: {
@@ -184,8 +187,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FCFEFF',
   },
   startButtonActive: {
-    borderColor: COLORS.BG_40,
-    backgroundColor: COLORS.MAIN_1,
+    borderColor: COLORS.ACTIVE_BTN_BG,
+    backgroundColor: COLORS.ACTIVE_BTN_BG,
   },
   startButtonText: {
     fontFamily: 'Pretendard',
@@ -196,6 +199,6 @@ const styles = StyleSheet.create({
     color: COLORS.BG_100,
   },
   startButtonTextActive: {
-    color: COLORS.BG_0,
+    color: COLORS.ACTIVE_BTN_TEXT,
   },
 });

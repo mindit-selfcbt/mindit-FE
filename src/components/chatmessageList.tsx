@@ -1,28 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { FlatList, View, Text, StyleSheet } from 'react-native';
 
-const MESSAGE_DELAY = 2000; // 조금 더 느리게
-
-const ChatMessageList = ({ messages }) => {
-  const [visibleMessages, setVisibleMessages] = useState([]);
-  const timeoutRef = useRef();
+const ChatMessageList = ({ messages, style }) => {
+  const flatListRef = useRef(null);
 
   useEffect(() => {
-    setVisibleMessages([]);
-    // 안전한 체크!
-    if (Array.isArray(messages) && messages.length > 0) {
-      let i = 0;
-      function addMsg() {
-        setVisibleMessages(prev => [...prev, messages[i]]);
-        i++;
-        if (i < messages.length) {
-          timeoutRef.current = setTimeout(addMsg, MESSAGE_DELAY);
-        }
-      }
-      addMsg();
+    if (flatListRef.current && messages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: true });
     }
-    return () => clearTimeout(timeoutRef.current);
   }, [messages]);
+
+  const handleContentSizeChange = () => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  };
 
   const renderItem = ({ item }) => (
     <View
@@ -31,47 +23,65 @@ const ChatMessageList = ({ messages }) => {
         item.from === 'User' ? styles.userBubble : styles.aiBubble,
       ]}
     >
-      <Text style={styles.messageText}>{item.text}</Text>
+      <Text
+        style={[styles.messageText, item.from === 'User' && styles.userText]}
+      >
+        {item.text}
+      </Text>
     </View>
   );
 
   return (
-    <FlatList
-      contentContainerStyle={styles.flatListPadding}
-      data={visibleMessages}
-      renderItem={renderItem}
-      keyExtractor={item => item.id}
-      showsVerticalScrollIndicator={false}
-    />
+    <View style={[{ flex: 1 }, style]}>
+      <FlatList
+        ref={flatListRef}
+        style={styles.flatList}
+        contentContainerStyle={styles.flatListPadding}
+        data={messages}
+        renderItem={renderItem}
+        keyExtractor={(item, index) =>
+          item.id ? item.id.toString() : index.toString()
+        }
+        showsVerticalScrollIndicator={false}
+        onContentSizeChange={handleContentSizeChange}
+        onLayout={handleContentSizeChange}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  flatList: {
+    flex: 1,
+  },
   flatListPadding: {
     paddingHorizontal: 18,
-    paddingBottom: 12,
     paddingTop: 20,
+    paddingBottom: 20,
   },
   messageBubble: {
     marginVertical: 8,
     padding: 16,
     borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.80)',
     maxWidth: '85%',
   },
   aiBubble: {
     alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255,255,255,0.80)',
   },
   userBubble: {
     alignSelf: 'flex-end',
+    backgroundColor: '#6289E8',
   },
   messageText: {
-    color: '#343B61',
     fontFamily: 'Pretendard',
     fontSize: 18,
-    fontStyle: 'normal',
     fontWeight: '600',
     lineHeight: 28.8,
+    color: '#343B61',
+  },
+  userText: {
+    color: '#FFFFFF',
   },
 });
 
