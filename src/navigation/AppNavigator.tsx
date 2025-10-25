@@ -11,6 +11,7 @@ import imagineScreen from '../screens/imagine/imagineScreen';
 import imaginereadyScreen from '../screens/imagine/imaginereadyScreen';
 import imaginalexposureScreen from '../screens/imagine/imaginalexposureScreen';
 import exposureScreen from '../screens/aiarexposure/exposureScreen';
+import aiexposureScreen from '../screens/aiarexposure/aiexposureScreen';
 import responsepreventionScreen from '../screens/responseprevention/responsepreventionScreen';
 import exitresponsepreventionScreen from '../screens/responseprevention/exitresponsepreventionScreen';
 import loadingScreen from '../screens/responseprevention/loadingScreen';
@@ -83,6 +84,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="exposure"
           component={exposureScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="aiexposure"
+          component={aiexposureScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

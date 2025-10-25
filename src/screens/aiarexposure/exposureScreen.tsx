@@ -13,7 +13,6 @@ import {
 const windowWidth = Dimensions.get('window').width;
 const HORIZONTAL_PADDING = 18;
 
-// 이미지 및 아이콘 경로
 const aiExposureActivateIcon = require('../../assets/img/exposure/aiexposrueactivateImg.png');
 const aiExposureDeactivateIcon = require('../../assets/img/exposure/aiexposruedeactivateImg.png');
 const arExposureActivateIcon = require('../../assets/img/exposure/arexposrueactivateImg.png');
@@ -22,14 +21,12 @@ const mainIcon = require('../../assets/icon/mainIcon.png');
 const noChoiceIcon = require('../../assets/img/exposure/nochoice.png');
 const choiceIcon = require('../../assets/img/exposure/choice.png');
 
-// 더미 AI 이미지
 const aiImages = [
   require('../../assets/img/exposure/aisubway1Img.png'),
   require('../../assets/img/exposure/aisubway2Img.png'),
   require('../../assets/img/exposure/aisubway3Img.png'),
 ];
 
-// 더미 AR 이미지
 const arImages = [
   require('../../assets/img/exposure/arhandle1Img.png'),
   require('../../assets/img/exposure/arhandle2Img.png'),
@@ -85,14 +82,12 @@ export default function ExposureScreen({ navigation }) {
       ? '생성하기를 누르면 AI 사진이 표시됩니다'
       : '생성하기를 누르면 AR 사진이 표시됩니다';
 
-  // --- 생성하기 버튼 핸들러 ---
   const handleGenerate = () => {
     if (selectedSituation !== null) {
       setIsGenerated(false);
       setSelectedImageIndex(null);
       setIsLoading(true);
 
-      // 2초 로딩 딜레이
       setTimeout(() => {
         setIsLoading(false);
         setIsGenerated(true);
@@ -100,13 +95,16 @@ export default function ExposureScreen({ navigation }) {
     }
   };
 
-  // --- 이미지 선택 핸들러 ---
   const handleImageSelect = (index: number) => {
     setSelectedImageIndex(prevIndex => (prevIndex === index ? null : index));
   };
 
-  // --- 시작하기 버튼 스타일 결정 (수정된 부분) ---
-  // 조건: 이미지가 생성되었고 (isGenerated) 사용자가 이미지를 선택했을 때 (selectedImageIndex !== null)
+  const handleStartTraining = () => {
+    if (isStartButtonActive && toggle === 'ai') {
+      navigation.navigate('aiexposure');
+    }
+  };
+
   const isStartButtonActive = isGenerated && selectedImageIndex !== null;
 
   const startBtnStyle = isStartButtonActive
@@ -117,16 +115,10 @@ export default function ExposureScreen({ navigation }) {
     ? { ...styles.startBtnText, color: '#FFFFFF' }
     : styles.startBtnText;
 
-  // --- 생성하기 버튼 스타일 결정 (기존 유지) ---
-  // 생성 완료 후에도 색상은 바뀌지 않음.
-  // 단, 로딩 중이 아닐 때만 '다시 생성하기' 버튼의 기본 스타일 유지
-  const isGenerateButtonActive = isGenerated && !isLoading;
-
   const generateBtnStyle = styles.generateBtn;
 
   const generateBtnTextStyle = styles.generateBtnText;
 
-  // --- UI 컴포넌트 분리: 이미지 렌더링 영역 ---
   const ImageDisplayArea = () => {
     const imagesToDisplay = toggle === 'ai' ? aiImages : arImages;
     const loadingMessage =
@@ -135,7 +127,6 @@ export default function ExposureScreen({ navigation }) {
         : 'AR 이미지를 생성 중입니다...';
 
     if (isLoading) {
-      // 로딩 중일 때
       return (
         <View style={exposureGuideBoxStyles.outer}>
           <ActivityIndicator
@@ -147,7 +138,6 @@ export default function ExposureScreen({ navigation }) {
         </View>
       );
     } else if (isGenerated) {
-      // 생성 완료 후 이미지 표시
       return (
         <ScrollView
           horizontal
@@ -176,7 +166,6 @@ export default function ExposureScreen({ navigation }) {
         </ScrollView>
       );
     } else {
-      // 생성 전 가이드 표시
       return (
         <View style={exposureGuideBoxStyles.outer}>
           <Image
@@ -191,7 +180,6 @@ export default function ExposureScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
-      {/* 상단 탭 및 아이콘 */}
       <View style={styles.topRow}>
         <View style={styles.toggleWrap}>
           {TOGGLE_OPTIONS.map(option => {
@@ -204,7 +192,7 @@ export default function ExposureScreen({ navigation }) {
                   setToggle(option.key as 'ai' | 'ar');
                   setIsGenerated(false);
                   setSelectedImageIndex(null);
-                  setIsLoading(false); // 로딩 중지
+                  setIsLoading(false);
                 }}
                 activeOpacity={1}
               >
@@ -242,7 +230,6 @@ export default function ExposureScreen({ navigation }) {
         불안 위계표에서 노출 훈련을 할 상황을 선택해주세요
       </Text>
 
-      {/* 상황 목록 */}
       <View style={styles.situationList}>
         {EXPOSURE_SITUATIONS.map((situation, i) => {
           const selected = selectedSituation === i;
@@ -280,7 +267,6 @@ export default function ExposureScreen({ navigation }) {
         를 생성해요
       </Text>
 
-      {/* 상황 선택 박스 */}
       <View style={exposureSituationBoxStyles.outer}>
         <Text style={exposureSituationBoxStyles.text}>
           {selectedSituation !== null
@@ -296,12 +282,10 @@ export default function ExposureScreen({ navigation }) {
 
       <View style={{ height: 12 }} />
 
-      {/* 이미지 표시/가이드/로딩 영역 */}
       <ImageDisplayArea />
 
       <View style={{ height: 24 }} />
 
-      {/* 버튼 영역 */}
       <View style={styles.buttonRowWrapper}>
         <View style={styles.buttonRow}>
           <TouchableOpacity
@@ -318,8 +302,9 @@ export default function ExposureScreen({ navigation }) {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={startBtnStyle} // 시작하기 버튼 스타일 적용
+            style={startBtnStyle}
             disabled={!isStartButtonActive}
+            onPress={handleStartTraining}
           >
             <Text style={startBtnTextStyle}>시작하기</Text>
           </TouchableOpacity>
