@@ -24,7 +24,8 @@
     "react-native-screens": "^4.13.1",
     "react-native-sound": "^0.13.0",
     "react-native-svg": "^15.12.1",
-    "react-native-video": "^6.17.0"
+    "react-native-video": "^6.17.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

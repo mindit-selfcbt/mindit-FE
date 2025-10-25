@@ -9,18 +9,40 @@ import {
   PermissionsAndroid,
   Platform,
   Alert,
+  TextInput,
+  Dimensions,
+  KeyboardAvoidingView,
+  Keyboard, // ✅ 추가
 } from 'react-native';
 import Voice from '@react-native-voice/voice';
 import VoiceIcon from '../assets/img/chat/voicerecognition.png';
 import KeyboardIcon from '../assets/img/chat/keyboard.png';
+import SendIcon from '../assets/img/chat/send.png';
+import MicIcon from '../assets/icon/micIcon.png';
 
-const ChatInput = ({ onKeyboardPress, onSendText }) => {
+const windowWidth = Dimensions.get('window').width;
+
+const ChatInput = ({ onSendText }) => {
   const [isRecording, setIsRecording] = useState(false);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+  const [inputText, setInputText] = useState('');
+  const [keyboardVisible, setKeyboardVisible] = useState(false); // ✅ 추가
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  console.log('ChatInput 렌더링됨, Voice:', Voice);
+  // ✅ 키보드 상태 감지
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', () =>
+      setKeyboardVisible(true),
+    );
+    const hideSub = Keyboard.addListener('keyboardDidHide', () =>
+      setKeyboardVisible(false),
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
-  // ⚡ Android 권한 요청
   const requestRecordPermission = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -34,110 +56,108 @@ const ChatInput = ({ onKeyboardPress, onSendText }) => {
             buttonPositive: '허용',
           },
         );
-        console.log('권한 요청 결과:', granted);
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
         console.warn('권한 요청 예외:', err);
         return false;
       }
     }
-    return true; // iOS는 Info.plist에서 권한 설정 필요
+    return true;
   };
 
-  useEffect(() => {
-    console.log('Voice 이벤트 등록 시도');
-
-    Voice.onSpeechResults = event => {
-      console.log('onSpeechResults 호출, event:', event);
-      const text = event.value?.[0];
-      if (text) {
-        console.log('인식된 텍스트:', text);
-        onSendText(text);
-      }
-    };
-
-    Voice.onSpeechError = event => {
-      console.log('onSpeechError 호출, event:', event);
-      setIsRecording(false);
-      Alert.alert(
-        '음성 인식 오류',
-        event.error?.message || '오류가 발생했습니다.',
-      );
-    };
-
-    return () => {
-      console.log('Voice 이벤트 해제');
-      Voice.destroy().then(() => Voice.removeAllListeners());
-    };
-  }, []);
-
-  // 🔹 녹음 중 애니메이션
-  useEffect(() => {
-    if (isRecording) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(scaleAnim, {
-            toValue: 1.2,
-            duration: 500,
-            useNativeDriver: true,
-            easing: Easing.ease,
-          }),
-          Animated.timing(scaleAnim, {
-            toValue: 1,
-            duration: 500,
-            useNativeDriver: true,
-            easing: Easing.ease,
-          }),
-        ]),
-      ).start();
-    } else {
-      scaleAnim.setValue(1);
-    }
-  }, [isRecording]);
-
-  // 🔹 녹음 시작
   const startRecording = async () => {
-    console.log('녹음 시작 시도');
-
-    if (!Voice || !Voice.isAvailable) {
-      console.log('Voice 모듈이 로드되지 않았거나 사용 불가');
-      Alert.alert('오류', 'Voice 모듈이 아직 준비되지 않았습니다.');
-      return;
-    }
-
     const available = await Voice.isAvailable();
-    console.log('Voice 사용 가능 여부:', available);
     if (!available) return;
 
     const hasPermission = await requestRecordPermission();
     if (!hasPermission) return;
 
     try {
-      console.log('Voice.start 호출 전');
       await Voice.start('ko-KR');
       setIsRecording(true);
-      console.log('Voice.start 호출 성공, 녹음 시작됨');
     } catch (e) {
-      console.log('Voice Start Error:', e);
       Alert.alert('음성 인식 시작 오류', e.message || e.toString());
     }
   };
 
-  // 🔹 녹음 종료
   const stopRecording = async () => {
-    console.log('녹음 종료 시도');
     try {
       await Voice.stop();
       setIsRecording(false);
-      console.log('Voice.stop 호출 성공, 녹음 종료됨');
     } catch (e) {
-      console.log('Voice Stop Error:', e);
       Alert.alert('음성 인식 종료 오류', e.message || e.toString());
     }
   };
 
+  const handleSendPress = () => {
+    if (inputText.trim()) {
+      onSendText(inputText.trim());
+      setInputText('');
+    }
+  };
+
+  const toggleKeyboardMode = () => {
+    setIsKeyboardOpen(prev => !prev);
+  };
+
+  // ⚡ Keyboard 모드
+  if (isKeyboardOpen) {
+    return (
+      <KeyboardAvoidingView
+        style={[
+          styles.keyboardAvoidContainer,
+          !keyboardVisible && { flex: 0 }, // ✅ 키보드가 내려가면 여백 제거
+        ]}
+        behavior="position"
+        keyboardVerticalOffset={40}
+      >
+        <View style={styles.chatBarWrapper}>
+          <View style={styles.chatBar}>
+            <TouchableOpacity
+              onPress={toggleKeyboardMode}
+              style={styles.micButton}
+            >
+              <Image source={MicIcon} style={styles.micIcon} />
+            </TouchableOpacity>
+
+            <TextInput
+              style={styles.textInput}
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="메시지를 입력하세요..."
+              placeholderTextColor="#9DA4B0"
+              returnKeyType="send"
+              onSubmitEditing={handleSendPress}
+              blurOnSubmit={false}
+              autoFocus
+            />
+
+            <TouchableOpacity
+              onPress={handleSendPress}
+              style={styles.sendButton}
+              disabled={!inputText.trim()}
+            >
+              <Image
+                source={SendIcon}
+                style={[
+                  styles.sendIcon,
+                  {
+                    opacity: inputText.trim() ? 1 : 0.5,
+                    width: 30,
+                    height: 30,
+                  },
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    );
+  }
+
+  // ⚡ 음성 모드
   return (
-    <View style={styles.inputWrap}>
+    <View style={styles.inputWrapVoice}>
       <TouchableOpacity
         onPress={isRecording ? stopRecording : startRecording}
         style={styles.voiceButton}
@@ -147,18 +167,23 @@ const ChatInput = ({ onKeyboardPress, onSendText }) => {
           style={[styles.voiceIcon, { transform: [{ scale: scaleAnim }] }]}
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={onKeyboardPress} style={styles.keyboardButton}>
+
+      <TouchableOpacity
+        onPress={toggleKeyboardMode}
+        style={styles.keyboardButton}
+      >
         <Image source={KeyboardIcon} style={styles.keyboardIcon} />
       </TouchableOpacity>
     </View>
   );
 };
 
+// ⚡ 스타일 정의
 const styles = StyleSheet.create({
-  inputWrap: {
+  inputWrapVoice: {
     width: '100%',
     position: 'absolute',
-    bottom: 20,
+    bottom: 0, // 기존 20 → 살짝 내려감
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -175,6 +200,68 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   keyboardIcon: { width: 60, height: 60, resizeMode: 'contain' },
+
+  keyboardAvoidContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'transparent',
+  },
+
+  chatBarWrapper: {
+    position: 'absolute',
+    bottom: -32,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  chatBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: windowWidth - 32,
+    maxWidth: 380,
+    height: 60,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderRadius: 40,
+    borderWidth: 1,
+    borderColor: '#FFF',
+    backgroundColor: '#FFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.07,
+    shadowRadius: 12,
+    elevation: 4,
+    gap: 8,
+  },
+  micButton: {
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  micIcon: {
+    width: 60,
+    height: 60,
+    resizeMode: 'contain',
+  },
+  textInput: {
+    flex: 1,
+    height: 60,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    fontSize: 16,
+    color: '#343B61',
+  },
+  sendButton: {
+    paddingHorizontal: 12,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sendIcon: {
+    resizeMode: 'contain',
+  },
 });
 
 export default ChatInput;

@@ -1,34 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { FlatList, View, Text, StyleSheet } from 'react-native';
 
-const MESSAGE_DELAY = 2000;
-
-const ChatMessageList = ({ messages }) => {
-  const [visibleMessages, setVisibleMessages] = useState([]);
+const ChatMessageList = ({ messages, style }) => {
   const flatListRef = useRef(null);
-  const timeoutRef = useRef();
 
+  // ✅ 새 메시지가 추가될 때 자동으로 맨 아래로 스크롤
   useEffect(() => {
-    setVisibleMessages([]);
-    if (Array.isArray(messages) && messages.length > 0) {
-      let i = 0;
-      function addMsg() {
-        setVisibleMessages(prev => [...prev, messages[i]]);
-        i++;
-        if (i < messages.length) {
-          timeoutRef.current = setTimeout(addMsg, MESSAGE_DELAY);
-        }
-      }
-      addMsg();
-    }
-    return () => clearTimeout(timeoutRef.current);
-  }, [messages]);
-
-  useEffect(() => {
-    if (flatListRef.current && visibleMessages.length > 0) {
+    if (flatListRef.current && messages.length > 0) {
       flatListRef.current.scrollToEnd({ animated: true });
     }
-  }, [visibleMessages]);
+  }, [messages]);
+
+  const handleContentSizeChange = () => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  };
 
   const renderItem = ({ item }) => (
     <View
@@ -37,43 +24,66 @@ const ChatMessageList = ({ messages }) => {
         item.from === 'User' ? styles.userBubble : styles.aiBubble,
       ]}
     >
-      <Text style={styles.messageText}>{item.text}</Text>
+      <Text
+        style={[styles.messageText, item.from === 'User' && styles.userText]}
+      >
+        {item.text}
+      </Text>
     </View>
   );
 
   return (
-    <FlatList
-      ref={flatListRef}
-      contentContainerStyle={styles.flatListPadding}
-      data={visibleMessages}
-      renderItem={renderItem}
-      keyExtractor={(item, index) => index.toString()}
-      showsVerticalScrollIndicator={false}
-    />
+    <View style={[{ flex: 1 }, style]}>
+      <FlatList
+        ref={flatListRef}
+        style={styles.flatList}
+        contentContainerStyle={styles.flatListPadding}
+        data={messages}
+        renderItem={renderItem}
+        keyExtractor={(item, index) =>
+          item.id ? item.id.toString() : index.toString()
+        }
+        showsVerticalScrollIndicator={false}
+        onContentSizeChange={handleContentSizeChange}
+        // ⚡ 새로운 메시지가 추가되면 하단 자동 스크롤
+        onLayout={handleContentSizeChange}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  flatList: {
+    flex: 1, // FlatList가 부모를 채우도록
+  },
   flatListPadding: {
     paddingHorizontal: 18,
     paddingTop: 20,
-    paddingBottom: 220, // ChatInput와 겹치지 않도록 충분한 여백
+    paddingBottom: 20,
   },
   messageBubble: {
     marginVertical: 8,
     padding: 16,
     borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.80)',
     maxWidth: '85%',
   },
-  aiBubble: { alignSelf: 'flex-start' },
-  userBubble: { alignSelf: 'flex-end' },
+  aiBubble: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255,255,255,0.80)',
+  },
+  userBubble: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#6289E8',
+  },
   messageText: {
-    color: '#343B61',
     fontFamily: 'Pretendard',
     fontSize: 18,
     fontWeight: '600',
     lineHeight: 28.8,
+    color: '#343B61',
+  },
+  userText: {
+    color: '#FFFFFF',
   },
 });
 
