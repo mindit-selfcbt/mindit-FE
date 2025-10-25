@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, View, Text, StyleSheet } from 'react-native';
 
-const MESSAGE_DELAY = 2000; // 조금 더 느리게
+const MESSAGE_DELAY = 2000;
 
 const ChatMessageList = ({ messages }) => {
   const [visibleMessages, setVisibleMessages] = useState([]);
+  const flatListRef = useRef(null);
   const timeoutRef = useRef();
 
   useEffect(() => {
     setVisibleMessages([]);
-    // 안전한 체크!
     if (Array.isArray(messages) && messages.length > 0) {
       let i = 0;
       function addMsg() {
@@ -24,6 +24,12 @@ const ChatMessageList = ({ messages }) => {
     return () => clearTimeout(timeoutRef.current);
   }, [messages]);
 
+  useEffect(() => {
+    if (flatListRef.current && visibleMessages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  }, [visibleMessages]);
+
   const renderItem = ({ item }) => (
     <View
       style={[
@@ -37,10 +43,11 @@ const ChatMessageList = ({ messages }) => {
 
   return (
     <FlatList
+      ref={flatListRef}
       contentContainerStyle={styles.flatListPadding}
       data={visibleMessages}
       renderItem={renderItem}
-      keyExtractor={item => item.id}
+      keyExtractor={(item, index) => index.toString()}
       showsVerticalScrollIndicator={false}
     />
   );
@@ -49,8 +56,8 @@ const ChatMessageList = ({ messages }) => {
 const styles = StyleSheet.create({
   flatListPadding: {
     paddingHorizontal: 18,
-    paddingBottom: 12,
     paddingTop: 20,
+    paddingBottom: 220, // ChatInput와 겹치지 않도록 충분한 여백
   },
   messageBubble: {
     marginVertical: 8,
@@ -59,17 +66,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.80)',
     maxWidth: '85%',
   },
-  aiBubble: {
-    alignSelf: 'flex-start',
-  },
-  userBubble: {
-    alignSelf: 'flex-end',
-  },
+  aiBubble: { alignSelf: 'flex-start' },
+  userBubble: { alignSelf: 'flex-end' },
   messageText: {
     color: '#343B61',
     fontFamily: 'Pretendard',
     fontSize: 18,
-    fontStyle: 'normal',
     fontWeight: '600',
     lineHeight: 28.8,
   },
