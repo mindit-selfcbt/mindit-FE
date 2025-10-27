@@ -11,6 +11,7 @@ import imagineScreen from '../screens/imagine/imagineScreen';
 import imaginereadyScreen from '../screens/imagine/imaginereadyScreen';
 import imaginalexposureScreen from '../screens/imagine/imaginalexposureScreen';
 import exposureScreen from '../screens/aiarexposure/exposureScreen';
+import aiexposureScreen from '../screens/aiarexposure/aiexposureScreen';
 import responsepreventionScreen from '../screens/responseprevention/responsepreventionScreen';
 import exitresponsepreventionScreen from '../screens/responseprevention/exitresponsepreventionScreen';
 import loadingScreen from '../screens/responseprevention/loadingScreen';
@@ -21,8 +22,10 @@ import cognitiveerrorScreen from '../screens/record/cognitiveerrorScreen';
 import erprecordScreen from '../screens/record/erprecordScreen';
 import weeklyreportScreen from '../screens/report/weeklyreportScreen';
 import monthlyreportScreen from '../screens/report/monthlyreportScreen';
+import dailyreportScreen from '../screens/report/dailyreportScreen';
 import myanxietyScreen from '../screens/myplan/myanxietyScreen';
 import myplanScreen from '../screens/myplan/myplanScreen';
+import mytimelineScreen from '../screens/myplan/mytimelineScreen';
 
 export type RootStackParamList = {
   Onboarding: undefined;
@@ -86,6 +89,11 @@ const AppNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name="aiexposure"
+          component={aiexposureScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="responseprevention"
           component={responsepreventionScreen}
           options={{ headerShown: false }}
@@ -136,6 +144,11 @@ const AppNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
+          name="dailyreport"
+          component={dailyreportScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="myanxiety"
           component={myanxietyScreen}
           options={{ headerShown: false }}
@@ -143,6 +156,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="myplan"
           component={myplanScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="mytimeline"
+          component={mytimelineScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

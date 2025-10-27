@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 const ANXIETY_ICONS = [
   require('../assets/img/report/anxiety1.png'),
@@ -15,12 +15,13 @@ function getDaysInMonth(year, month) {
   return new Date(year, month, 0).getDate();
 }
 
-export default function CalendarGrid({ year, month, anxietyList }) {
+export default function CalendarGrid({ year, month, anxietyList, onDayPress }) {
   const totalDays = getDaysInMonth(year, month);
   const firstDay = (new Date(year, month - 1, 1).getDay() + 6) % 7;
 
   let rows = [];
   let day = 1;
+
   for (let w = 0; w < 6; w++) {
     const week = [];
     for (let d = 0; d < 7; d++) {
@@ -29,16 +30,22 @@ export default function CalendarGrid({ year, month, anxietyList }) {
       } else if (day > totalDays) {
         week.push(<View style={styles.cell} key={`empty${w}_${d}`} />);
       } else {
-        const level = anxietyList?.[day - 1]?.level || 1;
+        const currentDay = day;
+        const level = anxietyList?.[currentDay - 1]?.level || 1;
+
         week.push(
-          <View style={styles.cell} key={`d${day}`}>
-            <Text style={styles.dayNumber}>{day}</Text>
+          <TouchableOpacity
+            style={styles.cell}
+            key={`d${currentDay}`}
+            onPress={() => onDayPress && onDayPress(currentDay, level)}
+          >
+            <Text style={styles.dayNumber}>{currentDay}</Text>
             <Image
               style={styles.anxietyIcon}
               source={ANXIETY_ICONS[level - 1]}
             />
             <View style={styles.imageBottomGap} />
-          </View>,
+          </TouchableOpacity>,
         );
         day++;
       }
@@ -67,8 +74,8 @@ export default function CalendarGrid({ year, month, anxietyList }) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginTop: 36,
-    paddingHorizontal: 6,
+    marginTop: 40,
+    paddingHorizontal: 4,
   },
   row: {
     flexDirection: 'row',
@@ -89,10 +96,10 @@ const styles = StyleSheet.create({
     aspectRatio: 0.95,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    minWidth: 34,
+    minWidth: 36,
     marginVertical: 32,
-    paddingTop: 8,
-    paddingBottom: 12,
+    paddingTop: 0,
+    paddingBottom: 0,
   },
   dayNumber: {
     color: '#25252C',

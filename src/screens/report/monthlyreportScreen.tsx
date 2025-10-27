@@ -6,12 +6,12 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import ToggleButton from '../../components/toggleButton';
 import MonthlyBarChart from '../../components/monthlybarChart';
 import CalendarGrid from '../../components/calendarGrid';
 
-// 아이콘 import는 동일...
 const mainIcon = require('../../assets/icon/mainIcon.png');
 const weeklyIcon = require('../../assets/icon/weeklyIcon.png');
 const backIcon = require('../../assets/icon/backIcon.png');
@@ -36,43 +36,60 @@ const months = [
   '11월',
   '12월',
 ];
-const monthValues = [100, 95, 90, 85, 70, 60, 50, 60, 30, 40, 35, 20];
+
+const checkingMonthValues = [70, 60, 50, 60, 30, 40, 35, 20, 15, 25, 30, 40];
+const contaminationMonthValues = [
+  55, 45, 65, 35, 25, 30, 40, 50, 45, 55, 60, 70,
+];
 
 function getDaysInMonth(year, month) {
   return new Date(year, month, 0).getDate();
 }
 
-// 월별 불안데이터 예시 생성기 (실제 데이타 연동 가능)
-function randomAnxietyForMonth(year, month) {
+function randomAnxietyForMonth(year, month, type = 'checking') {
   const numDays = getDaysInMonth(year, month);
-  return Array.from({ length: numDays }, (_, i) => ({
-    day: i + 1,
-    level: Math.ceil(Math.random() * 5),
-  }));
+  if (type === 'checking') {
+    return Array.from({ length: numDays }, (_, i) => ({
+      day: i + 1,
+      level: Math.ceil(Math.random() * 5),
+    }));
+  } else {
+    return Array.from({ length: numDays }, (_, i) => ({
+      day: i + 1,
+      level: Math.ceil(Math.random() * 3),
+    }));
+  }
 }
+
+const { width } = Dimensions.get('window');
+const scaleFactor = width / 360;
 
 export default function MonthlyReportScreen({ navigation }) {
   const now = new Date();
   const [toggle, setToggle] = useState('checking');
   const [currentYear, setCurrentYear] = useState(now.getFullYear());
-  const [currentMonth, setCurrentMonth] = useState(now.getMonth() + 1); // 1~12
+  const [currentMonth, setCurrentMonth] = useState(now.getMonth() + 1);
   const [anxietyList, setAnxietyList] = useState(
-    randomAnxietyForMonth(now.getFullYear(), now.getMonth() + 1),
+    randomAnxietyForMonth(now.getFullYear(), now.getMonth() + 1, 'checking'),
   );
 
-  // 그래프 월 계산도 맞춰줌
+  const currentMonthValues =
+    toggle === 'checking' ? checkingMonthValues : contaminationMonthValues;
+
   const showMonthIdx = currentMonth - 1;
   const showMonths = months.slice(
-    Math.max(0, showMonthIdx - 5),
+    Math.max(0, showMonthIdx - 4),
     showMonthIdx + 1,
   );
-  const showValues = monthValues.slice(
-    Math.max(0, showMonthIdx - 5),
+  const showValues = currentMonthValues.slice(
+    Math.max(0, showMonthIdx - 4),
     showMonthIdx + 1,
   );
-  const isBarRowLeft = showMonths.length < 6;
+  const isBarRowLeft = showMonths.length < 5;
 
-  // 월 이동 핸들러
+  const lastMonthValue = currentMonthValues[Math.max(0, showMonthIdx - 1)];
+  const currentMonthValue = currentMonthValues[showMonthIdx];
+
   const handleMonth = dir => {
     let y = currentYear;
     let m = currentMonth + (dir === 'prev' ? -1 : 1);
@@ -87,10 +104,60 @@ export default function MonthlyReportScreen({ navigation }) {
     setCurrentMonth(m);
   };
 
-  // 월/연도 바뀔 때마다 불안 레벨 데이터 새로 준비(랜덤 예시)
+  const handleDayPress = (day, level) => {
+    const monthString = String(currentMonth).padStart(2, '0');
+    const dayString = String(day).padStart(2, '0');
+    const selectedDate = `${currentYear}-${monthString}-${dayString}`;
+    navigation.navigate('dailyreport', { date: selectedDate, level: level });
+  };
+
   useEffect(() => {
-    setAnxietyList(randomAnxietyForMonth(currentYear, currentMonth));
-  }, [currentYear, currentMonth]);
+    setAnxietyList(randomAnxietyForMonth(currentYear, currentMonth, toggle));
+  }, [currentYear, currentMonth, toggle]);
+
+  const getAnxietyMessage = () => {
+    const difference = lastMonthValue - currentMonthValue;
+    const typeText = toggle === 'checking' ? '확인 강박' : '오염 강박';
+
+    if (difference > 0) {
+      return (
+        <Text style={styles.topText}>
+          눈송이님, 지난달보다 평균 {typeText}이{' '}
+          <Text style={styles.highlightScore}>{lastMonthValue}점</Text>
+          <Text style={styles.arrow}>{' → '}</Text>
+          <Text style={styles.highlightScore}>{currentMonthValue}점</Text>
+          으로{' '}
+          <Text style={{ fontWeight: 'bold', color: '#3557D4' }}>감소</Text>
+          했어요.{'\n'}
+          점점 안정되어 가는 모습이 눈에 띄어요.{'\n'}잘 해내고 있어요!
+        </Text>
+      );
+    } else if (difference < 0) {
+      return (
+        <Text style={styles.topText}>
+          눈송이님, 지난달보다 평균 {typeText}이{' '}
+          <Text style={styles.highlightScore}>{lastMonthValue}점</Text>
+          <Text style={styles.arrow}>{' → '}</Text>
+          <Text style={styles.highlightScore}>{currentMonthValue}점</Text>
+          으로{' '}
+          <Text style={{ fontWeight: 'bold', color: '#3557D4' }}>증가</Text>
+          했어요.{'\n'}혹시 스트레스 받는 일이 있었을까요?{' '}
+          <Text style={{ fontWeight: 'bold' }}>
+            다시 한번 목표를 되새겨봐요!
+          </Text>
+        </Text>
+      );
+    } else {
+      return (
+        <Text style={styles.topText}>
+          눈송이님, 지난달과 평균 {typeText}이{' '}
+          <Text style={styles.highlightScore}>{currentMonthValue}점</Text>으로{' '}
+          <Text style={{ fontWeight: 'bold', color: '#717780' }}>동일</Text>
+          해요.{'\n'}꾸준히 관리하는 모습, 정말 멋져요!
+        </Text>
+      );
+    }
+  };
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
@@ -107,25 +174,17 @@ export default function MonthlyReportScreen({ navigation }) {
           <Image source={mainIcon} style={styles.icon} />
         </TouchableOpacity>
       </View>
-      <View style={styles.topTextWrap}>
-        <Text style={styles.topText}>눈송이님, 지난달보다 평균 불안이</Text>
-        <View style={styles.anxietyChange}>
-          <Text style={styles.highlightScore}>58점</Text>
-          <Text style={styles.arrow}>{' → '}</Text>
-          <Text style={styles.highlightScore}>28점</Text>
-        </View>
-        <Text style={styles.topText}>
-          으로 감소했어요.{'\n'}변화가 눈에 띄어요.{'\n'}잘 해내고 있어요!
-        </Text>
-      </View>
+
+      <View style={styles.topTextWrap}>{getAnxietyMessage()}</View>
+
       <View style={styles.monthRow}>
         <View style={styles.monthCenterRow}>
           <TouchableOpacity onPress={() => handleMonth('prev')}>
             <Image source={backIcon} style={styles.smallIcon} />
           </TouchableOpacity>
-          <Text
-            style={styles.monthText}
-          >{`${currentYear}년 ${currentMonth}월`}</Text>
+          <Text style={styles.monthText}>
+            {`${currentYear}년 ${currentMonth}월`}
+          </Text>
           <TouchableOpacity onPress={() => handleMonth('next')}>
             <Image source={nextIcon} style={styles.smallIcon} />
           </TouchableOpacity>
@@ -141,18 +200,24 @@ export default function MonthlyReportScreen({ navigation }) {
           />
         </TouchableOpacity>
       </View>
+
       <Text style={styles.graphTitle}>월별 평균 불안 정도</Text>
-      {/* 월별 그래프 */}
-      <MonthlyBarChart
-        months={showMonths}
-        values={showValues}
-        isBarRowLeft={isBarRowLeft}
-      />
-      {/* 달력 (월 변경에 따라 날짜·이미지 연동!) */}
+
+      <View style={styles.monthlyBarChartWrapper}>
+        <MonthlyBarChart
+          months={showMonths}
+          values={showValues}
+          isBarRowLeft={isBarRowLeft}
+          maxValue={100}
+          maxHeight={100}
+        />
+      </View>
+
       <CalendarGrid
         year={currentYear}
         month={currentMonth}
         anxietyList={anxietyList}
+        onDayPress={handleDayPress}
       />
     </ScrollView>
   );
@@ -164,83 +229,89 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FBFF',
   },
   container: {
-    paddingHorizontal: 24,
-    paddingTop: 48,
-    paddingBottom: 40,
+    paddingHorizontal: 24 * scaleFactor,
+    paddingTop: 60 * scaleFactor,
+    paddingBottom: 20 * scaleFactor,
     backgroundColor: '#F8FBFF',
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
+    marginBottom: 40 * scaleFactor,
     position: 'relative',
   },
   mainIconWrap: { position: 'absolute', right: 0 },
-  icon: { width: 20, height: 20, marginLeft: 4 },
+  icon: {
+    width: 20 * scaleFactor,
+    height: 20 * scaleFactor,
+    marginLeft: 12,
+  },
   monthRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 8,
-    marginBottom: 18,
-    height: 48,
+    marginTop: 8 * scaleFactor,
+    marginBottom: 16 * scaleFactor,
+    height: 40 * scaleFactor,
   },
   monthCenterRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
-  smallIcon: { width: 20, height: 20, marginHorizontal: 4 },
+  smallIcon: {
+    width: 16 * scaleFactor,
+    height: 16 * scaleFactor,
+    marginHorizontal: 4 * scaleFactor,
+  },
   monthText: {
-    fontSize: 20,
+    fontSize: 16 * scaleFactor,
     color: '#25252C',
     fontWeight: '700',
-    marginHorizontal: 4,
+    marginHorizontal: 0,
     textAlign: 'center',
-    minWidth: 36,
+    minWidth: 24 * scaleFactor,
   },
   weeklyReportRow: { flexDirection: 'row', alignItems: 'center' },
-  weeklyIconRight: { marginLeft: 6 },
+  weeklyIconRight: { marginLeft: 4 * scaleFactor },
   weeklyReportText: {
     color: '#717780',
     fontFamily: 'Pretendard',
-    fontSize: 14,
+    fontSize: 16 * scaleFactor,
     fontWeight: '400',
-    letterSpacing: -0.42,
+    letterSpacing: -0.36 * scaleFactor,
   },
   graphTitle: {
     color: '#25252C',
     fontFamily: 'Pretendard',
-    fontSize: 20,
+    fontSize: 18 * scaleFactor,
     fontWeight: '700',
-    lineHeight: 30,
-    marginBottom: 12,
+    lineHeight: 28 * scaleFactor,
+    marginBottom: 12 * scaleFactor,
   },
-  topTextWrap: { marginTop: 0, marginBottom: 24 },
+  topTextWrap: { marginTop: 0, marginBottom: 16 * scaleFactor },
   topText: {
     color: '#25252C',
     fontFamily: 'Pretendard',
-    fontSize: 20,
-    fontWeight: '400',
-    lineHeight: 30,
-  },
-  anxietyChange: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 6,
+    fontSize: 20 * scaleFactor,
+    fontWeight: '700',
+    lineHeight: 30 * scaleFactor,
   },
   highlightScore: {
     color: '#3557D4',
-    fontFamily: 'Pretendard',
-    fontSize: 20,
+    fontSize: 20 * scaleFactor,
     fontWeight: '700',
-    lineHeight: 32,
+    lineHeight: 30 * scaleFactor,
   },
   arrow: {
     color: '#3557D4',
-    fontSize: 20,
+    fontSize: 20 * scaleFactor,
     fontWeight: '700',
-    marginHorizontal: 2,
+    marginHorizontal: 2 * scaleFactor,
+  },
+  monthlyBarChartWrapper: {
+    marginBottom: 20 * scaleFactor,
+    alignSelf: 'center',
   },
 });

@@ -117,17 +117,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 8,
     backgroundColor: '#fff',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
+    shadowColor: '#9298A2',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 4,
   },
   summaryLabel: {
     color: '#9298A2',
@@ -157,12 +151,12 @@ const styles = StyleSheet.create({
   hierarchyBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 80,
+    height: 88,
     borderRadius: 8,
     backgroundColor: '#F3F7FB',
     marginBottom: 12,
-    paddingLeft: 12,
-    paddingRight: 18,
+    paddingLeft: 20,
+    paddingRight: 20,
     width: '100%',
   },
   rankBox: {
@@ -172,7 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3557D4',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: 16,
   },
   rankText: {
     color: '#fff',
