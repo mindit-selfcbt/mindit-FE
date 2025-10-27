@@ -108,8 +108,7 @@ export default function MonthlyReportScreen({ navigation }) {
     const monthString = String(currentMonth).padStart(2, '0');
     const dayString = String(day).padStart(2, '0');
     const selectedDate = `${currentYear}-${monthString}-${dayString}`;
-
-    navigation.navigate('dailyreport', { day, level });
+    navigation.navigate('dailyreport', { date: selectedDate, level: level });
   };
 
   useEffect(() => {
@@ -141,7 +140,7 @@ export default function MonthlyReportScreen({ navigation }) {
           <Text style={styles.arrow}>{' → '}</Text>
           <Text style={styles.highlightScore}>{currentMonthValue}점</Text>
           으로{' '}
-          <Text style={{ fontWeight: 'bold', color: '#D43535' }}>증가</Text>
+          <Text style={{ fontWeight: 'bold', color: '#3557D4' }}>증가</Text>
           했어요.{'\n'}혹시 스트레스 받는 일이 있었을까요?{' '}
           <Text style={{ fontWeight: 'bold' }}>
             다시 한번 목표를 되새겨봐요!
@@ -254,7 +253,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 8 * scaleFactor,
     marginBottom: 16 * scaleFactor,
-    height: 60 * scaleFactor,
+    height: 40 * scaleFactor,
   },
   monthCenterRow: {
     flexDirection: 'row',
@@ -262,8 +261,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   smallIcon: {
-    width: 20 * scaleFactor,
-    height: 20 * scaleFactor,
+    width: 16 * scaleFactor,
+    height: 16 * scaleFactor,
     marginHorizontal: 4 * scaleFactor,
   },
   monthText: {

@@ -214,12 +214,6 @@ const ALL_DUMMY_RECORDS = [
   ],
 ];
 
-const getConsistentAnxietyLevel = date => {
-  if (!date) return 1;
-  const day = parseInt(date.split('-')[2], 10);
-  return (day % 5) + 1;
-};
-
 const formatDateForTitle = dateString => {
   if (!dateString) return '';
   const parts = dateString.split('-');
@@ -229,13 +223,19 @@ const formatDateForTitle = dateString => {
 };
 
 export default function DailyReportScreen({ route, navigation }) {
-  const { date = '2025-10-31' } = route.params || {};
+  const { date, level } = route.params || {};
+  const today = new Date();
+  const defaultDate = `${today.getFullYear()}-${String(
+    today.getMonth() + 1,
+  ).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const selectedDate = date || defaultDate;
+  const selectedLevel = level || 1;
 
-  const dateTitle = formatDateForTitle(date);
+  const dateTitle = formatDateForTitle(selectedDate);
   const screenTitle = `${dateTitle}의 반응 방지`;
 
-  const anxietyLevel = getConsistentAnxietyLevel(date);
-  const anxietyIconSource = ANXIETY_ICONS[anxietyLevel - 1] || ANXIETY_ICONS[0];
+  const anxietyIconSource =
+    ANXIETY_ICONS[selectedLevel - 1] || ANXIETY_ICONS[0];
 
   const randomIndex = Math.floor(Math.random() * ALL_DUMMY_RECORDS.length);
   const dailyRecords = ALL_DUMMY_RECORDS[randomIndex];
