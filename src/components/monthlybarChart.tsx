@@ -2,21 +2,24 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import BarItem from './barItem';
 
-const BAR_WIDTH = 48;
-const BAR_LINE_HEIGHT = 4;
+const BAR_WIDTH = 60;
 const GRAPH_BARLINE_WIDTH = 300;
-const BARROW_HEIGHT = 100;
-const YAXIS_HEIGHT = 100;
-const yLabelData = [{ value: 100 }, { value: 50 }, { value: 0 }];
+const BARROW_HEIGHT = 90;
+const YAXIS_HEIGHT = 110;
 
-export default function MonthlyBarChart({ months, values, isBarRowLeft }) {
+export default function MonthlyBarChart({
+  months,
+  values,
+  isBarRowLeft,
+  yLabelData = [100, 50, 0],
+}) {
   return (
     <View style={styles.graphBox}>
       <View style={styles.graphArea}>
         <View style={styles.yAxisWrapper}>
-          {yLabelData.map(item => (
-            <View key={item.value} style={styles.yAxisRow}>
-              <Text style={styles.yAxisText}>{item.value}</Text>
+          {yLabelData.map(value => (
+            <View key={value} style={styles.yAxisRow}>
+              <Text style={styles.yAxisText}>{value}</Text>
               <View style={styles.dotLineRow} />
             </View>
           ))}
@@ -32,11 +35,12 @@ export default function MonthlyBarChart({ months, values, isBarRowLeft }) {
             {months.map((month, i) => (
               <BarItem
                 key={month}
-                value={values[i]}
+                value={values?.[i] ?? 0}
                 isCurrent={i === months.length - 1}
               />
             ))}
           </View>
+
           <View
             style={[
               styles.monthLabelRow,
@@ -63,8 +67,8 @@ export default function MonthlyBarChart({ months, values, isBarRowLeft }) {
 
 const styles = StyleSheet.create({
   graphBox: {
-    width: 360,
-    height: 200,
+    width: 320,
+    height: 220,
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: '#D6E7F8',
@@ -73,21 +77,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     paddingLeft: 16,
-    paddingTop: 28,
+    paddingTop: 20,
   },
   graphArea: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    width: '100%',
   },
   yAxisWrapper: {
     flexDirection: 'column',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    height: YAXIS_HEIGHT,
-    marginRight: 10,
-    transform: [{ translateY: -20 }],
+    height: 100,
+    marginRight: -10,
+    marginBottom: 30,
   },
   yAxisRow: {
     flexDirection: 'row',
@@ -95,17 +97,12 @@ const styles = StyleSheet.create({
     height: YAXIS_HEIGHT / 2,
   },
   yAxisText: {
-    width: 24,
+    width: 22,
     textAlign: 'center',
     color: '#717780',
     fontFamily: 'Pretendard',
     fontSize: 12,
     fontWeight: '400',
-  },
-  dotLineRow: {
-    height: 1,
-    backgroundColor: '#E8F1FF',
-    flex: 1,
   },
   graphContent: {
     flex: 1,
@@ -128,11 +125,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: GRAPH_BARLINE_WIDTH,
-    alignSelf: 'flex-start',
-    marginTop: 20,
+    marginTop: 24,
+    marginRight: 100,
   },
   monthLabel: {
-    width: BAR_WIDTH,
+    width: 50,
     textAlign: 'center',
     color: '#717780',
     fontFamily: 'Pretendard',

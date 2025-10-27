@@ -67,8 +67,8 @@ export default function CalendarGrid({ year, month, anxietyList }) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginTop: 36,
-    paddingHorizontal: 6,
+    marginTop: 40,
+    paddingHorizontal: 4,
   },
   row: {
     flexDirection: 'row',
@@ -89,10 +89,10 @@ const styles = StyleSheet.create({
     aspectRatio: 0.95,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    minWidth: 34,
+    minWidth: 36,
     marginVertical: 32,
-    paddingTop: 8,
-    paddingBottom: 12,
+    paddingTop: 0,
+    paddingBottom: 0,
   },
   dayNumber: {
     color: '#25252C',
