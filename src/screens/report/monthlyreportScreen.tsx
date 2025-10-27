@@ -243,8 +243,8 @@ const styles = StyleSheet.create({
   },
   mainIconWrap: { position: 'absolute', right: 0 },
   icon: {
-    width: 24 * scaleFactor,
-    height: 24 * scaleFactor,
+    width: 20 * scaleFactor,
+    height: 20 * scaleFactor,
     marginLeft: 12,
   },
   monthRow: {
