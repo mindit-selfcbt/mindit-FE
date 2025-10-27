@@ -104,6 +104,14 @@ export default function MonthlyReportScreen({ navigation }) {
     setCurrentMonth(m);
   };
 
+  const handleDayPress = (day, level) => {
+    const monthString = String(currentMonth).padStart(2, '0');
+    const dayString = String(day).padStart(2, '0');
+    const selectedDate = `${currentYear}-${monthString}-${dayString}`;
+
+    navigation.navigate('dailyreport', { day, level });
+  };
+
   useEffect(() => {
     setAnxietyList(randomAnxietyForMonth(currentYear, currentMonth, toggle));
   }, [currentYear, currentMonth, toggle]);
@@ -210,6 +218,7 @@ export default function MonthlyReportScreen({ navigation }) {
         year={currentYear}
         month={currentMonth}
         anxietyList={anxietyList}
+        onDayPress={handleDayPress}
       />
     </ScrollView>
   );
