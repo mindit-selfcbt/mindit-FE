@@ -80,7 +80,7 @@ const AIExposureScreen = ({ navigation }) => {
   const handleModalStart = () => {
     setModalVisible(false);
     setIsStarted(true);
-    setMessage('화면의 원을 따라 손을 움직여주세요');
+    setMessage('화면을 꾹 누르고 시작하고 원을 따라 손을 움직여주세요');
   };
 
   const setPulsingState = state => {

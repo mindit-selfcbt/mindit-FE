@@ -15,19 +15,17 @@ import { useNavigation } from '@react-navigation/native';
 import Sound from 'react-native-sound';
 import NextButton from '../../components/nextButton';
 
-// 이미지 파일은 require() 사용 가능
 const profileImg1 = require('../../assets/img/imagine/profileImg1.png');
 const profileImg2 = require('../../assets/img/imagine/profileImg2.png');
 const profileImg3 = require('../../assets/img/imagine/profileImg3.png');
 const profileImg4 = require('../../assets/img/imagine/profileImg4.png');
 
-// 오디오 파일명은 문자열로, 안드로이드 raw 폴더에 복사 완료 전제
 const voices = [
   {
     id: 'jae1',
     name: '지안',
     desc: '차분한 중저음의 중성 음성',
-    subdesc: '전문적인 상담사 느낌의 신뢰를 주는 말투로 이끌어 줍니다.',
+    subdesc: '전문적인 상담사 느낌의 신뢰를 주는 말투로 이끌어줘요',
     image: profileImg1,
     audio: 'voice1_01',
   },
@@ -35,8 +33,7 @@ const voices = [
     id: 'haru',
     name: '하루',
     desc: '명료하고 단호한 음성',
-    subdesc:
-      '회피가 강한 사용자를 이끄는 코치형 음성으로 단호하게 이끌어 줍니다.',
+    subdesc: '회피가 강한 사용자를 이끄는 코치형 음성으로 단호하게 휘어잡아요',
     image: profileImg2,
     audio: 'voice2_01',
   },
@@ -44,7 +41,7 @@ const voices = [
     id: 'miso',
     name: '미소',
     desc: '밝고 경쾌한 여성 음성',
-    subdesc: '친근하고 에너지 넘치는 말투로 상상을 안내합니다.',
+    subdesc: '선생님처럼 친근하고 에너지 넘치는 말투로 상상을 진행할 수 있어요',
     image: profileImg3,
     audio: 'voice3_01',
   },
@@ -52,7 +49,7 @@ const voices = [
     id: 'minsu',
     name: '민수',
     desc: '부드러운 남성 음성',
-    subdesc: '따뜻하고 안정감 있게 상상을 도와줍니다.',
+    subdesc: '따뜻하고 안정감 있는 목소리로 보다 더 다정한 대화를 할 수 있어요',
     image: profileImg4,
     audio: 'voice4_01',
   },
@@ -61,29 +58,20 @@ const voices = [
 let currentSound = null;
 Sound.setCategory('Playback');
 
-/**
- * 현재 재생 중인 오디오를 중지하고 해제합니다.
- * currentSound가 null로 설정되어 비동기 콜백 충돌을 방지합니다.
- */
 const stopAndReleaseCurrentSound = () => {
   if (currentSound) {
-    const soundToRelease = currentSound; // 중지/해제할 객체의 참조를 저장
-    currentSound = null; // 전역 참조를 즉시 null로 설정 (가장 중요)
+    const soundToRelease = currentSound;
+    currentSound = null;
 
-    // stop은 비동기일 수 있으므로 콜백 내에서 release를 호출합니다.
     try {
       soundToRelease.stop(() => {
-        // stop이 완료된 후 해제
         soundToRelease.release();
       });
     } catch (e) {
       console.warn('이전 오디오 중지 중 오류 발생:', e);
-      // 오류가 발생해도 해제 시도 (단, 이미 해제되었을 가능성 있음)
       try {
         soundToRelease.release();
-      } catch (e2) {
-        // 무시
-      }
+      } catch (e2) {}
     }
   }
 };
@@ -95,62 +83,41 @@ const ImagineScreen = () => {
   const handleVoicePress = voice => {
     setSelectedVoice(voice.id);
 
-    // 1. 이전 오디오 중지 및 해제 (currentSound는 null이 됩니다.)
     stopAndReleaseCurrentSound();
 
-    // 2. 새로운 오디오 로드 시작
-    // 이 시점에 currentSound는 null이므로, 새 객체를 바로 할당합니다.
-    // 로드 콜백은 비동기이므로, 이 객체의 참조를 지역 변수에 유지합니다.
     const newSound = new Sound(voice.audio, Sound.MAIN_BUNDLE, error => {
-      // **(A) 로드 완료 콜백 시작**
-
       if (error) {
         console.error('오디오 로드 실패:', error);
         newSound.release();
-        // 만약 로드 실패 시, currentSound가 이 newSound를 참조하고 있었다면 null 처리
         if (currentSound === newSound) {
           currentSound = null;
         }
         return;
       }
 
-      // 로드 성공 시:
-      // 이 시점에 currentSound가 null이 아니거나 newSound가 아니라면
-      // 사용자가 이 오디오 로드 시간 동안 다른 음성을 선택했다는 뜻입니다.
       if (currentSound !== null && currentSound !== newSound) {
-        // 이미 다른 오디오가 시작되었으므로 이 객체는 재생하지 않고 해제
         newSound.release();
         return;
       }
 
-      // currentSound가 null이거나 newSound인 경우 (대부분 null일 것)
       currentSound = newSound;
 
-      // 3. 새 사운드 재생 시도
       currentSound.play(success => {
-        // **(B) 재생 완료 콜백 시작**
         if (success) {
           console.log(`${voice.name} 오디오 재생 완료`);
         } else {
           console.error('오디오 재생 실패');
         }
 
-        // 재생 완료 후 해제:
-        // 오디오 객체(currentSound)가 여전히 이 객체(newSound)와 동일한 경우에만
-        // 안전하게 해제하고 currentSound를 null로 설정합니다.
         if (currentSound === newSound) {
           currentSound.release();
           currentSound = null;
         } else {
-          // 이미 다른 오디오가 시작되어 currentSound가 변경되었거나 null이 된 경우,
-          // 이 객체(newSound)만 해제
           newSound.release();
         }
       });
     });
 
-    // 로드 시작 후, currentSound에 잠재적인 객체를 할당
-    // 이 객체는 로드 완료 전/후에 stopAndReleaseCurrentSound에 의해 안전하게 처리됩니다.
     currentSound = newSound;
   };
 
@@ -163,7 +130,6 @@ const ImagineScreen = () => {
     navigation.navigate('imagineready', { voiceId: selectedVoice });
   };
 
-  // ... (나머지 렌더링 코드는 이전과 동일)
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <View style={styles.container}>
@@ -171,11 +137,11 @@ const ImagineScreen = () => {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={{ height: 16 }} />
+          <View style={{ height: 80 }} />
           <View style={styles.topNotice}>
             <Text style={styles.topNoticeText}>눈송이님,</Text>
             <Text style={styles.topNoticeText}>
-              이번 주 상상 노출 훈련 횟수가 1회 남았어요.
+              이번 주 상상 노출 훈련 횟수가 {'\n'}1회 남았어요.
             </Text>
           </View>
 
@@ -205,8 +171,8 @@ const ImagineScreen = () => {
               </View>
               <View style={{ width: 12 }} />
               <Text style={styles.detailText}>
-                내가 도착 시간을 확인하지 않고 이동하는{'\n'}
-                상황을 바탕으로 상상 노출 2회
+                내가 도착 시간을 확인하지 않고 이동하는 상황을 바탕으로 상상
+                노출 2회
               </Text>
             </View>
           </View>
@@ -233,12 +199,10 @@ const ImagineScreen = () => {
             </TouchableOpacity>
           ))}
 
-          <View style={{ height: 120 }} />
+          <View style={styles.scrollButtonWrap}>
+            <NextButton onPress={handleNext} />
+          </View>
         </ScrollView>
-
-        <View style={styles.fixedButtonWrap}>
-          <NextButton onPress={handleNext} />
-        </View>
       </View>
     </SafeAreaView>
   );
@@ -260,7 +224,7 @@ const styles = StyleSheet.create({
     minHeight: '100%',
   },
   topNotice: {
-    width: 360,
+    width: 320,
     marginBottom: 20,
   },
   topNoticeText: {
@@ -271,7 +235,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard',
   },
   box: {
-    width: 360,
+    width: 320,
     paddingVertical: 20,
     paddingHorizontal: 16,
     borderRadius: 16,
@@ -346,20 +310,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 32,
-    width: 360,
+    width: 320,
     marginBottom: 20,
   },
   voiceBox: {
     flexDirection: 'row',
-    width: 360,
-    paddingVertical: 28,
+    width: 320,
+    paddingVertical: 24,
     paddingHorizontal: 24,
     alignItems: 'center',
     borderRadius: 16,
     backgroundColor: '#FFF',
     borderWidth: 0,
-    marginBottom: 16,
-    shadowColor: '#000',
+    marginBottom: 12,
+    shadowColor: '#9298A2',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -375,7 +339,7 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 28,
     backgroundColor: '#dbeafe',
-    marginRight: 16,
+    marginRight: 20,
   },
   voiceTexts: {
     flex: 1,
@@ -383,7 +347,7 @@ const styles = StyleSheet.create({
   voiceTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   voiceName: {
     color: '#000',
@@ -395,7 +359,7 @@ const styles = StyleSheet.create({
   voiceDesc: {
     color: '#9298A2',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '400',
   },
   voiceSubDesc: {
@@ -404,14 +368,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
   },
-  fixedButtonWrap: {
-    position: 'absolute',
-    left: (width - 360) / 2,
-    bottom: Platform.OS === 'ios' ? 0 : 12,
+  scrollButtonWrap: {
+    marginTop: 100,
     width: 360,
     alignSelf: 'center',
-    backgroundColor: 'transparent',
-    paddingBottom: 16,
+    paddingBottom: Platform.OS === 'ios' ? 0 : 12,
   },
 });
 
