@@ -26,8 +26,8 @@ const SPACING = 16;
 const planData = [
   {
     week: 1,
-    startDate: new Date(2025, 9, 21),
-    endDate: new Date(2025, 9, 27),
+    startDate: new Date(2025, 9, 27),
+    endDate: new Date(2025, 10, 2),
     title: '기초 상상 노출 훈련',
     goal: '나의 강박과 불안 관찰하고 익숙해지기',
     content:
@@ -35,8 +35,8 @@ const planData = [
   },
   {
     week: 2,
-    startDate: new Date(2025, 9, 28),
-    endDate: new Date(2025, 10, 3),
+    startDate: new Date(2025, 10, 3),
+    endDate: new Date(2025, 10, 9),
     title: '구체적 상황의 상상 노출 훈련',
     goal: '불확실성을 견뎌보기',
     content:
@@ -44,8 +44,8 @@ const planData = [
   },
   {
     week: 3,
-    startDate: new Date(2025, 10, 4),
-    endDate: new Date(2025, 10, 10),
+    startDate: new Date(2025, 10, 10),
+    endDate: new Date(2025, 10, 16),
     title: '결과까지 상상하는 노출 훈련',
     goal: '불안과 결과에 따른 감정을 수용하기',
     content:
@@ -53,16 +53,16 @@ const planData = [
   },
   {
     week: 4,
-    startDate: new Date(2025, 10, 11),
-    endDate: new Date(2025, 10, 17),
+    startDate: new Date(2025, 10, 17),
+    endDate: new Date(2025, 10, 23),
     title: '심화 상상 노출 훈련',
     goal: '예상치 못한 상황에도 적용하기',
     content: '예상 밖의 변화가 발생한 상황에서 상상 노출 2회',
   },
   {
     week: 5,
-    startDate: new Date(2025, 10, 18),
-    endDate: new Date(2025, 10, 24),
+    startDate: new Date(2025, 10, 24),
+    endDate: new Date(2025, 10, 30),
     title: '실전 적용 훈련',
     goal: '실제 상황에서 실천해보기',
     content: '실제 외출/이동 상황에서 강박 없이 행동해 보기 2회',
