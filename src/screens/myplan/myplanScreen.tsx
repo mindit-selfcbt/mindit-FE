@@ -11,7 +11,7 @@ import {
   Platform,
   Animated,
 } from 'react-native';
-import NextButton from '../../components/nextButton';
+import NextButton from '../../components/confirmButton';
 import { useNavigation } from '@react-navigation/native';
 
 import CalendarImg from '../../assets/img/myplan/calendar.png';
@@ -20,7 +20,7 @@ import ImaginaryExposureImg from '../../assets/img/myplan/imaginaryexposure.png'
 
 const { width: screenWidth } = Dimensions.get('window');
 const CARD_WIDTH = screenWidth - 48;
-const CARD_HEIGHT = 240;
+const CARD_HEIGHT = 200;
 const SPACING = 16;
 
 const planData = [
@@ -28,44 +28,42 @@ const planData = [
     week: 1,
     startDate: new Date(2025, 9, 27),
     endDate: new Date(2025, 10, 2),
-    title: '기초 상상 노출 훈련',
-    goal: '나의 강박과 불안 관찰하고 익숙해지기',
+    title: '사진 노출 훈련',
+    goal: '강박과 불안 관찰하고 익숙해지기',
     content:
-      '내가 도착 시간을 확인하지 않고 이동하는 상황을 바탕으로 상상 노출 2회',
+      'AI 사진 노출: 지하철 손잡이를 잡는 손의 사진으로 사진 노출 훈련 3회',
   },
   {
     week: 2,
     startDate: new Date(2025, 10, 3),
     endDate: new Date(2025, 10, 9),
-    title: '구체적 상황의 상상 노출 훈련',
+    title: '낮은 수준의 AR 노출 훈련',
     goal: '불확실성을 견뎌보기',
-    content:
-      '버스를 타고 이동하고 있고, 목적지까지 가는 길이 막히고 있다는 구체적인 상황을 바탕으로 상상 노출 2회',
+    content: '엘레베이터 버튼을 누르는 훈련 2회',
   },
   {
     week: 3,
     startDate: new Date(2025, 10, 10),
     endDate: new Date(2025, 10, 16),
-    title: '결과까지 상상하는 노출 훈련',
-    goal: '불안과 결과에 따른 감정을 수용하기',
-    content:
-      '확인 안 해서 도착이 늦었고, 상대방이 기다리고 있는 결과를 상상하는 훈련 2회',
+    title: '중간 수준의 AR 노출 훈련',
+    goal: '공공장소에서의 노출 연습',
+    content: '공공화장실 손잡이를 만지는 훈련 2회',
   },
   {
     week: 4,
     startDate: new Date(2025, 10, 17),
     endDate: new Date(2025, 10, 23),
-    title: '심화 상상 노출 훈련',
-    goal: '예상치 못한 상황에도 적용하기',
-    content: '예상 밖의 변화가 발생한 상황에서 상상 노출 2회',
+    title: '높은 수준의 AR 노출 훈련',
+    goal: '공공장소에서의 노출 연습',
+    content: '지하철 손잡이를 만지는 훈련 2회',
   },
   {
     week: 5,
     startDate: new Date(2025, 10, 24),
     endDate: new Date(2025, 10, 30),
-    title: '실전 적용 훈련',
-    goal: '실제 상황에서 실천해보기',
-    content: '실제 외출/이동 상황에서 강박 없이 행동해 보기 2회',
+    title: '노출 훈련 반복과 실생활 적용',
+    goal: 'AR 노출 훈련 습관화 & 실생활 적용',
+    content: '실제 공공장소의 물건을 잡은 후 손을 씻지 않고 버티기',
   },
 ];
 
@@ -84,7 +82,7 @@ export default function MyPlanScreen() {
       img: ResponsePreventionImg,
       question: '반응방지 훈련이란?',
       description:
-        '강박이 떠오를 때, 바로 그 순간!\n그 행동을 하지 않고 그대로 버텨보는\n훈련이에요.',
+        '강박이 떠오를 때, 바로 그 순간!\n그 행동을 하지 않고 그대로 버텨보는 훈련이에요.',
       when: '언제 하나요?',
       whenDesc: '강박이 발생하는 순간에 바로\n반응 방지를 실행해주세요.',
     },
@@ -94,7 +92,7 @@ export default function MyPlanScreen() {
       img: ImaginaryExposureImg,
       question: '상상 노출 훈련이란?',
       description:
-        '불안을 유발하는 사진이나 장면을\nAI를 통해 생성하고, 미리 정한 계획에 따라 일부러 마주해보는 연습이에요.',
+        '불안을 유발하는 사진이나 장면을 AI를 통해 생성하고, 미리 정한 계획에 따라 일부러 마주해보는 연습이에요.',
       when: '언제 하나요?',
       whenDesc:
         '계획된 플랜에 따라 일주일에\n정해진 횟수만큼 노출 훈련을\n진행합니다.',
@@ -112,7 +110,6 @@ export default function MyPlanScreen() {
         <Text style={styles.topTitle}>
           눈송이님이 진행할 훈련을 설명해드릴게요
         </Text>
-
         {trainings.map(item => (
           <View key={item.id} style={styles.trainingRow}>
             <View style={styles.badge}>
@@ -153,7 +150,7 @@ export default function MyPlanScreen() {
             snapToInterval={CARD_WIDTH + SPACING}
             decelerationRate="fast"
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 24 }}
+            contentContainerStyle={{ paddingHorizontal: 24, marginBottom: 8 }}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { x: scrollX } } }],
               { useNativeDriver: false },
@@ -167,9 +164,11 @@ export default function MyPlanScreen() {
                   <View style={styles.weekBadge}>
                     <Text style={styles.weekBadgeText}>{item.week}주차</Text>
                   </View>
-                  <Text style={styles.planCardDate}>
-                    {formatDate(item.startDate)} ~ {formatDate(item.endDate)}
-                  </Text>
+                  <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                    <Text style={styles.planCardDate}>
+                      {formatDate(item.startDate)} ~ {formatDate(item.endDate)}
+                    </Text>
+                  </View>
                 </View>
                 <Text style={styles.planCardTitle}>{item.title}</Text>
                 <View style={styles.fieldRow}>
@@ -205,8 +204,8 @@ export default function MyPlanScreen() {
 
         <NextButton
           text="다음"
-          onPress={() => navigation.navigate('mytimeline')}
-          style={{ marginBottom: 40 }}
+          onPress={() => navigation.navigate('main')}
+          style={{ marginBottom: 60 }}
         />
       </ScrollView>
     </SafeAreaView>
@@ -220,7 +219,6 @@ const styles = StyleSheet.create({
   },
   topTitle: {
     fontWeight: '700',
-    fontFamily: 'Pretendard',
     fontSize: 20,
     lineHeight: 32,
     color: '#25252C',
@@ -262,13 +260,11 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   badgeText: {
-    fontFamily: 'Pretendard',
     fontWeight: '500',
     fontSize: 14,
     color: '#3D3D44',
   },
   trainingQuestion: {
-    fontFamily: 'Pretendard',
     fontWeight: '800',
     fontSize: 16,
     color: '#3557D4',
@@ -286,12 +282,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginHorizontal: 24,
-    marginBottom: 20,
+    marginHorizontal: 32,
+    marginBottom: 12,
   },
   planHeaderText: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontWeight: '700',
     fontSize: 20,
     lineHeight: 32,
@@ -304,18 +299,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F8FBFF',
     paddingTop: 20,
-    paddingBottom: 12,
+    paddingBottom: 0,
   },
   planCard: {
     width: CARD_WIDTH,
-    minHeight: CARD_HEIGHT,
+    Height: CARD_HEIGHT,
     backgroundColor: '#FFF',
     borderRadius: 18,
     marginRight: SPACING,
-    padding: 24,
-    shadowColor: '#1A1D241A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    paddingTop: 24,
+    paddingHorizontal: 20,
+    paddingBottom: 0,
+    shadowColor: '#9298A2',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.5,
     shadowRadius: 8,
     elevation: 5,
     justifyContent: 'flex-start',
@@ -323,7 +320,8 @@ const styles = StyleSheet.create({
   planCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    justifyContent: 'space-between',
+    marginBottom: 14,
   },
   weekBadge: {
     backgroundColor: '#E8F1FF',
@@ -345,9 +343,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#9298A2',
     lineHeight: 19.2,
+    textAlign: 'right',
   },
   planCardTitle: {
-    fontFamily: 'Pretendard',
     fontWeight: '700',
     fontSize: 20,
     color: '#25252C',
@@ -357,7 +355,7 @@ const styles = StyleSheet.create({
   },
   fieldRow: {
     flexDirection: 'row',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   fieldLabel: {
     backgroundColor: '#E8F1FF',
@@ -379,22 +377,22 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'Pretendard',
     fontWeight: '400',
-    fontSize: 16,
+    fontSize: 13,
     lineHeight: 24,
     color: '#25252C',
-    marginTop: 2,
+    marginTop: 4,
   },
   indicatorContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
-    marginBottom: 10,
+    marginTop: 24,
+    marginBottom: 40,
   },
   indicatorDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 3,
     backgroundColor: '#3557D4',
-    marginHorizontal: 4,
   },
 });
