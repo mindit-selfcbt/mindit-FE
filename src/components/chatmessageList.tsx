@@ -1,11 +1,41 @@
 import React, { useRef, useEffect } from 'react';
-import { FlatList, View, Text, StyleSheet } from 'react-native';
+import { FlatList, View, Text, StyleSheet, Animated } from 'react-native';
+
+const AnimatedMessageBubble = ({ item, children }) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
+
+  return (
+    <Animated.View
+      style={{
+        opacity: fadeAnim,
+      }}
+    >
+      <View
+        style={[
+          styles.messageBubble,
+          item.from === 'User' ? styles.userBubble : styles.aiBubble,
+        ]}
+      >
+        {children}
+      </View>
+    </Animated.View>
+  );
+};
 
 const ChatMessageList = ({ messages, style }) => {
   const flatListRef = useRef(null);
 
   useEffect(() => {
     if (flatListRef.current && messages.length > 0) {
+      // animated: true 유지하여 부드러운 스크롤
       flatListRef.current.scrollToEnd({ animated: true });
     }
   }, [messages]);
@@ -17,18 +47,13 @@ const ChatMessageList = ({ messages, style }) => {
   };
 
   const renderItem = ({ item }) => (
-    <View
-      style={[
-        styles.messageBubble,
-        item.from === 'User' ? styles.userBubble : styles.aiBubble,
-      ]}
-    >
+    <AnimatedMessageBubble item={item}>
       <Text
         style={[styles.messageText, item.from === 'User' && styles.userText]}
       >
         {item.text}
       </Text>
-    </View>
+    </AnimatedMessageBubble>
   );
 
   return (
@@ -57,7 +82,8 @@ const styles = StyleSheet.create({
   flatListPadding: {
     paddingHorizontal: 18,
     paddingTop: 20,
-    paddingBottom: 20,
+    // paddingBottom을 150으로 증가시켜 마지막 메시지 잘림 방지
+    paddingBottom: 300,
   },
   messageBubble: {
     marginVertical: 8,
@@ -86,3 +112,4 @@ const styles = StyleSheet.create({
 });
 
 export default ChatMessageList;
+// C:\mindit-FE\src\components\chatmessageList.tsx
