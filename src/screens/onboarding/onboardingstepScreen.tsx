@@ -10,9 +10,14 @@ import {
 } from 'react-native';
 import NextButton from '../../components/nextButton';
 
-const CARD_WIDTH = 300;
-const CARD_HEIGHT = 280;
-const CARD_SPACING = 16;
+// 💡 카드 너비를 240px로 추가 축소하여 양옆 카드가 더 많이 보이도록 조정합니다.
+const CARD_WIDTH = 250;
+const CARD_HEIGHT = 180;
+const CARD_SPACING = 4;
+const SCREEN_WIDTH = Dimensions.get('window').width;
+
+// 💡 sidePadding 재계산: 카드를 정확히 중앙에 배치하기 위한 패딩 (중앙 정렬 유지)
+const sidePadding = (SCREEN_WIDTH - CARD_WIDTH) / 2;
 
 const cardContents = [
   {
@@ -57,9 +62,6 @@ const OnboardingPracticeOrderScreen = ({ navigation }) => {
     }
   };
 
-  const SCREEN_WIDTH = Dimensions.get('window').width;
-  const sidePadding = (SCREEN_WIDTH - CARD_WIDTH) / 2;
-
   return (
     <View style={styles.container}>
       <View style={styles.headerWrapper}>
@@ -73,10 +75,14 @@ const OnboardingPracticeOrderScreen = ({ navigation }) => {
         keyExtractor={(_, i) => String(i)}
         horizontal
         showsHorizontalScrollIndicator={false}
+        // snapToInterval은 여전히 한 카드의 너비 + 간격
         snapToInterval={CARD_WIDTH + CARD_SPACING}
         decelerationRate="fast"
         pagingEnabled={false}
-        contentContainerStyle={{ paddingHorizontal: sidePadding }}
+        // paddingHorizontal: 카드를 정확히 중앙에 오도록 하고, 양옆 카드의 노출 영역을 확보합니다.
+        contentContainerStyle={{
+          paddingHorizontal: sidePadding,
+        }}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
           { useNativeDriver: true },
@@ -93,15 +99,21 @@ const OnboardingPracticeOrderScreen = ({ navigation }) => {
             index * (CARD_WIDTH + CARD_SPACING),
             (index + 1) * (CARD_WIDTH + CARD_SPACING),
           ];
+          // 스크롤 위치에 따라 크기를 1(현재 카드)에서 0.8(이전/다음 카드)로 조정
           const scale = scrollX.interpolate({
             inputRange,
-            outputRange: [0.95, 1, 0.95],
+            outputRange: [0.8, 1, 0.8],
             extrapolate: 'clamp',
           });
           const isCurrent = index === currentIndex;
           const shadowStyle = isCurrent
             ? styles.cardShadow
             : styles.prevCardShadow;
+
+          // 마지막 아이템을 제외하고 CARD_SPACING을 marginRight로 적용
+          const itemMarginRight =
+            index === cardContents.length - 1 ? 0 : CARD_SPACING;
+
           return (
             <Animated.View
               style={[
@@ -109,8 +121,8 @@ const OnboardingPracticeOrderScreen = ({ navigation }) => {
                 shadowStyle,
                 {
                   transform: [{ scale }],
-                  marginRight: CARD_SPACING,
-                  width: CARD_WIDTH,
+                  marginRight: itemMarginRight, // 간격 적용
+                  width: CARD_WIDTH, // 💡 수정된 CARD_WIDTH 적용
                   height: CARD_HEIGHT,
                   opacity: 1,
                   backgroundColor: '#FFF',
@@ -155,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FBFF',
     alignItems: 'center',
-    paddingTop: 64,
+    paddingTop: 80,
   },
   headerWrapper: {
     width: '100%',
@@ -164,40 +176,41 @@ const styles = StyleSheet.create({
   },
   guideText: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontSize: 20,
     fontWeight: '800',
     lineHeight: 30,
     textAlign: 'left',
+    top: 60,
   },
   card: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
     gap: 4,
-    minHeight: 212,
+    minHeight: 250,
     paddingVertical: 20,
     paddingHorizontal: 24,
     borderRadius: 16,
     backgroundColor: '#FFF',
-    marginTop: 8,
+    marginTop: 30,
     marginBottom: 16,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
+    top: 30,
   },
   cardShadow: {
-    shadowColor: '#000',
+    shadowColor: '#9298A2',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.07,
-    shadowRadius: 12,
-    elevation: 4,
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 10,
   },
   prevCardShadow: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowColor: '#9298A2',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
   },
   cardStep: {
     display: 'flex',
@@ -219,8 +232,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   cardImg: {
-    width: 80,
-    height: 80,
+    width: 50,
+    height: 50,
     marginBottom: 4,
 
     resizeMode: 'contain',
@@ -228,35 +241,34 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
-    fontSize: 20,
-    fontWeight: '700',
-    lineHeight: 32,
+    fontSize: 18,
+    fontWeight: '800',
+    lineHeight: 28,
     marginBottom: 8,
     textAlign: 'left',
   },
   cardDesc: {
     color: '#717780',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '400',
-    lineHeight: 24,
+    lineHeight: 20,
     textAlign: 'left',
   },
   indicatorWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 8,
-    marginBottom: 250,
+    marginBottom: 210,
     width: '100%',
   },
   indicatorDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    top: 0,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: '#DFE7EF',
-    marginHorizontal: 4,
+    marginHorizontal: 3,
   },
   indicatorDotActive: {
     backgroundColor: '#3557D4',

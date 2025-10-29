@@ -135,7 +135,6 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#3557D4',
-    fontFamily: 'Pretendard',
     fontSize: 20,
     fontWeight: '800',
     lineHeight: 32,

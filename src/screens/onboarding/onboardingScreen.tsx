@@ -54,18 +54,16 @@ const styles = StyleSheet.create({
   mainText: {
     color: '#25252C',
     textAlign: 'center',
-    fontFamily: 'Pretendard',
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '800',
     lineHeight: 30,
     marginBottom: 100,
   },
   highlight: {
     color: '#3557D4',
     textAlign: 'center',
-    fontFamily: 'Pretendard',
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '800',
     lineHeight: 30,
   },
 });

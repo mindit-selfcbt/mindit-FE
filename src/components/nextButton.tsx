@@ -29,7 +29,7 @@ const nextButton: React.FC<nextButtonProps> = ({ title = '다음', onPress }) =>
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 60,
     width: 320,
     paddingVertical: 20,
     borderRadius: 8,
@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFF',
-    fontFamily: 'Pretendard',
     fontSize: 16,
     fontWeight: '700',
     lineHeight: 24,
