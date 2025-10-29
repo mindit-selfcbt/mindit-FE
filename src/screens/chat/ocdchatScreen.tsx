@@ -15,6 +15,7 @@ import MainIcon from '../../assets/icon/mainIcon.png';
 const OcdChatScreen = ({ navigation }) => {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const totalMessageCount = ocddummyMessages.length; // 총 더미 메시지 개수 저장
 
   const handleMainPress = () => {
     navigation.navigate('main');
@@ -35,16 +36,16 @@ const OcdChatScreen = ({ navigation }) => {
     // TODO: 실제 채팅 흐름에서는 여기에 AI 응답 로직을 구현해야 합니다.
   };
 
-  // 컴포넌트가 마운트될 때 더미 메시지를 순차적으로 표시
+  // 1. 컴포넌트 마운트 시 더미 메시지를 순차적으로 표시 (스크롤 속도 조정됨)
   useEffect(() => {
     let timeout = null;
     let index = 0;
 
     const displayNextMessage = () => {
-      if (index < ocddummyMessages.length) {
+      if (index < totalMessageCount) {
         const nextMessage = ocddummyMessages[index];
-        // 딜레이를 250ms로 조정하여 스크롤 속도를 늦춤
-        const delay = 1000;
+        // 딜레이 250ms로 조정하여 스크롤 속도를 늦추고 부드럽게 표시
+        const delay = 250;
 
         timeout = setTimeout(() => {
           setMessages(prevMessages => [
@@ -67,6 +68,24 @@ const OcdChatScreen = ({ navigation }) => {
       clearTimeout(timeout);
     };
   }, []);
+
+  // 2. 대화가 끝났는지 감지하고 화면 이동 로직
+  useEffect(() => {
+    // 현재 메시지 수가 전체 메시지 수와 같으면 대화 종료로 간주
+    if (messages.length > 0 && messages.length === totalMessageCount) {
+      // 마지막 메시지 표시 애니메이션이 끝날 시간을 기다린 후 네비게이션 실행
+      const navigationDelay = 1000; // 1초 대기 후 이동 (애니메이션 여유 시간)
+
+      const navigateTimeout = setTimeout(() => {
+        console.log('대화 종료! 특정 화면(ResultScreen)으로 이동합니다.');
+
+        // **[수정 필요] 여기에 원하는 화면의 이름을 넣어주세요.**
+        navigation.navigate('myanxiety');
+      }, navigationDelay);
+
+      return () => clearTimeout(navigateTimeout);
+    }
+  }, [messages.length, totalMessageCount, navigation]);
 
   return (
     <View style={styles.container}>
@@ -111,4 +130,3 @@ const styles = StyleSheet.create({
 });
 
 export default OcdChatScreen;
-// C:\mindit-FE\src\screens\chat\ocdchatScreen.tsx
