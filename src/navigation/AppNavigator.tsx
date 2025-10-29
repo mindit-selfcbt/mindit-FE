@@ -20,8 +20,8 @@ import recordcatalogScreen from '../screens/record/recordcatalogScreen';
 import recordScreen from '../screens/record/recordScreen';
 import cognitiveerrorScreen from '../screens/record/cognitiveerrorScreen';
 import erprecordScreen from '../screens/record/erprecordScreen';
-import weeklyreportScreen from '../screens/report/weeklyreportScreen';
 import monthlyreportScreen from '../screens/report/monthlyreportScreen';
+import weeklyreportScreen from '../screens/report/weeklyreportScreen';
 import dailyreportScreen from '../screens/report/dailyreportScreen';
 import myanxietyScreen from '../screens/myplan/myanxietyScreen';
 import myplanScreen from '../screens/myplan/myplanScreen';
@@ -134,13 +134,13 @@ const AppNavigator = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="weeklyreport"
-          component={weeklyreportScreen}
+          name="monthlyreport"
+          component={monthlyreportScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="monthlyreport"
-          component={monthlyreportScreen}
+          name="weeklyreport"
+          component={weeklyreportScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

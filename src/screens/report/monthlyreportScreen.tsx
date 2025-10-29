@@ -191,7 +191,7 @@ export default function MonthlyReportScreen({ navigation }) {
         </View>
         <TouchableOpacity
           style={styles.weeklyReportRow}
-          onPress={() => navigation.navigate('WeeklyReport')}
+          onPress={() => navigation.navigate('weeklyreport')}
         >
           <Text style={styles.weeklyReportText}>주간 리포트 보기</Text>
           <Image
