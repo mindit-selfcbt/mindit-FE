@@ -62,7 +62,7 @@ const planData = [
     startDate: new Date(2025, 10, 24),
     endDate: new Date(2025, 10, 30),
     title: '노출 훈련 반복과 실생활 적용',
-    goal: 'AR 노출 훈련 습관화 & 실생활 적용',
+    goal: 'AR 노출 훈련 습관화&실생활 적용',
     content: '실제 공공장소의 물건을 잡은 후 손을 씻지 않고 버티기',
   },
 ];
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'Pretendard',
     fontWeight: '400',
-    fontSize: 13,
+    fontSize: 14,
     lineHeight: 24,
     color: '#25252C',
     marginTop: 4,

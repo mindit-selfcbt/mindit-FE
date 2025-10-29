@@ -46,7 +46,7 @@ const MainScreen = ({ navigation }) => {
       navigation.navigate('monthlyreport');
     }
     if (key === 'plan') {
-      navigation.navigate('myanxiety');
+      navigation.navigate('mytimeline');
     }
   };
 
@@ -173,7 +173,6 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#3D3D44',
-    fontFamily: 'Pretendard',
     fontSize: 20,
     fontStyle: 'normal',
     fontWeight: '800',

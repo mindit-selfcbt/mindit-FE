@@ -41,38 +41,34 @@ const createWeeklyData = (baseDate, weeks) => {
 const checkingPlanData = createWeeklyData(new Date(2025, 9, 27), [
   {
     week: 1,
-    title: '기초 상상 노출 훈련',
-    goal: '나의 강박과 불안 관찰하고 익숙해지기',
+    title: '사진 노출 훈련',
+    goal: '강박과 불안 관찰하고 익숙해지기',
     content:
-      '내가 도착 시간을 확인하지 않고 이동하는 상황을 바탕으로 상상 노출 2회',
+      'AI 사진 노출: 지하철 손잡이를 잡는 손의 사진으로 사진 노출 훈련 3회',
   },
   {
     week: 2,
-    title: '구체적 상황의 상상 노출 훈련',
+    title: '낮은 수준의 AR 노출 훈련',
     goal: '불확실성을 견뎌보기',
-    content:
-      '버스를 타고 이동하고 있고, 목적지까지 가는 길이 막히고 있다는 구체적인 상황을 바탕으로 상상 노출 2회',
+    content: '엘레베이터 버튼을 누르는 훈련 2회',
   },
   {
     week: 3,
-    title: '결과까지 상상하는 노출 훈련',
-    goal: '불안과 결과에 따른 감정을 수용하기',
-    content:
-      '확인 안 해서 도착이 늦었고, 상대방이 기다리고 있는 결과를 상상하는 훈련 2회',
+    title: '중간 수준의 AR 노출 훈련',
+    goal: '공공장소에서의 노출 연습',
+    content: '공공화장실 손잡이를 만지는 훈련 2회',
   },
   {
     week: 4,
-    title: '실제 노출 훈련1',
-    goal: '실생활에 직접 적용하며 익숙해지기',
-    content:
-      '도착 예상 시간과 현재 위치를 확인하지 않고 외출하는 실제 노출 훈련 1회',
+    title: '높은 수준의 AR 노출 훈련',
+    goal: '공공장소에서의 노출 연습',
+    content: '지하철 손잡이를 만지는 훈련 2회',
   },
   {
     week: 5,
-    title: '실제 노출 훈련2',
-    goal: '실생활에 직접 적용하며 익숙해지기',
-    content:
-      '도착 예상 시간과 현재 위치를 확인하지 않고 외출하는 실제 노출 훈련 2회',
+    title: '노출 훈련 반복과 실생활 적용',
+    goal: 'AR 노출 훈련 습관화 & 실생활 적용',
+    content: '실제 공공장소의 물건을 잡은 후 손을 씻지 않고 버티기',
   },
 ]);
 
@@ -273,7 +269,6 @@ const styles = StyleSheet.create({
   },
   planHeaderText: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontWeight: '700',
     fontSize: 20,
     lineHeight: 32,
@@ -300,7 +295,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: -2,
   },
-  // checkIconOverlay 스타일 제거
 
   dashedContainer: {
     flex: 1,
@@ -354,7 +348,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   weekBadgeCompleted: {
-    backgroundColor: '#E6E9F2',
+    backgroundColor: '#E8F1FF',
   },
   weekBadgeText: {
     color: '#3557D4',
@@ -374,7 +368,6 @@ const styles = StyleSheet.create({
     lineHeight: 19.2,
   },
   planCardTitle: {
-    fontFamily: 'Pretendard',
     fontWeight: '700',
     fontSize: 18,
     color: '#25252C',
@@ -384,7 +377,7 @@ const styles = StyleSheet.create({
 
   fieldRow: { flexDirection: 'row', marginBottom: 10 },
   fieldLabel: {
-    backgroundColor: '#F3F7FB',
+    backgroundColor: '#E8F1FF',
     height: 32,
     borderRadius: 55,
     paddingHorizontal: 16,
@@ -409,7 +402,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'Pretendard',
     fontWeight: '400',
-    fontSize: 15,
+    fontSize: 13,
     lineHeight: 24,
     color: '#25252C',
     marginTop: 2,
