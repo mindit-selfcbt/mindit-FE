@@ -82,16 +82,13 @@ const ImagineScreen = () => {
 
   const handleVoicePress = voice => {
     setSelectedVoice(voice.id);
-
     stopAndReleaseCurrentSound();
 
     const newSound = new Sound(voice.audio, Sound.MAIN_BUNDLE, error => {
       if (error) {
         console.error('오디오 로드 실패:', error);
         newSound.release();
-        if (currentSound === newSound) {
-          currentSound = null;
-        }
+        if (currentSound === newSound) currentSound = null;
         return;
       }
 
@@ -155,22 +152,22 @@ const ImagineScreen = () => {
             <View style={{ height: 12 }} />
             <Text style={styles.trainTitle}>기초 상상 노출 훈련</Text>
             <View style={{ height: 12 }} />
-            <View style={styles.inlineRow}>
+            <View style={[styles.inlineRow, { alignItems: 'flex-start' }]}>
               <View style={styles.labelBadge}>
                 <Text style={styles.labelBadgeText}>목표</Text>
               </View>
               <View style={{ width: 12 }} />
-              <Text style={styles.detailText}>
+              <Text style={[styles.detailText, { marginTop: 0 }]}>
                 나의 강박과 불안 관찰하고 익숙해지기
               </Text>
             </View>
             <View style={{ height: 12 }} />
-            <View style={styles.inlineRow}>
+            <View style={[styles.inlineRow, { alignItems: 'flex-start' }]}>
               <View style={styles.labelBadge}>
                 <Text style={styles.labelBadgeText}>내용</Text>
               </View>
               <View style={{ width: 12 }} />
-              <Text style={styles.detailText}>
+              <Text style={[styles.detailText, { marginTop: 0 }]}>
                 내가 도착 시간을 확인하지 않고 이동하는 상황을 바탕으로 상상
                 노출 2회
               </Text>
@@ -220,7 +217,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     alignItems: 'center',
-    paddingBottom: 24,
+    paddingBottom: 100,
     minHeight: '100%',
   },
   topNotice: {
@@ -232,7 +229,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 32,
-    fontFamily: 'Pretendard',
   },
   box: {
     width: 320,
@@ -274,11 +270,10 @@ const styles = StyleSheet.create({
     color: '#25252C',
     fontSize: 20,
     fontWeight: '700',
-    fontFamily: 'Pretendard',
   },
   inlineRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     width: '100%',
   },
   labelBadge: {
@@ -303,10 +298,10 @@ const styles = StyleSheet.create({
     lineHeight: 25.6,
     flex: 1,
     flexWrap: 'wrap',
+    marginTop: 0,
   },
   sectionLabel: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontSize: 20,
     fontWeight: '700',
     lineHeight: 32,
@@ -369,10 +364,10 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   scrollButtonWrap: {
-    marginTop: 100,
+    marginTop: 40,
     width: 360,
     alignSelf: 'center',
-    paddingBottom: Platform.OS === 'ios' ? 0 : 12,
+    top: 100,
   },
 });
 
