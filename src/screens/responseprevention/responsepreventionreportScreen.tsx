@@ -6,11 +6,16 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Dimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import retryImg from '../../assets/img/responseprevention/retryImg.png';
 import cognitiveerrorImg from '../../assets/img/responseprevention/cognitiveerrorImg.png';
+import mainIcon from '../../assets/icon/mainIcon.png';
+
+const { width } = Dimensions.get('window');
+const scaleFactor = width / 360;
 
 const BAR_WIDTH = 120;
 const BAR_ROW_HEIGHT = 120;
@@ -147,17 +152,29 @@ function ComparisonBarGraph() {
 export default function ErpRecordScreen() {
   const navigation = useNavigation();
 
+  const goToMain = () => {
+    navigation.navigate('main');
+  };
+
   return (
     <ScrollView
       style={styles.scrollContainer}
       contentContainerStyle={styles.scrollContent}
     >
-      <Text style={styles.pageTitle}>반응 방지 리포트</Text>
+      <View style={styles.topRow}>
+        <Text style={styles.pageTitle}>반응 방지 리포트</Text>
+        <TouchableOpacity style={styles.mainIconWrap} onPress={goToMain}>
+          <Image source={mainIcon} style={styles.icon} />
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.meta}>10월 31일 금요일 · 오전 9시 30분</Text>
+
       <View style={styles.situationBox}>
         <Text style={styles.infoLabel}>강박 상황</Text>
         <Text style={styles.infoText}>이동 중에 내 위치를 확인하고 싶다</Text>
       </View>
+
       <View style={styles.statBoxRow}>
         <View style={styles.statBox}>
           <Text style={styles.statTitle}>이번 주 반응 방지</Text>
@@ -176,7 +193,9 @@ export default function ErpRecordScreen() {
           </View>
         </View>
       </View>
+
       <AnxietySection />
+
       <View style={styles.anxietyBox}>
         <Text style={styles.anxietyTitle}>불안 정도 비교</Text>
         <Text style={styles.anxietyDesc}>
@@ -195,6 +214,7 @@ export default function ErpRecordScreen() {
           <Text style={styles.comparisonLegendLabel}>이번 불안 정도</Text>
         </View>
       </View>
+
       <View style={styles.thoughtBox}>
         <Text style={styles.obsessiveThoughtText}>강박 사고</Text>
         <Text style={styles.thoughtTitle}>
@@ -205,6 +225,7 @@ export default function ErpRecordScreen() {
           현재 위치를 확인하지 않으면 늦을 것 같다는 생각이 든다.
         </Text>
       </View>
+
       <View style={styles.buttonContainer}>
         <View style={styles.buttonRow}>
           <TouchableOpacity
@@ -233,19 +254,38 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 60,
   },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20 * scaleFactor,
+    position: 'relative',
+    width: '100%',
+    paddingHorizontal: 16,
+    marginLeft: -16,
+    marginTop: 40,
+  },
   pageTitle: {
     color: '#25252C',
     fontSize: 20,
     fontWeight: '700',
-    marginTop: 40,
     lineHeight: 30,
-    marginBottom: 6,
+  },
+  mainIconWrap: {
+    position: 'absolute',
+    right: 0,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
   },
   meta: {
     color: '#9298A2',
     fontSize: 14,
     fontWeight: '500',
-    marginBottom: 20,
+    marginTop: -6,
+    marginBottom: 16,
     fontFamily: 'Pretendard',
   },
   situationBox: {

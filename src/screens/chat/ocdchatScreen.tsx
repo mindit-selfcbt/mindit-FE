@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Easing,
+} from 'react-native';
 import ChatMessageList from '../../components/chatmessageList';
 import ChatInput from '../../components/chatInput';
 import { ocddummyMessages } from '../../data/ocddummyMessages';
 import MainIcon from '../../assets/icon/mainIcon.png';
 
-const initialMessages = ocddummyMessages.filter(m => m.auto).slice(0, 2);
-
 const OcdChatScreen = ({ navigation }) => {
-  const [messages, setMessages] = useState(initialMessages);
-  const [nextAiResponseIndex, setNextAiResponseIndex] = useState(2);
+  const [messages, setMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
 
   const handleMainPress = () => {
     navigation.navigate('main');
@@ -23,37 +28,45 @@ const OcdChatScreen = ({ navigation }) => {
       from: 'User',
       auto: false,
     };
+
+    // 1. 사용자 메시지 추가
     setMessages(prevMessages => [...prevMessages, newUserMessage]);
 
-    const nextAiIndex = ocddummyMessages.findIndex(
-      (msg, index) => index >= nextAiResponseIndex && msg.from === 'AI',
-    );
-
-    if (nextAiIndex !== -1) {
-      const nextAiMessage = ocddummyMessages[nextAiIndex];
-
-      setTimeout(() => {
-        setMessages(prevMessages => [
-          ...prevMessages,
-          {
-            ...nextAiMessage,
-            id: (prevMessages.length + 2).toString(),
-            auto: false,
-          },
-        ]);
-
-        const nextUserIndex = ocddummyMessages.findIndex(
-          (msg, index) => index > nextAiIndex && msg.from === 'User',
-        );
-
-        if (nextUserIndex !== -1) {
-          setNextAiResponseIndex(nextUserIndex);
-        } else {
-          setNextAiResponseIndex(ocddummyMessages.length);
-        }
-      }, 1000);
-    }
+    // TODO: 실제 채팅 흐름에서는 여기에 AI 응답 로직을 구현해야 합니다.
   };
+
+  // 컴포넌트가 마운트될 때 더미 메시지를 순차적으로 표시
+  useEffect(() => {
+    let timeout = null;
+    let index = 0;
+
+    const displayNextMessage = () => {
+      if (index < ocddummyMessages.length) {
+        const nextMessage = ocddummyMessages[index];
+        // 딜레이를 250ms로 조정하여 스크롤 속도를 늦춤
+        const delay = 1000;
+
+        timeout = setTimeout(() => {
+          setMessages(prevMessages => [
+            ...prevMessages,
+            {
+              ...nextMessage,
+              auto: false,
+            },
+          ]);
+
+          index++;
+          displayNextMessage(); // 다음 메시지 표시
+        }, delay);
+      }
+    };
+
+    displayNextMessage();
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -98,3 +111,4 @@ const styles = StyleSheet.create({
 });
 
 export default OcdChatScreen;
+// C:\mindit-FE\src\screens\chat\ocdchatScreen.tsx

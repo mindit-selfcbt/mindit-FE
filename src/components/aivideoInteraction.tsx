@@ -13,7 +13,7 @@ const pulsingVideo = require('../assets/video/aivideo.mp4');
 const PULSE_SCALE_MIN = 1.0;
 const PULSE_SCALE_MAX = 1.0;
 const PULSE_DURATION = 1000;
-const LONG_PRESS_DURATION = 3000;
+const LONG_PRESS_DURATION = 500;
 
 const AIVideoInteraction = ({
   isStarted,
