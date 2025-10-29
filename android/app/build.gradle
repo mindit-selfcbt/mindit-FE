@@ -85,6 +85,11 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "mindit-app.apk"
+        }
+    }
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
