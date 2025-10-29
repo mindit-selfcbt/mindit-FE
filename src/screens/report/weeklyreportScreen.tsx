@@ -63,8 +63,8 @@ const REACTION_PREVENTION_DATA = [
 
 const WEEKLY_EXPOSURE_CARD_DATA = {
   week: 4,
-  startDate: new Date(2025, 3, 22),
-  endDate: new Date(2025, 3, 29),
+  startDate: new Date(2025, 9, 27),
+  endDate: new Date(2025, 10, 2),
   title: '결과까지 상상하는 노출 훈련',
   goal: '불안과 결과에 따른 감정을 수용하기',
   content:
@@ -582,7 +582,7 @@ const planCardStyles = StyleSheet.create({
     lineHeight: 19.2 * scaleFactor,
   },
   planCardTitle: {
-    fontWeight: '700',
+    fontWeight: '500',
     fontSize: 20 * scaleFactor,
     color: '#25252C',
     lineHeight: 32 * scaleFactor,
