@@ -1,7 +1,9 @@
+// C:\mindit-FE\src\screens\aiarexposure\aiexposureScreen.tsx
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import AnxietyStartModal from '../../components/anxietystartModal';
-import AnxietyExitModal from '../../components/anxietyexitModal';
+import AnxietyStartModal from '../../components/aistartModal';
+import AnxietyExitModal from '../../components/aiexitModal';
 import AIVideoInteraction from '../../components/aivideoInteraction';
 
 const exitIcon = require('../../assets/icon/exitIcon.png');
@@ -9,7 +11,7 @@ const exitIcon = require('../../assets/icon/exitIcon.png');
 const AIExposureScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(true);
   const [exitModalVisible, setExitModalVisible] = useState(false);
-  const [anxiety, setAnxiety] = useState(50);
+  const [anxiety, setAnxiety] = useState(0);
   const [isStarted, setIsStarted] = useState(false);
   const [isPulsing, setIsPulsing] = useState(false);
   const [seconds, setSeconds] = useState(0);
@@ -71,7 +73,7 @@ const AIExposureScreen = ({ navigation }) => {
   const handleCompleteExit = () => {
     setExitModalVisible(false);
     setIsPulsing(false);
-    navigation.replace('main', {
+    navigation.replace('ailoading', {
       initialAnxiety: anxiety,
       secondsSpent: seconds,
     });
@@ -151,7 +153,7 @@ const AIExposureScreen = ({ navigation }) => {
         visible={exitModalVisible}
         anxiety={anxiety}
         setAnxiety={setAnxiety}
-        onComplete={handleCompleteExit}
+        onComplete={handleCompleteExit} // onComplete를 전달함
         onCancel={() => {
           setExitModalVisible(false);
           if (isStarted) {

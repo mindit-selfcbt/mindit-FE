@@ -1,4 +1,6 @@
-import React, { useState } from 'react'; // 💡 수정: useState import 추가
+// C:\mindit-FE\src\components\aistartModal.tsx
+
+import React, { useState } from 'react'; // 💡 useState import 확인
 import {
   Modal,
   View,
@@ -32,17 +34,15 @@ const AnxietyStartModal = ({
   setAnxiety,
 }) => {
   const navigation = useNavigation();
-  // 💡 추가된 부분: 사용자가 슬라이더를 움직였는지 추적하는 상태
+  // 💡 수정된 부분: 사용자가 슬라이더를 움직였는지 추적하는 상태 추가
   const [hasInteracted, setHasInteracted] = useState(false);
-
-  // const isSliderMoved = anxiety > 0; // ⚠️ 기존 로직 (제거)
 
   const handleCancel = () => {
     navigation.navigate('main');
     onClose && onClose();
   };
 
-  // 💡 추가된 부분: 슬라이더 값 변경 핸들러
+  // 💡 수정된 부분: 슬라이더 값 변경 핸들러
   const handleValueChange = value => {
     setAnxiety(value);
     if (!hasInteracted) setHasInteracted(true);
@@ -63,7 +63,9 @@ const AnxietyStartModal = ({
             resizeMode="contain"
           />
 
-          <Text style={styles.title}>현재 느끼는 불안 정도를 입력해주세요</Text>
+          <Text style={styles.title}>
+            사진을 보고 느껴지는{'\n'}불안 정도를 입력해주세요
+          </Text>
 
           <Slider
             minimumValue={0}
@@ -92,25 +94,25 @@ const AnxietyStartModal = ({
               onPress={onStart}
               style={[
                 styles.startButton,
-                // 💡 수정된 부분: hasInteracted 상태 사용
+                // 💡 수정된 부분: hasInteracted 상태로 활성화 조건 변경
                 hasInteracted
                   ? styles.startButtonActive
                   : styles.startButtonInactive,
               ]}
-              // 💡 수정된 부분: hasInteracted 상태 사용
+              // 💡 수정된 부분: hasInteracted 상태로 disabled 조건 변경
               disabled={!hasInteracted}
               activeOpacity={0.8}
             >
               <Text
                 style={[
                   styles.startButtonText,
-                  // 💡 수정된 부분: hasInteracted 상태 사용
+                  // 💡 수정된 부분: hasInteracted 상태로 텍스트 스타일 변경
                   hasInteracted
                     ? styles.startButtonTextActive
                     : styles.startButtonTextInactive,
                 ]}
               >
-                시작하기
+                반응 방지 시작하기
               </Text>
             </TouchableOpacity>
           </View>
@@ -142,8 +144,8 @@ const styles = StyleSheet.create({
   image: {
     width: 80,
     height: 80,
-    marginBottom: 20,
-    marginTop: 10,
+    marginBottom: 8,
+    marginTop: 8,
   },
   title: {
     color: COLORS.BG_100,
@@ -151,11 +153,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
     lineHeight: 30,
-    marginBottom: 10,
+    marginBottom: 0,
   },
   slider: {
     width: '100%',
-    height: 60,
+    height: 50,
     marginBottom: 40,
   },
   buttonContainerAbsolute: {
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: COLORS.MAIN_1,
     fontFamily: 'Pretendard',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
   },
   startButton: {
@@ -201,7 +203,7 @@ const styles = StyleSheet.create({
   },
   startButtonText: {
     fontFamily: 'Pretendard',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
   },
   startButtonTextInactive: {

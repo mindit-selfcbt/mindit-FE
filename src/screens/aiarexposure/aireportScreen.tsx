@@ -1,6 +1,23 @@
+// C:\mindit-FE\src\screens\aiarexposure\aireportScreen.tsx
+
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import retryImg from '../../assets/img/responseprevention/retryImg.png';
+import cognitiveerrorImg from '../../assets/img/responseprevention/cognitiveerrorImg.png';
+import mainIcon from '../../assets/icon/mainIcon.png';
+
+const { width } = Dimensions.get('window');
+const scaleFactor = width / 360;
 
 const BAR_WIDTH = 120;
 const BAR_ROW_HEIGHT = 120;
@@ -19,9 +36,7 @@ function BarItem({ value, label, isCurrent }) {
           {safeValue}
         </Text>
       </View>
-
       <View style={{ height: 8 }} />
-
       <View style={[styles.barWrap, { height: barHeight + BAR_LINE_HEIGHT }]}>
         <View
           style={[
@@ -40,7 +55,6 @@ function BarItem({ value, label, isCurrent }) {
           />
         </View>
       </View>
-
       <Text style={styles.barLabel}>{label}</Text>
     </View>
   );
@@ -51,19 +65,17 @@ function AnxietySection() {
     <View style={styles.anxietyBox}>
       <Text style={styles.anxietyTitle}>불안 정도</Text>
       <Text style={styles.anxietyDesc}>
-        반응 방지를 하며 기록한 불안의 변화
+        AI 사진 노출을 하며 기록한 불안의 변화
       </Text>
-
       <View style={styles.chartArea}>
         <View style={styles.yAxis}>
           <Text style={styles.axisLabel}>100</Text>
           <View style={{ flex: 1 }} />
           <Text style={styles.axisLabel}>0</Text>
         </View>
-
         <View style={styles.barsArea}>
-          <BarItem value={75} label="반응 방지 시작" isCurrent={false} />
-          <BarItem value={30} label="반응 방지 완료" isCurrent={true} />
+          <BarItem value={75} label="노출 시작" isCurrent={false} />
+          <BarItem value={30} label="노출 완료" isCurrent={true} />
         </View>
       </View>
     </View>
@@ -76,12 +88,10 @@ function ComparisonBarItem({ value, isCurrent }) {
   const BAR_LINE_HEIGHT_COMPARE = 5;
   const safeValue = Math.max(0, Math.min(value, 100));
   const barHeight = (safeValue / 100) * BAR_ROW_HEIGHT_COMPARE;
-
   const valueLabelStyle = [
     styles.compareValueLabelBase,
     isCurrent ? styles.compareValueLabelCurrent : styles.compareValueLabelPrev,
   ];
-
   return (
     <View style={styles.compareBarItem}>
       <Text style={valueLabelStyle}>{safeValue}</Text>
@@ -141,36 +151,46 @@ function ComparisonBarGraph() {
   );
 }
 
-export default function ErpRecordScreen() {
+// 💡 컴포넌트 이름 변경 (이전 단계 수정 사항 유지)
+export default function AIReportScreen() {
+  const navigation = useNavigation();
+
+  const goToMain = () => {
+    navigation.navigate('main');
+  };
+
   return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.descMain}>
-        이번 반응 방지에서 평균 불안은{'\n'}
-        <Text style={styles.descMainScore}>50점</Text>이었어요! 앞으로 반응
-        방지를{'\n'}
-        이어나가며 불안을 줄여 나가요
-      </Text>
+    <ScrollView
+      style={styles.scrollContainer}
+      contentContainerStyle={styles.scrollContent}
+    >
+      <View style={styles.topRow}>
+        {/* 💡 텍스트 수정 (이전 단계 수정 사항 유지) */}
+        <Text style={styles.pageTitle}>사진 노출 훈련 리포트</Text>
+        <TouchableOpacity style={styles.mainIconWrap} onPress={goToMain}>
+          <Image source={mainIcon} style={styles.icon} />
+        </TouchableOpacity>
+      </View>
 
       <Text style={styles.meta}>10월 31일 금요일 · 오전 9시 30분</Text>
 
       <View style={styles.situationBox}>
         <Text style={styles.infoLabel}>강박 상황</Text>
-        <Text style={styles.infoText}>
-          이동 중에 나의 현재 위치를 확인하고 싶다
-        </Text>
+        <Text style={styles.infoText}>이동 중에 내 위치를 확인하고 싶다</Text>
       </View>
 
       <View style={styles.statBoxRow}>
         <View style={styles.statBox}>
-          <Text style={styles.statTitle}>이번 주 반응 방지</Text>
+          {/* 💡 텍스트 수정 (이전 단계 수정 사항 유지) */}
+          <Text style={styles.statTitle}>이번 주 AI 노출</Text>
           <View style={styles.statNumRow}>
             <Text style={styles.statNumber}>1</Text>
             <Text style={styles.statUnit}>번째</Text>
           </View>
         </View>
-
         <View style={styles.statBox}>
-          <Text style={styles.statTitle}>반응 방지 시간</Text>
+          {/* 💡 텍스트 수정 (이전 단계 수정 사항 유지) */}
+          <Text style={styles.statTitle}>AI 노출 시간</Text>
           <View style={styles.statNumRow}>
             <Text style={styles.statNumber}>3</Text>
             <Text style={styles.statUnit}>분</Text>
@@ -185,7 +205,7 @@ export default function ErpRecordScreen() {
       <View style={styles.anxietyBox}>
         <Text style={styles.anxietyTitle}>불안 정도 비교</Text>
         <Text style={styles.anxietyDesc}>
-          이전 반응 방지 회차와 불안 정도를 비교해서 볼 수 있습니다.
+          이전 AI 사진 노출 회차와 불안 정도를 비교해서 볼 수 있습니다.
         </Text>
         <ComparisonBarGraph />
         <View style={styles.comparisonLegendRow}>
@@ -200,39 +220,68 @@ export default function ErpRecordScreen() {
           <Text style={styles.comparisonLegendLabel}>이번 불안 정도</Text>
         </View>
       </View>
-    </View>
+
+      <View style={styles.buttonContainer}>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.retryButton}
+            // 💡 수정: 'aiexposure' 화면으로 이동하도록 변경 (이전 단계 수정 사항 유지)
+            onPress={() => navigation.navigate('aiexposure')}
+          >
+            <Image source={retryImg} style={styles.buttonIcon} />
+            <Text style={styles.retryButtonText}>훈련 다시 하기</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.errorButton}>
+            <Image source={cognitiveerrorImg} style={styles.buttonIcon} />
+            <Text style={styles.errorButtonText}>인지적 오류 확인</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  screenContainer: {
+  scrollContainer: {
     flex: 1,
-    padding: 8,
+    backgroundColor: '#F8FBFF',
   },
-  descMain: {
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 60,
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20 * scaleFactor,
+    position: 'relative',
+    width: '100%',
+    paddingHorizontal: 16,
+    marginLeft: -16,
+    marginTop: 40,
+  },
+  pageTitle: {
     color: '#25252C',
     fontSize: 20,
     fontWeight: '800',
-    lineHeight: 34,
-    marginBottom: 20,
-    marginTop: 12,
-    textAlign: 'left',
+    lineHeight: 30,
   },
-  descMainScore: {
-    color: '#3557D4',
-    fontSize: 20,
-    fontWeight: '800',
-    lineHeight: 34,
-    fontFamily: 'Pretendard',
-    textAlign: 'left',
+  mainIconWrap: {
+    position: 'absolute',
+    right: 0,
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
   },
   meta: {
     color: '#9298A2',
     fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 20,
-    fontFamily: 'Pretendard',
-    textAlign: 'left',
+    fontWeight: '800',
+    marginTop: -6,
+    marginBottom: 16,
   },
   situationBox: {
     width: 320,
@@ -250,13 +299,12 @@ const styles = StyleSheet.create({
   infoLabel: {
     color: '#717780',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '800',
     marginBottom: 8,
-    fontFamily: 'Pretendard',
   },
   infoText: {
     color: '#25252C',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
     fontFamily: 'Pretendard',
   },
@@ -278,11 +326,9 @@ const styles = StyleSheet.create({
   },
   statTitle: {
     color: '#717780',
-    fontFamily: 'Pretendard',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '800',
     marginBottom: 4,
-    textAlign: 'left',
   },
   statNumRow: {
     flexDirection: 'row',
@@ -346,7 +392,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard',
     fontSize: 12,
     fontWeight: '400',
-    lineHeight: 20,
   },
   barsArea: {
     flexDirection: 'row',
@@ -354,18 +399,15 @@ const styles = StyleSheet.create({
     height: BAR_ROW_HEIGHT + 50,
     flex: 1,
     justifyContent: 'center',
-    gap: 0,
   },
   barItem: {
     alignItems: 'center',
     width: BAR_WIDTH,
-    marginHorizontal: 0,
   },
   barValueBox: {
     paddingHorizontal: 12,
     borderRadius: 8,
     backgroundColor: '#E8F1FF',
-    position: 'relative',
     zIndex: 10,
     flexDirection: 'row',
     alignItems: 'center',
@@ -380,7 +422,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard',
     fontSize: 16,
     fontWeight: '700',
-    lineHeight: 22,
   },
   barValueTextLast: { color: '#FFF' },
   barWrap: {
@@ -392,7 +433,6 @@ const styles = StyleSheet.create({
   barTopLine: {
     width: BAR_WIDTH,
     height: BAR_LINE_HEIGHT,
-    borderRadius: 0,
   },
   barTopLinePrev: { backgroundColor: '#85B6FF' },
   barTopLineCurrent: { backgroundColor: '#3557D4' },
@@ -402,7 +442,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     top: 0,
-    borderRadius: 0,
   },
   barLabel: {
     marginTop: 12,
@@ -420,14 +459,12 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#85B6FF',
   },
   comparisonLegendLabel: {
     color: '#717780',
     fontFamily: 'Pretendard',
     fontSize: 14,
     fontWeight: '400',
-    lineHeight: 18,
     letterSpacing: -0.42,
     marginLeft: 4,
     marginRight: 18,
@@ -446,12 +483,10 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginTop: 12,
     marginLeft: 12,
-    textAlign: 'center', // ← 가운데 정렬
   },
   compareBarItem: {
     alignItems: 'center',
     width: 40,
-    marginHorizontal: 0,
   },
   compareBarWrap: {
     width: 40,
@@ -461,8 +496,6 @@ const styles = StyleSheet.create({
   },
   compareBarLine: {
     height: 5,
-    borderRadius: 0,
-    marginBottom: 0,
   },
   compBarTopLinePrev: { backgroundColor: '#C1D7FF' },
   compBarTopLineCurrent: { backgroundColor: '#3856C1' },
@@ -471,13 +504,89 @@ const styles = StyleSheet.create({
     fontFamily: 'Gmarket Sans',
     fontSize: 14,
     fontWeight: '400',
-    lineHeight: 21,
     marginBottom: 4,
   },
-  compareValueLabelPrev: {
-    color: '#5096FF',
+  compareValueLabelPrev: { color: '#5096FF' },
+  compareValueLabelCurrent: { color: '#3856C1' },
+  thoughtBox: {
+    width: 320,
+    borderRadius: 10,
+    backgroundColor: '#FFF',
+    alignSelf: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 24,
   },
-  compareValueLabelCurrent: {
+  obsessiveThoughtText: {
+    color: '#25252C',
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 8,
+  },
+  thoughtTitle: {
+    color: '#9298A2',
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontWeight: '400',
+    letterSpacing: -0.42,
+    marginBottom: 8,
+  },
+  thoughtText: {
+    color: '#25252C',
+    fontFamily: 'Pretendard',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  buttonContainer: {
+    width: 320,
+    alignSelf: 'center',
+    marginBottom: 30,
+    marginTop: 12,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  retryButton: {
+    flex: 1,
+    height: 60,
+    borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: '#92A9FF',
+    backgroundColor: '#E8F1FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+  },
+  retryButtonText: {
     color: '#3856C1',
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  errorButton: {
+    flex: 1,
+    height: 60,
+    borderRadius: 8,
+    backgroundColor: '#3856C1',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+  },
+  errorButtonText: {
+    color: '#FFF',
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  buttonIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
   },
 });

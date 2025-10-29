@@ -284,8 +284,7 @@ const styles = StyleSheet.create({
   },
   graphTitle: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
-    fontSize: 18 * scaleFactor,
+    fontSize: 20 * scaleFactor,
     fontWeight: '700',
     lineHeight: 28 * scaleFactor,
     marginBottom: 12 * scaleFactor,
@@ -293,7 +292,6 @@ const styles = StyleSheet.create({
   topTextWrap: { marginTop: 0, marginBottom: 16 * scaleFactor },
   topText: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontSize: 20 * scaleFactor,
     fontWeight: '700',
     lineHeight: 30 * scaleFactor,

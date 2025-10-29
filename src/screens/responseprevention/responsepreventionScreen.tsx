@@ -9,7 +9,8 @@ const exitIcon = require('../../assets/icon/exitIcon.png');
 const ResponsePreventionScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(true);
   const [exitModalVisible, setExitModalVisible] = useState(false);
-  const [anxiety, setAnxiety] = useState(50);
+  // 💡 수정된 부분: 초기 불안 정도를 50에서 0으로 변경
+  const [anxiety, setAnxiety] = useState(0);
   const [isStarted, setIsStarted] = useState(false);
   const [isPulsing, setIsPulsing] = useState(false);
   const [seconds, setSeconds] = useState(0);

@@ -31,7 +31,7 @@ const dummyRecordsByType = {
     {
       date: '10월 15일',
       time: '오후 9시 50분',
-      title: '외출 후 문을 제대로 잠갔는지 다시 확인하러 갔다',
+      title: '외출 후 문을 제대로 잠갔는지 확인하러 갔다',
       extra1: '확인 횟수',
       extra2: '2번',
       extra3: '평균 불안 정도',
@@ -40,7 +40,7 @@ const dummyRecordsByType = {
     {
       date: '9월 30일',
       time: '저녁 7시 20분',
-      title: '전등 스위치를 끄지 않았을까 걱정되어 돌아가 확인했다',
+      title: '전등 스위치를 끄지 않았을까 걱정되어 돌아갔다',
       extra1: '확인 횟수',
       extra2: '3번',
       extra3: '평균 불안 정도',

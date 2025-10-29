@@ -29,15 +29,26 @@ const AnxietyExitModal = ({
   visible,
   onComplete,
   onCancel,
-  anxiety,
-  setAnxiety,
+  anxiety, // prop으로 받지만, 이제 슬라이더의 초기값으로는 사용되지 않습니다.
+  setAnxiety, // 최종 값 저장을 위해 사용됩니다.
 }) => {
+  // 💡 수정된 부분: 모달이 열릴 때마다 0으로 초기화되는 지역 상태
+  const [exitAnxiety, setExitAnxiety] = useState(0);
+
   // ✅ 새 state: 사용자가 실제로 슬라이더를 움직였는지 추적
   const [hasMoved, setHasMoved] = useState(false);
 
   const handleValueChange = value => {
-    setAnxiety(value);
+    // 💡 수정: 지역 상태를 업데이트
+    setExitAnxiety(value);
     if (!hasMoved) setHasMoved(true); // 처음 슬라이더를 움직였을 때 true로 변경
+  };
+
+  // 💡 추가된 부분: 완료 시 지역 상태 값을 부모에게 전달
+  const handleCompleteExit = () => {
+    // 지역 상태의 최종 값을 setAnxiety prop을 이용해 부모 컴포넌트(ResponsePreventionScreen)에 전달
+    setAnxiety(exitAnxiety);
+    onComplete();
   };
 
   return (
@@ -60,8 +71,9 @@ const AnxietyExitModal = ({
           <Slider
             minimumValue={0}
             maximumValue={100}
-            value={anxiety}
-            onValueChange={handleValueChange} // ✅ 수정
+            // 💡 수정: 지역 상태인 exitAnxiety를 value로 사용 (항상 0에서 시작)
+            value={exitAnxiety}
+            onValueChange={handleValueChange}
             style={styles.slider}
             minimumTrackTintColor={COLORS.SLIDER_TRACK}
             maximumTrackTintColor={COLORS.BG_40}
@@ -82,7 +94,8 @@ const AnxietyExitModal = ({
 
             {/* 완료하기 버튼 */}
             <TouchableOpacity
-              onPress={onComplete}
+              // 💡 수정: 새로운 완료 핸들러 사용
+              onPress={handleCompleteExit}
               style={[
                 styles.startButton,
                 hasMoved

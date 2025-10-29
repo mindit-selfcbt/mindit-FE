@@ -221,7 +221,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: COLORS.TEXT_DARK,
-    fontFamily: 'Pretendard',
     fontSize: 20,
     fontWeight: '900',
     lineHeight: 30,
@@ -341,6 +340,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     alignSelf: 'center',
+    marginBottom: 20,
   },
   completeButtonActive: {
     backgroundColor: COLORS.BG_BUTTON,
@@ -350,7 +350,6 @@ const styles = StyleSheet.create({
   },
   completeButtonText: {
     color: COLORS.TEXT_WHITE,
-    fontFamily: 'Pretendard',
     fontSize: 18,
     fontWeight: '900',
   },

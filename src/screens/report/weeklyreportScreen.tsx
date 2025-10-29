@@ -116,10 +116,10 @@ export default function WeeklyReportScreen({ navigation }) {
         <Text>했어요.{'\n'}</Text>
         <Text
           style={{
-            fontWeight: '400',
-            fontSize: 18 * scaleFactor,
+            fontWeight: '800',
+            fontSize: 20 * scaleFactor,
             lineHeight: 28 * scaleFactor,
-            color: '#717780',
+            color: '#25252C',
           }}
         >
           {encouragementText}
@@ -391,7 +391,6 @@ const styles = StyleSheet.create({
   },
   graphTitle: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontSize: 20 * scaleFactor,
     fontWeight: '700',
     lineHeight: 32 * scaleFactor,
@@ -400,7 +399,6 @@ const styles = StyleSheet.create({
   topTextWrap: { marginTop: 0, marginBottom: 16 * scaleFactor },
   topText: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontSize: 20 * scaleFactor,
     fontWeight: '700',
     lineHeight: 30 * scaleFactor,
@@ -432,7 +430,7 @@ const weeklyStyles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 21 * scaleFactor,
     letterSpacing: -0.42 * scaleFactor,
-    marginBottom: 16 * scaleFactor,
+    marginBottom: 0 * scaleFactor,
   },
   graphBlock: {
     backgroundColor: 'transparent',

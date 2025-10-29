@@ -1,4 +1,6 @@
-import React, { useState } from 'react'; // 💡 수정: useState import 추가
+// C:\mindit-FE\src\components\aiexitModal.tsx
+
+import React, { useState } from 'react';
 import {
   Modal,
   View,
@@ -9,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 
 const COLORS = {
   BG_0: '#F8FBFF',
@@ -24,28 +26,30 @@ const COLORS = {
 
 const Step4Image = require('../assets/img/responseprevention/infoImg.png');
 
-const AnxietyStartModal = ({
+// 💡 수정: 컴포넌트 이름을 AnxietyExitModal로 정정
+const AnxietyExitModal = ({
   visible,
-  onClose,
-  onStart,
+  onCancel, // 이어서하기 버튼 (onCancel)
+  // 💥 에러 수정: onStart 대신 onComplete prop 사용
+  onComplete, // 완료하기 버튼 (onComplete)
   anxiety,
   setAnxiety,
 }) => {
-  const navigation = useNavigation();
-  // 💡 추가된 부분: 사용자가 슬라이더를 움직였는지 추적하는 상태
+  // 모달이 열릴 때마다 0으로 초기화되는 지역 상태
+  const [exitAnxiety, setExitAnxiety] = useState(0);
+
+  // 사용자가 슬라이더를 움직였는지 추적하는 상태 (버튼 활성화 로직)
   const [hasInteracted, setHasInteracted] = useState(false);
 
-  // const isSliderMoved = anxiety > 0; // ⚠️ 기존 로직 (제거)
-
-  const handleCancel = () => {
-    navigation.navigate('main');
-    onClose && onClose();
+  const handleValueChange = value => {
+    setExitAnxiety(value);
+    if (!hasInteracted) setHasInteracted(true);
   };
 
-  // 💡 추가된 부분: 슬라이더 값 변경 핸들러
-  const handleValueChange = value => {
-    setAnxiety(value);
-    if (!hasInteracted) setHasInteracted(true);
+  // 💡 수정: 완료 시 지역 상태 값을 부모에게 전달하고 onComplete 호출
+  const handleCompleteExit = () => {
+    setAnxiety(exitAnxiety);
+    onComplete(); // 💥 에러 해결: onStart() 대신 onComplete() 호출
   };
 
   return (
@@ -63,13 +67,14 @@ const AnxietyStartModal = ({
             resizeMode="contain"
           />
 
-          <Text style={styles.title}>현재 느끼는 불안 정도를 입력해주세요</Text>
+          <Text style={styles.title}>
+            사진을 보고 느껴지는{'\n'}불안 정도를 입력해주세요
+          </Text>
 
           <Slider
             minimumValue={0}
             maximumValue={100}
-            value={anxiety}
-            // 💡 수정된 부분: 새 핸들러 사용
+            value={exitAnxiety}
             onValueChange={handleValueChange}
             style={styles.slider}
             minimumTrackTintColor={COLORS.SLIDER_TRACK}
@@ -81,36 +86,33 @@ const AnxietyStartModal = ({
 
           <View style={styles.buttonContainerAbsolute}>
             <TouchableOpacity
-              onPress={handleCancel}
+              onPress={onCancel}
               style={styles.cancelButton}
               activeOpacity={0.8}
             >
-              <Text style={styles.cancelButtonText}>취소</Text>
+              <Text style={styles.cancelButtonText}>이어서하기</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={onStart}
+              onPress={handleCompleteExit}
               style={[
                 styles.startButton,
-                // 💡 수정된 부분: hasInteracted 상태 사용
                 hasInteracted
                   ? styles.startButtonActive
                   : styles.startButtonInactive,
               ]}
-              // 💡 수정된 부분: hasInteracted 상태 사용
               disabled={!hasInteracted}
               activeOpacity={0.8}
             >
               <Text
                 style={[
                   styles.startButtonText,
-                  // 💡 수정된 부분: hasInteracted 상태 사용
                   hasInteracted
                     ? styles.startButtonTextActive
                     : styles.startButtonTextInactive,
                 ]}
               >
-                시작하기
+                완료하기
               </Text>
             </TouchableOpacity>
           </View>
@@ -120,7 +122,7 @@ const AnxietyStartModal = ({
   );
 };
 
-export default AnxietyStartModal;
+export default AnxietyExitModal;
 
 const styles = StyleSheet.create({
   backdrop: {
@@ -142,8 +144,8 @@ const styles = StyleSheet.create({
   image: {
     width: 80,
     height: 80,
-    marginBottom: 20,
-    marginTop: 10,
+    marginBottom: 8,
+    marginTop: 8,
   },
   title: {
     color: COLORS.BG_100,
@@ -151,11 +153,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
     lineHeight: 30,
-    marginBottom: 10,
+    marginBottom: 0,
   },
   slider: {
     width: '100%',
-    height: 60,
+    height: 50,
     marginBottom: 40,
   },
   buttonContainerAbsolute: {
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: COLORS.MAIN_1,
     fontFamily: 'Pretendard',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
   },
   startButton: {
@@ -201,7 +203,7 @@ const styles = StyleSheet.create({
   },
   startButtonText: {
     fontFamily: 'Pretendard',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
   },
   startButtonTextInactive: {

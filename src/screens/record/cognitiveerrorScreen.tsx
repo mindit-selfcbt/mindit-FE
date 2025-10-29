@@ -112,9 +112,8 @@ const styles = StyleSheet.create({
   infoLabel: {
     color: '#717780',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '800',
     marginBottom: 8,
-    fontFamily: 'Pretendard',
     textAlign: 'left',
   },
   infoText: {
@@ -131,7 +130,6 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontSize: 18,
     fontWeight: '700',
     lineHeight: 22,
@@ -162,7 +160,6 @@ const styles = StyleSheet.create({
   },
   cogErrorTitle: {
     color: '#3557D4',
-    fontFamily: 'Pretendard',
     fontSize: 16,
     fontWeight: '700',
     alignSelf: 'flex-start',
@@ -189,7 +186,6 @@ const styles = StyleSheet.create({
   },
   chatBtnLabel: {
     color: '#3856C1',
-    fontFamily: 'Pretendard',
     fontSize: 16,
     fontWeight: '800',
     lineHeight: 24,

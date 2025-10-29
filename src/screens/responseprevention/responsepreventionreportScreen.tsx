@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     color: '#25252C',
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '800',
     lineHeight: 30,
   },
   mainIconWrap: {
@@ -283,10 +283,9 @@ const styles = StyleSheet.create({
   meta: {
     color: '#9298A2',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '800',
     marginTop: -6,
     marginBottom: 16,
-    fontFamily: 'Pretendard',
   },
   situationBox: {
     width: 320,
@@ -304,9 +303,8 @@ const styles = StyleSheet.create({
   infoLabel: {
     color: '#717780',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '800',
     marginBottom: 8,
-    fontFamily: 'Pretendard',
   },
   infoText: {
     color: '#25252C',
@@ -332,9 +330,8 @@ const styles = StyleSheet.create({
   },
   statTitle: {
     color: '#717780',
-    fontFamily: 'Pretendard',
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '800',
     marginBottom: 4,
   },
   statNumRow: {
@@ -370,7 +367,6 @@ const styles = StyleSheet.create({
   },
   anxietyTitle: {
     color: '#717780',
-    fontFamily: 'Pretendard',
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 4,
@@ -527,9 +523,8 @@ const styles = StyleSheet.create({
   },
   obsessiveThoughtText: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '800',
     marginBottom: 8,
   },
   thoughtTitle: {

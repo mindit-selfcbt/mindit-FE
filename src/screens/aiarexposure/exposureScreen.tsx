@@ -52,7 +52,7 @@ const TRAINING_LABELS = {
 
 const SITUATION_DESCRIPTIONS = [
   '더러운 지하철 손잡이를 만진 후 손이 오염되었다.',
-  '다른 사람이 만진 물건을 만진 후 손이 오염되었다.',
+  '다른 사람이 만진 물건 때문에 손이 오염되었다.',
   '공공화장실의 문 손잡이를 잡는다.',
   '오염에 손이 닿았다.',
 ];
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
   trainingDesc: {
     color: '#717780',
     fontFamily: 'Pretendard',
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '400',
     marginBottom: 16,
     letterSpacing: -0.42,
@@ -444,6 +444,7 @@ const styles = StyleSheet.create({
   buttonRowWrapper: {
     width: '100%',
     alignItems: 'center',
+    paddingBottom: 30,
   },
   buttonRow: {
     flexDirection: 'row',
@@ -519,7 +520,7 @@ const exposureSituationBoxStyles = StyleSheet.create({
   text: {
     color: '#25252C',
     fontFamily: 'Pretendard',
-    fontSize: 16,
+    fontSize: 14,
     fontStyle: 'normal',
     fontWeight: '400',
     lineHeight: 25.6,

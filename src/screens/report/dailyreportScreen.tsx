@@ -321,7 +321,6 @@ const styles = StyleSheet.create({
   },
   titleText: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontSize: 20 * scaleFactor,
     fontWeight: '700',
     lineHeight: 28 * scaleFactor,
@@ -353,7 +352,6 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     color: '#25252C',
-    fontFamily: 'Pretendard',
     fontSize: 14 * scaleFactor,
     fontWeight: '700',
   },
