@@ -20,11 +20,18 @@ const AnimatedMessageBubble = ({ item, children }) => {
     >
       <View
         style={[
-          styles.messageBubble,
-          item.from === 'User' ? styles.userBubble : styles.aiBubble,
+          styles.messageWrapper,
+          item.from === 'User' ? styles.userWrapper : styles.aiWrapper,
         ]}
       >
-        {children}
+        <View
+          style={[
+            styles.messageBubble,
+            item.from === 'User' ? styles.userBubble : styles.aiBubble,
+          ]}
+        >
+          {children}
+        </View>
       </View>
     </Animated.View>
   );
@@ -35,7 +42,6 @@ const ChatMessageList = ({ messages, style }) => {
 
   useEffect(() => {
     if (flatListRef.current && messages.length > 0) {
-      // animated: true 유지하여 부드러운 스크롤
       flatListRef.current.scrollToEnd({ animated: true });
     }
   }, [messages]);
@@ -49,7 +55,10 @@ const ChatMessageList = ({ messages, style }) => {
   const renderItem = ({ item }) => (
     <AnimatedMessageBubble item={item}>
       <Text
-        style={[styles.messageText, item.from === 'User' && styles.userText]}
+        style={[
+          styles.messageText,
+          item.from === 'User' ? styles.userText : styles.aiText,
+        ]}
       >
         {item.text}
       </Text>
@@ -82,23 +91,36 @@ const styles = StyleSheet.create({
   flatListPadding: {
     paddingHorizontal: 18,
     paddingTop: 20,
-    // paddingBottom을 150으로 증가시켜 마지막 메시지 잘림 방지
     paddingBottom: 300,
   },
-  messageBubble: {
+
+  // 버블 너비 자동 조정 및 정렬을 위한 래퍼 (Wrapper)
+  messageWrapper: {
+    flexDirection: 'row',
     marginVertical: 8,
+  },
+  aiWrapper: {
+    justifyContent: 'flex-start',
+  },
+  userWrapper: {
+    justifyContent: 'flex-end',
+  },
+
+  messageBubble: {
     padding: 16,
     borderRadius: 16,
     maxWidth: '85%',
+    // [⭐️ 확인]: View 컴포넌트는 기본적으로 내용물에 맞게 너비를 조정하므로,
+    // 이전에 제거한 alignSelf 대신, 이 maxWidth를 통해 최대 너비만 제한합니다.
   },
   aiBubble: {
-    alignSelf: 'flex-start',
     backgroundColor: 'rgba(255,255,255,0.80)',
   },
   userBubble: {
-    alignSelf: 'flex-end',
     backgroundColor: '#6289E8',
   },
+
+  // 텍스트 스타일 및 정렬
   messageText: {
     fontFamily: 'Pretendard',
     fontSize: 18,
@@ -106,10 +128,15 @@ const styles = StyleSheet.create({
     lineHeight: 28.8,
     color: '#343B61',
   },
+  aiText: {
+    // AI 메시지는 왼쪽 정렬 유지
+    textAlign: 'left',
+  },
   userText: {
     color: '#FFFFFF',
+    // [⭐️ 수정]: 사용자 메시지는 오른쪽 정렬을 통해 오른쪽 끝이 꽉 찬 느낌을 주도록 유지
+    textAlign: 'right',
   },
 });
 
 export default ChatMessageList;
-// C:\mindit-FE\src\components\chatmessageList.tsx
